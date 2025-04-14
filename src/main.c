@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/14 12:19:36 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/14 13:53:06 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_free_dtab(char **tab)
 	return (1);
 }
 
-int	ft_is_access(char *path_cmd, int *error)
+int	ft_is_exec(char *path_cmd, int *error)
 {
 	if (access(path_cmd, F_OK) == 0)
 	{
@@ -86,7 +86,7 @@ char	*search_path(char *cmd, char **path, int *error)
 		free(path_tmp);
 		if (!path_cmd)
 			return (NULL);
-		if (ft_is_access(path_cmd, error))
+		if (ft_is_exec(path_cmd, error))
 			return (path_cmd);
 		free(path_cmd);
 	}
@@ -102,14 +102,14 @@ void	ft_error_msg(char *arg, char *msg)
 	ft_putstr_fd("\n", 2);
 }
 
-int	redirect_input(char *file, int *status, char **path)
+int	redirect_input(char *file, char **path)
 {
 	int	infile;
 
-	if (!ft_is_access(file, status))
-		ft_error("No such file or directory", path, &file, status);
-	else if (status == 126)
-		ft_error("Permission denied", path, &file, status);
+	if (access(file, F_OK) != 0)
+		ft_error("No such file or directory", path, &file, 127);
+	else if (access(file, R_OK) != 0)
+		ft_error("Permission denied", path, &file, 1);
 	else
 	{
 		infile = open(file, O_RDONLY);
@@ -122,6 +122,7 @@ int	redirect_input(char *file, int *status, char **path)
 		}
 		close(infile);
 	}
+	return (0);
 }
 
 int	ft_error(char *msg, char **path, char **dtab, int status)
@@ -145,6 +146,7 @@ int	main(int ac, char **av, char **env)
 	char	*read;
 	int		status;
 	pid_t	pid;
+	//char	*file;
 
 	(void)ac;
 	(void)av;
@@ -156,9 +158,12 @@ int	main(int ac, char **av, char **env)
 			break ;
 		if (!read[0])
 			continue ;
+		// printf("read=%s;\n",read);
+		if (ft_strchr(read, '<'))
+			read = &(ft_strchr(read, '<')[1]);
 		cmd = ft_split(read, ' ');
 		free(read);
-		if (!cmd || !(*cmd))
+		if (!cmd || !cmd[0])
 			return (ft_error("split error", path, cmd, -1));
 		path_cmd = search_path(cmd[0], path, &status);
 		if (!path_cmd)
