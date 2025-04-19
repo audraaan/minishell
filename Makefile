@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/04/12 14:50:47 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/04/19 01:22:59 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,11 @@ INC_DIR		=	./inc/
 
 OBJ		=	$(SRC:.c=.o)
 DEPS	=	$(OBJ:.o=.d)
-SRC		=	$(SRC_PATH)main.c 
+SRC		=	$(SRC_PATH)main.c \
+			$(SRC_PATH)bultins_env.c \
+			$(SRC_PATH)get_cmd.c \
+			$(SRC_PATH)redirect.c \
+			$(SRC_PATH)utils.c
 
 
 all: $(NAME)
