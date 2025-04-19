@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/16 13:07:23 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/19 04:43:08 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,27 +23,70 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-typedef struct s_data
-{
-	int len_data; // le nb de truc quya ds la ligne de commande
-	int type;     // genre si c un file une cmd un < | > >> << t a capter k
-	char			**content;
-	struct s_data	*next;
-}					t_data;
-
 typedef struct s_lst
 {
 	char			*content;
 	struct s_lst	*next;
 }					t_lst;
 
-t_lst				*new_node(char *str);
+// typedef enum e_token_type
+//{
+// REDIR_IN,
+// REDIR_OUT,
+// HEREDOC,
+// APPEND,
+// PIPE,
+// WORD
+//}					t_token_type;
+//
+// typedef struct s_token
+//{
+// char			*str;
+// t_token_type	type;
+// struct s_token	*next;
+//}					t_token;
+//
+// typedef struct s_data
+//{
+// t_cmd			*cmd;
+// t_list			*env;
+// char			*fd_in;
+// char			*fd_out;
+// struct s_data	*next;
+//}					t_data;
+//
+// typedef struct s_cmd
+//{
+// char			**cmd_param;
+// struct s_cmd	*next;
+//}					t_cmd;
+
+// main.c
+t_lst				*make_env(void);
 t_lst				*parse_env(char **envp);
-int					ft_free_dtab(char **tab);
-void				ft_error_msg(char *arg, char *msg);
-int					ft_error(char *msg, char **path, char **dtab, int status);
+// build_env.c
+int					ft_env(t_lst *env);
+int					check_params_env(char *a);
+void				ft_unset(t_lst **env, char **a);
+char				**lst_in_tab(t_lst *env);
+void				sort_tab(char **tab);
+int					export_not_args(t_lst **env);
+int					ft_export(t_lst **env, char **a);
+// get_cmd.c
 char				**parse_path(char **env);
 char				*search_path(char *cmd, char **path, int *error);
-int					ft_is_access(char *path_cmd, int *error);
+// redirect.c
+int					redirect_outfile(char *file);
+int					redirect_infile(char *file);
+// utils.c
+void				ft_error_msg(char *arg, char *msg);
+int					ft_error(char *msg, char **path, char **dtab, int status);
+int					ft_free_dtab(char **tab);
+int					ft_is_exec(char *path_cmd, int *error);
+void				ft_free_all_lst(t_lst *lst);
+void				ft_free_lst(t_lst *lst);
+t_lst				*new_node(char *str);
+int					ft_lstlen(t_lst *lst);
+t_lst				*ft_last_node(t_lst *lst);
 
 #endif
