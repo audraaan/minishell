@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/19 05:09:37 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/21 04:17:19 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,10 @@ int	main(int ac, char **av, char **envp)
 	t_lst	*env;
 
 	(void)ac;
+	(void)av;
 	env = parse_env(envp);
-	ft_export(&env, av);
+	ft_unset(&env, av);
+	ft_printf("\n");
 	export_not_args(&env);
 	ft_free_all_lst(env);
 	return (0);

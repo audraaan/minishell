@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/04/19 01:22:59 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/04/21 03:39:38 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,8 +34,9 @@ SRC		=	$(SRC_PATH)main.c \
 			$(SRC_PATH)bultins_env.c \
 			$(SRC_PATH)get_cmd.c \
 			$(SRC_PATH)redirect.c \
-			$(SRC_PATH)utils.c
-
+			$(SRC_PATH)utils.c \
+			$(SRC_PATH)ft_export_not_args.c \
+			$(SRC_PATH)ft_export.c
 
 all: $(NAME)
 

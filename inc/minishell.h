@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/19 04:43:08 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/21 03:36:58 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,11 @@ t_lst				*parse_env(char **envp);
 int					ft_env(t_lst *env);
 int					check_params_env(char *a);
 void				ft_unset(t_lst **env, char **a);
-char				**lst_in_tab(t_lst *env);
-void				sort_tab(char **tab);
-int					export_not_args(t_lst **env);
+//export.c
 int					ft_export(t_lst **env, char **a);
+//export_not_args.c
+int					export_not_args(t_lst **env);
+
 // get_cmd.c
 char				**parse_path(char **env);
 char				*search_path(char *cmd, char **path, int *error);
