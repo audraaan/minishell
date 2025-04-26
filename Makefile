@@ -6,63 +6,77 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/04/21 03:39:38 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/04/26 10:43:29 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= minishell 
-CC		=	cc 
 
-CFLAGS	=	-Wall -Wextra -Werror -g3
-DFLAGS	=	-MMD -MP
+NAME 				= 			minishell
 
-LIBFT_PATH	=	./libft/
-LIBFT_FILE	=	libft.a
-LIBFT_EX	=	$(LIBFT_PATH)$(LIBFT_FILE)
+LIBFT				=			inc/libft/libft.a
 
+HEAD 				=			minishell.h
 
+OBJ_DIR				=			obj/
 
-HDR_FLAG	=	-I$(INC_DIR) -I$(LIBFT_PATH)
+CC					=			cc
 
+CFLAGS				=		-Wall -Werror -MMD -MP -g3
 
-SRC_PATH	=	./src/
-INC_DIR		=	./inc/
+SRCS				=			$(addprefix $(SRCS_DIR), $(SRC_ACC))
 
-OBJ		=	$(SRC:.c=.o)
-DEPS	=	$(OBJ:.o=.d)
-SRC		=	$(SRC_PATH)main.c \
-			$(SRC_PATH)bultins_env.c \
-			$(SRC_PATH)get_cmd.c \
-			$(SRC_PATH)redirect.c \
-			$(SRC_PATH)utils.c \
-			$(SRC_PATH)ft_export_not_args.c \
-			$(SRC_PATH)ft_export.c
+SRCS_DIR			=			srcs/
+PARSING_DIR			=			parsing/
 
-all: $(NAME)
-
-$(SRC_PATH)%.o: $(SRC_PATH)%.c Makefile
-	$(CC) $(CFLAGS) $(DFLAGS) $(HDR_FLAG) -c $< -o $@
-
--include $(DEPS)
+PARSING_SRCS		=			tokenize \
+								env
 
 
-$(NAME): $(LIBFT_EX) $(OBJ)
-	$(CC) -lreadline $(CFLAGS) $(OBJ) $(LIBFT_PATH)$(LIBFT_FILE) -o $(NAME)
+MAIN_SRCS			=			main \
+								utils \
+								bultins_env \
+								ft_export_not_args \
+								ft_export \
+								get_cmd \
+								redirect
 
-$(LIBFT_EX): FORCE
-	make -C $(LIBFT_PATH)
+SRC_ACC				+=			$(addprefix $(PARSING_DIR), $(addsuffix .c, $(PARSING_SRCS)))
+SRC_ACC				+=			$(addsuffix .c, $(MAIN_SRCS))
+
+OBJ			=			$(patsubst $(SRCS_DIR)%.c,$(OBJ_DIR)%.o,$(SRCS))
+
+DEP			=			$(patsubst $(SRCS_DIR)%.c,$(OBJ_DIR)%.d,$(SRCS))
+
+all:					$(NAME)
+
+$(NAME):				$(OBJ) $(LIBFT)
+							$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -lreadline -o $@
+
+$(OBJ_DIR)%.o: $(SRCS_DIR)%.c
+						@mkdir -p $(dir $@)
+						$(CC) $(CFLAGS) -c $< -o $@
+
+$(LIBFT): FORCE
+	$(MAKE) -C inc/libft
+	$(MAKE) bonus -C inc/libft
 
 clean:
-	make clean -C $(LIBFT_PATH)
-	rm -f $(OBJ)
-	rm -f $(DEPS)
+						make clean -C inc/libft
+						@rm -rf $(OBJ_DIR)
+						@echo "Deleting $(OBJ_DIR)"
 
-fclean: clean
-	rm -f $(NAME)
-	make fclean -C $(LIBFT_PATH)
 
-re: fclean all
+fclean:					clean
+							make fclean -C inc/libft
+							@rm -rf $(NAME)
+							@echo "Deleting $(NAME)"
 
-FORCE :
 
-.PHONY: all clean fclean re FORCE
+re: 					fclean
+						$(MAKE) all
+
+FORCE:
+
+.PHONY: 				re all clean fclean FORCE
+
+-include $(DEP)
