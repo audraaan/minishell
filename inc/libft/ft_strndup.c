@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 12:40:12 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/26 16:29:04 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/27 11:49:26 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	*ft_strndup(const char *s, int n)
 {
-	char *dup;
-	int i;
+	char	*dup;
+	int		i;
 
 	if (n <= 0)
 		return (NULL);

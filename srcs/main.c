@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/26 17:41:54 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/27 13:22:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,9 @@ int	ft_nb_pipe(t_token *token)
 
 void	handle_pipe(int nb_pipe, t_data data)
 {
-	while ()
+	while (nb_pipe)
+	{
+	}
 }
 int	main(int ac, char **av, char **env)
 {
@@ -125,17 +127,18 @@ int	main(int ac, char **av, char **env)
 	char	*cwd;
 	char	*expended;
 	char	*read;
+	t_token	*tmp_token;
+	pid_t	pid;
+	int		status;
+	char	*path_cmd;
 
 	cwd = NULL;
+	status = 0;
 	init_data(&data, ac, av);
 	data.env = cpy_env(env);
 	while (1)
 	{
-		expended = getcwd(NULL, 0);
-		cwd = ft_strjoin(expended, ">");
-		free(expended);
-		read = readline(cwd);
-		free(cwd);
+		read = readline("minishell> ");
 		if (!read)
 			break ;
 		add_history(read);
@@ -144,11 +147,65 @@ int	main(int ac, char **av, char **env)
 		expended = expand_env_var(data.env, read);
 		data.token = tokenize(&data, expended);
 		free(expended);
-		data.cmd = handle_cmd(read);
+		// data.cmd = handle_cmd(read);
 		// print_tokens(data.token);
 		// free_tokens(data.token);
-		if (ft_nb_pipe(data.token))
-			handle_pipe(ft_nb_pipe(data.token), data);
+		tmp_token = data.token;
+		while (tmp_token)
+		{
+			if (tmp_token->type == 0)
+			{
+				if (!tmp_token->next)
+					ft_printf("minishell: syntax error near unexpected token `newline'\n");
+				else
+				{
+					tmp_token = tmp_token->next;
+					if (tmp_token->next)
+						if (redirect_infile(tmp_token->str))
+							return (ft_printf("error redir in"), 1);
+				}
+			}
+			else if (tmp_token->type == 5)
+			{
+				path_cmd = search_path(tmp_token->str, parse_path(env),
+						&status);
+				if (!path_cmd)
+				{
+					ft_error("command not found", NULL, NULL, -1);
+				}
+				else if (status == 126)
+					ft_error("Permission denied", NULL, NULL, -1);
+				pid = fork();
+				if (pid == -1)
+					return (ft_printf("pid error"), 1);
+				else if (pid == 0)
+				{
+					execve(path_cmd, ft_split(tmp_token->str, ' '), env);
+				}
+				else
+					waitpid(pid, &status, 0);
+			}
+			else if (tmp_token->type == 1)
+			{
+				if (!tmp_token->next)
+					ft_printf("minishell: syntax error near unexpected token `newline'\n");
+				else
+				{
+					tmp_token = tmp_token->next;
+					if (redirect_outfile(tmp_token->str))
+						return (ft_printf("error redir out"), 1);
+				}
+			}
+			else if (tmp_token->type == 2)
+				ft_printf("pas encore de heredoc\n");
+			else if (tmp_token->type == 3)
+			{
+				tmp_token = tmp_token->next;
+				if (redirect_outfile_append(tmp_token->str))
+					return (ft_printf("error redir append out"), 1);
+			}
+			tmp_token = tmp_token->next;
+		}
 	}
 	rl_clear_history();
 	free_all(data, read);

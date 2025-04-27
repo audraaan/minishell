@@ -1,0 +1,12 @@
+total 596K
+drwxr-xr-x 6 alarroye 2024_lyon  136 Apr 27 14:07 .
+drwxr-xr-x 6 alarroye 2024_lyon  115 Apr 27 14:05 ..
+-rwxr-xr-x 1 alarroye 2024_lyon 529K Apr 14 13:23 docutile.pdf
+drwxr-xr-x 8 alarroye 2024_lyon  185 Apr 26 18:04 .git
+-rw-r--r-- 1 alarroye 2024_lyon    0 Apr 27 14:08 in
+drwxr-xr-x 3 alarroye 2024_lyon   38 Apr 27 14:07 inc
+-rw-r--r-- 1 alarroye 2024_lyon 2.1K Apr 26 18:03 Makefile
+-rwxr-xr-x 1 alarroye 2024_lyon  55K Apr 27 14:07 minishell
+drwxr-xr-x 3 alarroye 2024_lyon  285 Apr 27 14:07 obj
+-rw-r--r-- 1 alarroye 2024_lyon   79 Apr 27 14:05 readline.supp
+drwxr-xr-x 3 alarroye 2024_lyon  153 Apr 27 14:07 srcs

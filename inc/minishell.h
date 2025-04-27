@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/26 10:59:40 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/27 10:01:09 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,13 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+//#define REDIR_IN		0	//>
+//#define REDIR_OUT		1	//<
+//#define HEREDOC		2	//<<
+//#define APPEND		3	//>>
+//#define PIPE			4	//|
+//#define WORD			5	//cmd
 
 typedef struct s_lst
 {
