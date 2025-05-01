@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/27 10:01:09 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/01 11:28:29 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ typedef struct s_lst
 typedef struct s_cmd
 {
 	char			**cmd_param;
+	char			*file_in;
+	char			*file_out;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -64,8 +66,6 @@ typedef struct s_data
 	t_cmd			*cmd;
 	t_list			*env;
 	t_token			*token;
-	char			*fd_in;
-	char			*fd_out;
 	struct s_data	*next;
 }					t_data;
 
@@ -77,7 +77,8 @@ char				*expand_env_var(t_list *env_cpy, char *str);
 int					ft_isspace(char c);
 void				print_tokens(t_token *head);
 void				free_all(t_data data, char *read);
-
+t_data				cmd_builder(t_data *data);
+t_cmd				*cmd_list(t_token *token);
 /*utils*/
 int					ft_strcmp(char *s1, char *s2);
 void				free_tokens(t_token *token);
@@ -104,7 +105,7 @@ int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);
 
 // utils.c
-void				ft_error_msg(char *arg, char *msg);
+int				ft_error_msg(char *arg, char *msg);
 int					ft_error(char *msg, char **path, char **dtab, int status);
 int					ft_free_dtab(char **tab);
 int					ft_is_exec(char *path_cmd, int *error);

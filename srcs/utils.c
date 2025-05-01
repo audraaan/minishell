@@ -6,13 +6,13 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/19 04:41:58 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/01 11:26:09 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-void	ft_error_msg(char *arg, char *msg)
+int	ft_error_msg(char *arg, char *msg)
 {
 	ft_putstr_fd("minishell: ", 2);
 	if (arg)
@@ -22,10 +22,12 @@ void	ft_error_msg(char *arg, char *msg)
 	}
 	ft_putstr_fd(msg, 2);
 	ft_putstr_fd("\n", 2);
+	return (1);
 }
+
 int	ft_error(char *msg, char **path, char **dtab, int status)
 {
-	if (dtab)
+	if (dtab && dtab[0])
 		ft_error_msg(dtab[0], msg);
 	else
 		ft_error_msg(" ", msg);
@@ -35,6 +37,7 @@ int	ft_error(char *msg, char **path, char **dtab, int status)
 		exit(status);
 	return (1);
 }
+
 int	ft_free_dtab(char **tab)
 {
 	int	i;
@@ -66,6 +69,7 @@ int	ft_is_exec(char *path_cmd, int *error)
 		*error = 127;
 	return (0);
 }
+
 void	ft_free_all_lst(t_lst *lst)
 {
 	t_lst	*tmp;

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/27 13:22:23 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/01 13:54:10 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,29 +115,92 @@ int	ft_nb_pipe(t_token *token)
 	return (res);
 }
 
-void	handle_pipe(int nb_pipe, t_data data)
+// void	handle_pipe(int nb_pipe, t_data data)
+//{
+//	while (nb_pipe)
+//	{
+//	}
+//}
+
+int	ft_child(t_token *tmp_token, char *path_cmd, char **env)
 {
-	while (nb_pipe)
+	if (tmp_token->next)
 	{
+		if (!tmp_token->next->next && (tmp_token->next->type == REDIR_OUT
+				|| tmp_token->next->type == APPEND))
+			return (ft_printf("minishell: syntax error near unexpected token `newline'\n"));
+		if (tmp_token->next->type == REDIR_OUT && tmp_token->next->next
+			&& redirect_outfile(tmp_token->next->next->str))
+			return (ft_printf("error redir out"), 1);
+		if (tmp_token->next->type == APPEND && tmp_token->next->next
+			&& redirect_outfile_append(tmp_token->next->next->str))
+			return (ft_printf("error redir append out"), 1);
 	}
+	return (execve(path_cmd, ft_split(tmp_token->str, ' '), env));
 }
+
+void	print(t_cmd *cmd)
+{
+	int	i;
+
+	if (!cmd)
+	{
+		printf("Command list is empty\n");
+		return ;
+	}
+	printf("Starting to print commands:\n"); // Debug message
+	while (cmd)
+	{
+		i = 0;
+		printf("Command at %p:\n", (void *)cmd);
+		// Print command address for debugging
+		if (!cmd->cmd_param)
+		{
+			printf("  cmd_param array is NULL\n");
+		}
+		else
+		{
+			while (cmd->cmd_param[i])
+			{
+				printf("  param[%d]: '%s'\n", i, cmd->cmd_param[i]);
+				i++;
+			}
+			if (i == 0)
+				printf("  No parameters found\n");
+		}
+		cmd = cmd->next;
+	}
+	printf("Done printing commands\n"); // Debug message
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
-	char	*cwd;
 	char	*expended;
 	char	*read;
 	t_token	*tmp_token;
-	pid_t	pid;
 	int		status;
+	int		stdout_save;
+	int		stdin_save;
+	int		if_infile;
+	pid_t	pid;
 	char	*path_cmd;
+	int		file;
 
-	cwd = NULL;
+	if_infile = 0;
 	status = 0;
 	init_data(&data, ac, av);
 	data.env = cpy_env(env);
+	stdout_save = dup(STDOUT_FILENO);
+	stdin_save = dup(STDIN_FILENO);
 	while (1)
 	{
+		if (if_infile)
+		{
+			printf("CACAAAAAAAAAAAAAA\n");
+			close(STDIN_FILENO);
+			dup2(stdin_save, STDIN_FILENO);
+		}
 		read = readline("minishell> ");
 		if (!read)
 			break ;
@@ -146,65 +209,140 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		expended = expand_env_var(data.env, read);
 		data.token = tokenize(&data, expended);
+		// cmd_builder(&data);
 		free(expended);
 		// data.cmd = handle_cmd(read);
-		// print_tokens(data.token);
+		print_tokens(data.token);
 		// free_tokens(data.token);
+		// print(data.cmd);
 		tmp_token = data.token;
 		while (tmp_token)
 		{
-			if (tmp_token->type == 0)
+			if (tmp_token->type == REDIR_IN)
 			{
 				if (!tmp_token->next)
+				{
 					ft_printf("minishell: syntax error near unexpected token `newline'\n");
+					// code d error 2;
+					break ;
+				}
 				else
 				{
 					tmp_token = tmp_token->next;
-					if (tmp_token->next)
+					if (tmp_token->type != WORD)
+					{
+						ft_error_msg(tmp_token->str,
+							"syntax error near unexpected token");
+						// coderor2
+						break ;
+					}
+					if (access(tmp_token->str, F_OK) == -1)
+					{
+						ft_error_msg(tmp_token->str,
+							"No such file or directory");
+						// code error 1
+						break ;
+					}
+					else if (access(tmp_token->str, R_OK) == -1)
+					{
+						ft_error_msg(tmp_token->str, "Permission denied");
+						// code error 1
+						break ;
+					}
+					else if (tmp_token->next)
+					{
 						if (redirect_infile(tmp_token->str))
 							return (ft_printf("error redir in"), 1);
+						if_infile = 1;
+					}
+					tmp_token = tmp_token->next;
 				}
 			}
-			else if (tmp_token->type == 5)
+			else if (tmp_token && tmp_token->type == WORD)
 			{
-				path_cmd = search_path(tmp_token->str, parse_path(env),
-						&status);
+				if (!(ft_strchr(tmp_token->str, '/')
+						&& ft_is_exec(tmp_token->str, &status)))
+					path_cmd = search_path(tmp_token->str, parse_path(env),
+							&status);
+				else
+					path_cmd = tmp_token->str;
 				if (!path_cmd)
 				{
-					ft_error("command not found", NULL, NULL, -1);
+					ft_error_msg(tmp_token->str, "command not found");
+					// code error 127
+					break ;
 				}
 				else if (status == 126)
-					ft_error("Permission denied", NULL, NULL, -1);
+				{
+					ft_error_msg(tmp_token->str, "Permission denied");
+					// code error 126
+					break ;
+				}
 				pid = fork();
 				if (pid == -1)
 					return (ft_printf("pid error"), 1);
 				else if (pid == 0)
+					dprintf(2, "child=%i;\n", ft_child(tmp_token, path_cmd,
+							env));
+				waitpid(pid, &status, 0);
+				if (tmp_token->next && (tmp_token->next->type == REDIR_OUT
+						|| tmp_token->next->type == APPEND))
 				{
-					execve(path_cmd, ft_split(tmp_token->str, ' '), env);
+					if (!tmp_token->next->next)
+					{
+						ft_error_msg("'newline'",
+							"syntax error near unexpected token");
+						// code error 2
+						break ;
+					}
+					// printf("blablabla\n");
+					dup2(STDOUT_FILENO, stdout_save);
+					tmp_token = tmp_token->next->next->next;
 				}
 				else
-					waitpid(pid, &status, 0);
+					tmp_token = tmp_token->next;
+				// if (tmp_token)
+				//	printf("strcmd=%s\n", tmp_token->str);
+				// else
+				//	printf("NULL:)\n");
 			}
-			else if (tmp_token->type == 1)
+			else if (tmp_token && tmp_token->type == REDIR_OUT)
 			{
 				if (!tmp_token->next)
-					ft_printf("minishell: syntax error near unexpected token `newline'\n");
+					ft_error_msg("'newline'",
+						"syntax error near unexpected token");
 				else
 				{
 					tmp_token = tmp_token->next;
-					if (redirect_outfile(tmp_token->str))
-						return (ft_printf("error redir out"), 1);
+					file = open(tmp_token->str, O_CREAT | O_WRONLY | O_TRUNC,
+							0644);
+					if (file == -1)
+						return (ft_printf("error open outfile no cmd prev"), 1);
+					close(file);
+					tmp_token = tmp_token->next;
 				}
 			}
-			else if (tmp_token->type == 2)
-				ft_printf("pas encore de heredoc\n");
-			else if (tmp_token->type == 3)
+			else if (tmp_token && tmp_token->type == APPEND)
 			{
-				tmp_token = tmp_token->next;
-				if (redirect_outfile_append(tmp_token->str))
-					return (ft_printf("error redir append out"), 1);
+				if (!tmp_token->next)
+					ft_error_msg("'newline'",
+						"syntax error near unexpected token");
+				else
+				{
+					tmp_token = tmp_token->next;
+					file = open(tmp_token->str, O_CREAT | O_WRONLY | O_APPEND,
+							0644);
+					if (file == -1)
+						return (ft_printf("error open append outfile no cmd prev"),
+							1);
+					close(file);
+					tmp_token = tmp_token->next;
+				}
 			}
-			tmp_token = tmp_token->next;
+			else if (tmp_token && tmp_token->type == HEREDOC)
+				ft_printf("pas encore de heredoc\n");
+			// if (tmp_token)
+			// tmp_token = tmp_token->next;
 		}
 	}
 	rl_clear_history();

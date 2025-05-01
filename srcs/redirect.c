@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/27 13:13:42 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/01 11:31:16 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	redirect_outfile(char *file)
 	return (0);
 }
 
-int redirect_outfile_append(char *file)
+int	redirect_outfile_append(char *file)
 {
 	int	outfile;
 
@@ -58,7 +58,7 @@ int	redirect_infile(char *file)
 
 	if (access(file, F_OK) != 0)
 	{
-		ft_error("No such file or directory", NULL, &file, 127);
+		ft_printf("No such file or directory", NULL, &file, 127);
 	}
 	else if (access(file, R_OK) != 0)
 		ft_error("Permission denied", NULL, &file, 1);

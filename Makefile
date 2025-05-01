@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/04/26 10:43:29 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/05/01 12:32:55 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ SRCS_DIR			=			srcs/
 PARSING_DIR			=			parsing/
 
 PARSING_SRCS		=			tokenize \
-								env
+								env \
+								command_builder
 
 
 MAIN_SRCS			=			main \
