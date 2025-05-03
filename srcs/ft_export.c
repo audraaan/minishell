@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/21 03:42:26 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/03 15:59:50 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	ft_export(t_lst **env, char **a)
 
 	tmp = *env;
 	i = -1;
-	if (!a)
+	if (!a[1])
 		return (export_not_args(env));
 	while (a && a[++i])
 	{

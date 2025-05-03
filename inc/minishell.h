@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/01 11:28:29 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/03 16:59:40 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "libft/libft.h"
 # include <errno.h>
 # include <fcntl.h>
+# include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
@@ -89,12 +90,15 @@ t_lst				*make_env(void);
 t_lst				*parse_env(char **envp);
 // build_env.c
 int					ft_env(t_lst *env);
+int					ft_unset(t_lst **env, char **a);
 int					check_params_env(char *a);
-void				ft_unset(t_lst **env, char **a);
+
 // export.c
 int					ft_export(t_lst **env, char **a);
 // export_not_args.c
 int					export_not_args(t_lst **env);
+// ft_pwd.c
+int					ft_pwd(void);
 
 // get_cmd.c
 char				**parse_path(char **env);
@@ -105,7 +109,7 @@ int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);
 
 // utils.c
-int				ft_error_msg(char *arg, char *msg);
+int					ft_error_msg(char *arg, char *msg);
 int					ft_error(char *msg, char **path, char **dtab, int status);
 int					ft_free_dtab(char **tab);
 int					ft_is_exec(char *path_cmd, int *error);

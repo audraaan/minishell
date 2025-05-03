@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/05/01 12:32:55 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/05/03 16:58:01 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,8 @@ MAIN_SRCS			=			main \
 								ft_export_not_args \
 								ft_export \
 								get_cmd \
-								redirect
+								redirect \
+								ft_pwd
 
 SRC_ACC				+=			$(addprefix $(PARSING_DIR), $(addsuffix .c, $(PARSING_SRCS)))
 SRC_ACC				+=			$(addsuffix .c, $(MAIN_SRCS))

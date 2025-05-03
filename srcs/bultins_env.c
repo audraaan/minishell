@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:11:10 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/21 05:09:14 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/03 17:06:41 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	ft_env(t_lst *env)
 	while (tmp_env)
 	{
 		if (ft_strchr(tmp_env->content, '='))
-			printf("%s\n", tmp_env->content);
+			ft_printf("%s\n", tmp_env->content);
 		tmp_env = tmp_env->next;
 	}
 	return (0);
@@ -66,7 +66,7 @@ int	cmp_unset(t_lst **prev, t_lst **last, char *a)
 		return (0);
 }
 
-void	ft_unset(t_lst **env, char **a)
+int	ft_unset(t_lst **env, char **a)
 {
 	t_lst	*tmp_prev;
 	t_lst	*tmp_last;
@@ -91,4 +91,5 @@ void	ft_unset(t_lst **env, char **a)
 				}
 		}
 	}
+	return (0);
 }

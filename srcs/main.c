@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/01 13:54:10 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/03 19:58:05 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,27 @@ int	ft_nb_pipe(t_token *token)
 //	}
 //}
 
+int	is_builtins(char **cmd, t_lst **env)
+{
+	// dprintf(2, "cmd=%s;\n", cmd[0]);
+	if (!ft_strcmp(cmd[0], "env") && ft_env(*env) == 0)
+	{
+		exit(0);
+	}
+	else if (!ft_strcmp(cmd[0], "unset") && ft_unset(env, cmd) == 0)
+		exit(0);
+	else if (!ft_strcmp(cmd[0], "export") && ft_export(env, cmd) == 0)
+	{
+		exit(0);
+	}
+	else if (!ft_strcmp(cmd[0], "pwd") && ft_pwd() == 0)
+	{
+		// dprintf(2, "JIRAD");
+		exit(0);
+	}
+	return (0);
+}
+
 int	ft_child(t_token *tmp_token, char *path_cmd, char **env)
 {
 	if (tmp_token->next)
@@ -138,41 +159,6 @@ int	ft_child(t_token *tmp_token, char *path_cmd, char **env)
 	}
 	return (execve(path_cmd, ft_split(tmp_token->str, ' '), env));
 }
-
-void	print(t_cmd *cmd)
-{
-	int	i;
-
-	if (!cmd)
-	{
-		printf("Command list is empty\n");
-		return ;
-	}
-	printf("Starting to print commands:\n"); // Debug message
-	while (cmd)
-	{
-		i = 0;
-		printf("Command at %p:\n", (void *)cmd);
-		// Print command address for debugging
-		if (!cmd->cmd_param)
-		{
-			printf("  cmd_param array is NULL\n");
-		}
-		else
-		{
-			while (cmd->cmd_param[i])
-			{
-				printf("  param[%d]: '%s'\n", i, cmd->cmd_param[i]);
-				i++;
-			}
-			if (i == 0)
-				printf("  No parameters found\n");
-		}
-		cmd = cmd->next;
-	}
-	printf("Done printing commands\n"); // Debug message
-}
-
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
@@ -186,10 +172,12 @@ int	main(int ac, char **av, char **env)
 	pid_t	pid;
 	char	*path_cmd;
 	int		file;
+	t_lst	*envp;
 
 	if_infile = 0;
 	status = 0;
 	init_data(&data, ac, av);
+	envp = parse_env(env);
 	data.env = cpy_env(env);
 	stdout_save = dup(STDOUT_FILENO);
 	stdin_save = dup(STDIN_FILENO);
@@ -197,7 +185,7 @@ int	main(int ac, char **av, char **env)
 	{
 		if (if_infile)
 		{
-			printf("CACAAAAAAAAAAAAAA\n");
+			// printf("CACAAAAAAAAAAAAAA\n");
 			close(STDIN_FILENO);
 			dup2(stdin_save, STDIN_FILENO);
 		}
@@ -212,7 +200,7 @@ int	main(int ac, char **av, char **env)
 		// cmd_builder(&data);
 		free(expended);
 		// data.cmd = handle_cmd(read);
-		print_tokens(data.token);
+		// print_tokens(data.token);
 		// free_tokens(data.token);
 		// print(data.cmd);
 		tmp_token = data.token;
@@ -260,30 +248,41 @@ int	main(int ac, char **av, char **env)
 			}
 			else if (tmp_token && tmp_token->type == WORD)
 			{
-				if (!(ft_strchr(tmp_token->str, '/')
-						&& ft_is_exec(tmp_token->str, &status)))
-					path_cmd = search_path(tmp_token->str, parse_path(env),
-							&status);
-				else
-					path_cmd = tmp_token->str;
-				if (!path_cmd)
+				if (ft_strcmp(tmp_token->str, "env")
+					&& ft_strcmp(tmp_token->str, "export")
+					&& ft_strcmp(tmp_token->str, "unset")
+					&& ft_strcmp(tmp_token->str, "cd")
+					&& ft_strcmp(tmp_token->str, "pwd")
+					&& ft_strcmp(tmp_token->str, "echo")
+					&& ft_strcmp(tmp_token->str, "exit"))
 				{
-					ft_error_msg(tmp_token->str, "command not found");
-					// code error 127
-					break ;
-				}
-				else if (status == 126)
-				{
-					ft_error_msg(tmp_token->str, "Permission denied");
-					// code error 126
-					break ;
+					if (!(ft_strchr(tmp_token->str, '/')
+							&& ft_is_exec(tmp_token->str, &status)))
+						path_cmd = search_path(tmp_token->str, parse_path(env),
+								&status);
+					else
+						path_cmd = tmp_token->str;
+					if (!path_cmd)
+					{
+						ft_error_msg(tmp_token->str, "command not found");
+						// code error 127
+						break ;
+					}
+					else if (status == 126)
+					{
+						ft_error_msg(tmp_token->str, "Permission denied");
+						// code error 126
+						break ;
+					}
 				}
 				pid = fork();
 				if (pid == -1)
 					return (ft_printf("pid error"), 1);
 				else if (pid == 0)
-					dprintf(2, "child=%i;\n", ft_child(tmp_token, path_cmd,
-							env));
+				{
+					is_builtins(ft_split(tmp_token->str, ' '), &envp);
+					ft_child(tmp_token, path_cmd, env);
+				}
 				waitpid(pid, &status, 0);
 				if (tmp_token->next && (tmp_token->next->type == REDIR_OUT
 						|| tmp_token->next->type == APPEND))
