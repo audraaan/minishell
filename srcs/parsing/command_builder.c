@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:02:16 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/05/01 12:34:06 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/04 14:54:56 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	cmd_count(t_token *tmp, int *nb_pipe)
 {
-	while (tmp)
+	while(tmp)
 	{
 		if (tmp->type == PIPE)
 			(*nb_pipe)++;
@@ -24,7 +24,7 @@ void	cmd_count(t_token *tmp, int *nb_pipe)
 
 void	param_count(t_token *tmp, int *nb_param)
 {
-	while (tmp)
+	while(tmp)
 	{
 		if (tmp->type != PIPE)
 			(*nb_param)++;
@@ -32,15 +32,14 @@ void	param_count(t_token *tmp, int *nb_param)
 	}
 }
 
-t_cmd	*cmd_list(t_token *token)
+t_cmd *cmd_list(t_token *token)
 {
-	t_cmd	*head;
-	t_cmd	*current;
-	t_token	*tmp;
-	int		nb_pipe;
-	int		nb_token;
-	int		i;
-	t_cmd	*new_cmd;
+	t_cmd *head;
+	t_cmd *current;
+	t_token *tmp;
+	int	nb_pipe;
+	int nb_token;
+	int	i;
 
 	i = 0;
 	nb_pipe = 0;
@@ -52,11 +51,10 @@ t_cmd	*cmd_list(t_token *token)
 	param_count(tmp, &nb_token);
 	while (i <= nb_pipe)
 	{
-		new_cmd = malloc(sizeof(t_cmd));
+		t_cmd *new_cmd = malloc(sizeof (t_cmd));
 		if (!new_cmd)
 			return (NULL);
-		new_cmd->cmd_param = ft_calloc(sizeof(char *), (nb_pipe + 1));
-			// nbr de cmd param
+		new_cmd->cmd_param = ft_calloc(sizeof (char *), (nb_pipe + 1));// nbr de cmd param
 		//new_cmd->fd_in = NULL;
 		//new_cmd->fd_out = NULL;
 		new_cmd->next = NULL;
@@ -72,7 +70,7 @@ t_cmd	*cmd_list(t_token *token)
 
 t_data	cmd_builder(t_data *data)
 {
-	int i;
+	int	i;
 	t_token *token;
 	t_cmd *cmd;
 

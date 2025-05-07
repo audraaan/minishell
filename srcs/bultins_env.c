@@ -6,21 +6,21 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:11:10 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/03 17:06:41 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/07 15:37:22 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-int	ft_env(t_lst *env)
+int	ft_env(t_list *env)
 {
-	t_lst	*tmp_env;
+	t_list	*tmp_env;
 
 	tmp_env = env;
 	while (tmp_env)
 	{
-		if (ft_strchr(tmp_env->content, '='))
-			ft_printf("%s\n", tmp_env->content);
+		if (tmp_env->content)
+			ft_printf("%s=%s\n", tmp_env->name, tmp_env->content);
 		tmp_env = tmp_env->next;
 	}
 	return (0);
@@ -42,7 +42,7 @@ int	check_params_env(char *a)
 	return (0);
 }
 
-int	cmp_unset(t_lst **prev, t_lst **last, char *a)
+int	cmp_unset(t_list **prev, t_list **last, char *a)
 {
 	int	len;
 	int	len_a;
@@ -66,30 +66,31 @@ int	cmp_unset(t_lst **prev, t_lst **last, char *a)
 		return (0);
 }
 
-int	ft_unset(t_lst **env, char **a)
+int	ft_unset(t_list **env, char **a)
 {
-	t_lst	*tmp_prev;
-	t_lst	*tmp_last;
-	int		i;
+	t_list	*tmp;
+	t_list	*prev;
 
-	i = -1;
-	while (a && a[++i])
+	while (a && *a)
 	{
-		if (!check_params_env(a[i]) && !ft_strchr(a[i], '='))
-		{
-			tmp_prev = *env;
-			tmp_last = (*env)->next;
-			if (ft_strncmp(tmp_prev->content, a[i], ft_strlen(a[i])) == 0)
-				ft_free_lst(*env);
-			else
-				while (tmp_last)
+		tmp = *env;
+		prev = NULL;
+		if (!check_params_env(*a) && !ft_strchr(*a, '='))
+			while (tmp)
+			{
+				if (ft_strcmp(tmp->name, *a) == 0)
 				{
-					if (cmp_unset(&tmp_prev, &tmp_last, a[i]))
-						break ;
-					tmp_prev = tmp_prev->next;
-					tmp_last = tmp_last->next;
+					if (prev == NULL)
+						*env = tmp->next;
+					else
+						prev->next = tmp->next;
+					ft_free_lst(tmp);
+					break ;
 				}
-		}
+				prev = tmp;
+				tmp = tmp->next;
+			}
+		a++;
 	}
 	return (0);
 }

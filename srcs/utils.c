@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/01 11:26:09 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/07 12:49:25 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ int	ft_is_exec(char *path_cmd, int *error)
 	return (0);
 }
 
-void	ft_free_all_lst(t_lst *lst)
+void	ft_free_all_lst(t_list *lst)
 {
-	t_lst	*tmp;
+	t_list	*tmp;
 
 	while (lst)
 	{
@@ -82,35 +82,50 @@ void	ft_free_all_lst(t_lst *lst)
 	}
 }
 
-void	ft_free_lst(t_lst *lst)
+void	ft_free_lst(t_list *lst)
 {
-	t_lst	*tmp;
+	t_list	*tmp;
 
 	tmp = lst;
 	lst = lst->next;
+	if (tmp->name)
+		free(tmp->name);
 	if (tmp->content)
 		free(tmp->content);
 	if (tmp)
 		free(tmp);
 }
 
-t_lst	*new_node(char *str)
+t_list	*new_node(char *str)
 {
-	t_lst	*node;
+	t_list	*node;
+	int		len;
 
-	node = malloc(sizeof(t_lst));
+	len = ft_strlen(str) - ft_strlen(ft_strchr(str, '='));
+	node = malloc(sizeof(t_list));
 	if (!node)
 		return (NULL);
-	node->content = ft_strdup(str);
-	if (!(node->content))
+	if (ft_strchr(str, '=') && (ft_strchr(str, '=') + 1))
+	{
+		node->content = ft_strdup(ft_strchr(str, '=') + 1);
+		if (!(node->content))
+			return (NULL);
+	}
+	else
+		node->content = NULL;
+	node->name = ft_strndup(str, len);
+	if (!(node->name))
+	{
+		free(node->content);
 		return (NULL);
+	}
 	node->next = NULL;
 	return (node);
 }
 
-int	ft_lstlen(t_lst *lst)
+int	ft_lstlen(t_list *lst)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (lst)
@@ -121,7 +136,7 @@ int	ft_lstlen(t_lst *lst)
 	return (i);
 }
 
-t_lst	*ft_last_node(t_lst *lst)
+t_list	*ft_last_node(t_list *lst)
 {
 	if (lst)
 	{
@@ -129,4 +144,82 @@ t_lst	*ft_last_node(t_lst *lst)
 			lst = lst->next;
 	}
 	return (lst);
+}
+
+void	print_tokens(t_token *head)
+{
+	const char	*type_names[] = {"REDIR_IN", "REDIR_OUT", "HEREDOC", "APPEND",
+			"PIPE", "WORD"};
+
+	printf("\n--- TOKENS ---\n");
+	while (head)
+	{
+		printf("[%-8s] %s\n", type_names[head->type], head->str);
+		head = head->next;
+	}
+	printf("--------------\n\n");
+}
+
+t_list	*cpy_env(char **env)
+{
+	int		i;
+	int		j;
+	char	*name;
+	char	*content;
+	t_list	*env_cpy;
+
+	env_cpy = NULL;
+	i = 0;
+	j = 0;
+	while (env[i])
+	{
+		j = 0;
+		while (env[i][j] && env[i][j] != '=')
+			j++;
+		name = ft_substr(env[i], 0, j);
+		if (env[i][j] == '=')
+			content = ft_strdup(&env[i][j + 1]);
+		else
+			content = NULL;
+		ft_lstadd_back(&env_cpy, ft_lstnew(name, content));
+		i++;
+	}
+	return (env_cpy);
+}
+
+void	free_env(t_list *env)
+{
+	t_list	*tmp;
+
+	while (env)
+	{
+		tmp = env;
+		env = env->next;
+		free(tmp->name);
+		free(tmp->content);
+		free(tmp);
+	}
+}
+
+void	free_tokens(t_token *token)
+{
+	t_token	*tmp;
+
+	while (token)
+	{
+		tmp = token;
+		token = token->next;
+		free(tmp->str);
+		free(tmp);
+	}
+	token = NULL;
+}
+
+void	free_all(t_data data, char *read)
+{
+	if (data.token)
+		free_tokens(data.token);
+	if (data.env)
+		free_env(data.env);
+	free(read);
 }

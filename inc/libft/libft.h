@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 17:43:05 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/26 12:47:05 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/07 12:42:29 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char				*ft_strnstr(const char *whole, const char *part,
 void				ft_bzero(void *s, size_t n);
 void				ft_putnbr_fd(int n, int fd);
 void				ft_putchar_fd(char c, int fd);
-void				ft_putstr_fd(char *s, int fd);
+int					ft_putstr_fd(char *s, int fd);
 void				ft_putendl_fd(char *s, int fd);
 void				*ft_calloc(size_t nmemb, size_t size);
 void				ft_lstadd_back(t_list **lst, t_list *new);

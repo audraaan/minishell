@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/03 16:59:40 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/07 13:45:59 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "libft/libft.h"
+# include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -30,6 +31,13 @@
 //#define APPEND		3	//>>
 //#define PIPE			4	//|
 //#define WORD			5	//cmd
+
+//typedef struct s_list
+//{
+//	char			*content;
+//	char			*name;
+//	struct s_list	*next;
+//}					t_list;
 
 typedef struct s_lst
 {
@@ -86,17 +94,15 @@ void				free_tokens(t_token *token);
 void				free_env(t_list *env);
 
 // main.c
-t_lst				*make_env(void);
-t_lst				*parse_env(char **envp);
+t_list				*make_env(void);
+t_list				*parse_env(char **envp);
 // build_env.c
-int					ft_env(t_lst *env);
-int					ft_unset(t_lst **env, char **a);
+int					ft_env(t_list *env);
+int					ft_unset(t_list **env, char **a);
 int					check_params_env(char *a);
 
 // export.c
-int					ft_export(t_lst **env, char **a);
-// export_not_args.c
-int					export_not_args(t_lst **env);
+int					ft_export(t_list **env, char **a);
 // ft_pwd.c
 int					ft_pwd(void);
 
@@ -113,10 +119,10 @@ int					ft_error_msg(char *arg, char *msg);
 int					ft_error(char *msg, char **path, char **dtab, int status);
 int					ft_free_dtab(char **tab);
 int					ft_is_exec(char *path_cmd, int *error);
-void				ft_free_all_lst(t_lst *lst);
-void				ft_free_lst(t_lst *lst);
-t_lst				*new_node(char *str);
-int					ft_lstlen(t_lst *lst);
-t_lst				*ft_last_node(t_lst *lst);
+void				ft_free_all_lst(t_list *lst);
+void				ft_free_lst(t_list *lst);
+t_list				*new_node(char *str);
+int					ft_lstlen(t_list *lst);
+t_list				*ft_last_node(t_list *lst);
 
 #endif

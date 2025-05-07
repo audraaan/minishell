@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/26 11:00:21 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/04 14:52:09 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,18 @@ char *expand_env_var(t_list *env_cpy, char *str)
 	{
 		if (str[i] == '\'' && quotes != 2)
 		{
-			quotes = quotes == 1 ? 0 : 1;
+			if (quotes == 1)
+				quotes = 0;
+			else
+				quotes = 1;
 			res = join_and_free(res, char_to_str(str[i++]));
 		}
 		else if (str[i] == '\"' && quotes != 1)
 		{
-			quotes = quotes == 2 ? 0 : 2;
+			if (quotes == 2)
+				quotes = 0;
+			else
+				quotes = 2;
 			res = join_and_free(res, char_to_str(str[i++]));
 		}
 		else if (str[i] == '$' && quotes != 1)
@@ -87,31 +93,4 @@ char *expand_env_var(t_list *env_cpy, char *str)
 		}
 	}
 	return (res);
-}
-
-t_list *cpy_env(char **env)
-{
-	int	i;
-	int	j;
-	char *name;
-	char *content;
-	t_list *env_cpy;
-
-	env_cpy = NULL;
-	i = 0;
-	j = 0;
-	while (env[i])
-	{
-		j = 0;
-		while (env[i][j] && env[i][j] != '=')
-			j++;
-		name = ft_substr(env[i], 0, j);
-		if (env[i][j] == '=')
-			content = ft_strdup(&env[i][j + 1]);
-		else
-			content = NULL;
-		ft_lstadd_back(&env_cpy, ft_lstnew(name, content));
-		i++;
-	}
-	return (env_cpy);
 }

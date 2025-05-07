@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/05/03 16:58:01 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/05/07 13:46:28 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,6 @@ PARSING_SRCS		=			tokenize \
 MAIN_SRCS			=			main \
 								utils \
 								bultins_env \
-								ft_export_not_args \
 								ft_export \
 								get_cmd \
 								redirect \
