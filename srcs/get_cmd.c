@@ -6,35 +6,37 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/04/21 05:05:51 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/09 19:08:56 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-char	**parse_path(char **env)
+char	**parse_path(t_list *env)
 {
-	char	*tab;
 	char	**path;
-	int		i;
+	t_list	*tmp;
 
-	tab = NULL;
-	i = 0;
+	// char	*tab;
+	// tab = NULL;
 	path = NULL;
-	while (env[i])
+	tmp = env;
+	while (tmp)
 	{
-		if (!ft_strncmp("PATH=", env[i], 5))
+		if (!ft_strcmp("PATH", tmp->name))
 			break ;
-		i++;
+		tmp = tmp->next;
 	}
-	if (env[i])
-		tab = ft_strdup(&env[i][4]);
-	if (!tab)
-		return (NULL);
-	path = ft_split(tab, ':');
-	free(tab);
-	if (!path || !(*path))
-		ft_free_dtab(path);
+	if (tmp)
+	{
+		path = ft_split(ft_strdup(tmp->content), ':');
+		if (!path || !(*path))
+		{
+			ft_error_msg("malloc parse_path", "failed");
+			ft_free_dtab(path);
+			return (NULL);
+		}
+	}
 	return (path);
 }
 
@@ -45,7 +47,7 @@ char	*search_path(char *cmd, char **path, int *error)
 	char	*path_tmp;
 
 	i = -1;
-	while (path[++i])
+	while (path && path[++i])
 	{
 		path_tmp = ft_strjoin(path[i], "/");
 		if (!path_tmp)

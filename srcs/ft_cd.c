@@ -6,29 +6,44 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 18:04:32 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/07 15:58:22 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/09 15:35:12 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-int	update_pwd(t_data *data) // pas finit du tt
+int	update_pwd(t_data *data)
 {
-	char **pwd;
+	char	pwd[PATH_MAX];
+	char	**pwds_exported;
 
-	pwd = ft_strdup(data->next->cmd->cmd_param);
-	if (!pwd)
-		return (ft_printf("malloc failed"));
-	pwd = ft_strjoin("PWD=", pwd);
-	if (!pwd)
-		return (ft_printf("malloc failed"));
-	ft_export(&data->env, ODLPWD = PWD);
-	ft_export(&data->env, "PWD");
+	// pwds_exported = NULL;
+	if (getcwd(pwd, PATH_MAX))
+	{
+		pwd = ft_strjoin("PWD=", pwd);
+		if (!pwd)
+			return (ft_printf("malloc failed"));
+		pwds_exported[0] = pwd;
+		pwds_exported[1] = ft_strdup("OLDPWD");
+		if (!pwds_exported[1])
+		{
+			ft_free_dtab(pwds_exported);
+			return (ft_printf("malloc failed"));
+		}
+		pwds_exported[2] = NULL;
+		return (ft_export(&data->env, pwds_exported));
+	}
+	else
+	{
+		perror("getcwd");
+		return (errno);
+	}
 }
 
 int	ft_cd(t_data *data)
 {
 	t_list	*tmp_env;
+	int		res_update;
 
 	tmp_env = data->env;
 	if (!data->next)
@@ -40,11 +55,14 @@ int	ft_cd(t_data *data)
 	}
 	else if (data->next->next->type == WORD)
 		return (ft_error_msg("cd", "too many arguments"));
-	if (chdir(data->next->cmd->cmd_param) == -1)
+	if (chdir(data->next->cmd->cmd_param[0]) == -1)
 	{
 		perror("cd");
 		return (errno);
 	}
-	else
-		return (update_pwd(data)); // update de con
+	res_update = update_pwd(data);
+	if (res_update)
+	{
+		return (res_update);
+	}
 }

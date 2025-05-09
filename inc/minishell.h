@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/07 13:45:59 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/09 17:50:02 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 //#define PIPE			4	//|
 //#define WORD			5	//cmd
 
-//typedef struct s_list
+// typedef struct s_list
 //{
 //	char			*content;
 //	char			*name;
@@ -107,7 +107,7 @@ int					ft_export(t_list **env, char **a);
 int					ft_pwd(void);
 
 // get_cmd.c
-char				**parse_path(char **env);
+char				**parse_path(t_list *env);
 char				*search_path(char *cmd, char **path, int *error);
 // redirect.c
 int					redirect_outfile(char *file);
@@ -124,5 +124,5 @@ void				ft_free_lst(t_list *lst);
 t_list				*new_node(char *str);
 int					ft_lstlen(t_list *lst);
 t_list				*ft_last_node(t_list *lst);
-
+char				**lst_in_tab(t_list *env);
 #endif

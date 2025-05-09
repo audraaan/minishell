@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/07 12:49:25 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/09 18:25:38 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,4 +222,29 @@ void	free_all(t_data data, char *read)
 	if (data.env)
 		free_env(data.env);
 	free(read);
+}
+
+char	**lst_in_tab(t_list *env)
+{
+	int len_env;
+	char **tab_env;
+	int i;
+
+	len_env = ft_lstlen(env);
+	tab_env = malloc(sizeof(char *) * (len_env + 1));
+	i = -1;
+	if (!tab_env)
+		return (NULL);
+	while (env)
+	{
+		tab_env[++i] = ft_strjoin(ft_strjoin(env->name, "="), env->content);
+		if (!tab_env[i])
+		{
+			ft_free_dtab(tab_env);
+			return (NULL);
+		}
+		env = env->next;
+	}
+	tab_env[len_env] = NULL;
+	return (tab_env);
 }
