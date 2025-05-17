@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/09 17:50:02 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/05/17 21:47:54 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,11 @@ typedef struct s_lst
 
 typedef struct s_cmd
 {
+	int				type;
+	char			*eof;
 	char			**cmd_param;
-	char			*file_in;
-	char			*file_out;
+	char			**file_in;
+	char			**file_out;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -72,10 +74,10 @@ typedef struct s_token
 
 typedef struct s_data
 {
-	t_cmd			*cmd;
 	t_list			*env;
+	t_cmd			*cmd;
 	t_token			*token;
-	struct s_data	*next;
+	//struct s_data	*next;
 }					t_data;
 
 /*parsing*/
