@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/01 14:56:14 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/03 00:50:39 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,43 +103,19 @@ t_list	*cpy_env(char **env)
 
 int	is_builtins(char **cmd, t_list **env)
 {
-	if (!ft_strcmp(cmd[0], "env") && ft_env(*env) == 0)
-		exit(0);
-	else if (!ft_strcmp(cmd[0], "unset") && ft_unset(env, cmd) == 0)
-		exit(0);
-	else if (!ft_strcmp(cmd[0], "export") && ft_export(env, cmd) == 0)
-		exit(0);
-	else if (!ft_strcmp(cmd[0], "pwd") && ft_pwd() == 0)
-		exit(0);
-	else if (!ft_strcmp(cmd[0], "cd") && ft_cd(env, cmd) == 0)
-		exit(0);
-	return (0);
-}
-
-int	ft_child(t_cmd *cmd, char *path_cmd, t_list *env, int prev_fd, int *fd)
-{
-	char	**env_exec;
-
-	env_exec = NULL;
-	if (prev_fd != -1)
-	{
-		dup2(prev_fd, STDIN_FILENO);
-		close(prev_fd);
-	}
-	if (cmd->next)
-	{
-		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-	}
-	if (handle_redir(cmd))
+	if (!ft_strcmp(cmd[0], "env"))
+		ft_env(*env);
+	else if (!ft_strcmp(cmd[0], "unset"))
+		ft_unset(env, cmd);
+	else if (!ft_strcmp(cmd[0], "export"))
+		ft_export(env, cmd);
+	else if (!ft_strcmp(cmd[0], "pwd"))
+		ft_pwd();
+	else if (!ft_strcmp(cmd[0], "cd"))
+		ft_cd(env, cmd);
+	else
 		return (1);
-	env_exec = lst_in_tab(env);
-	if (!env_exec)
-		return (ft_printf("malloc failed"), 1);
-	execve(path_cmd, cmd->cmd_param, env_exec);
-	perror("execve");
-	exit(errno);
+	return (0);
 }
 
 int	main(int ac, char **av, char **env)
@@ -174,6 +150,7 @@ int	main(int ac, char **av, char **env)
 		{
 			close(stdin_save);
 			close(stdout_save);
+			// free_all(data, read);
 			break ;
 		}
 		if (!read[0])
@@ -221,6 +198,35 @@ int	handle_redir(t_cmd *cmd)
 	return (0);
 }
 
+int	ft_child(t_cmd *cmd, char *path_cmd, t_list *env, int prev_fd, int *fd)
+{
+	char	**env_exec;
+
+	env_exec = NULL;
+	if (prev_fd != -1)
+	{
+		dup2(prev_fd, STDIN_FILENO);
+		close(prev_fd);
+	}
+	if (cmd->next)
+	{
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+	}
+	if (handle_redir(cmd))
+		exit(1);
+	env_exec = lst_in_tab(env);
+	if (!env_exec)
+		return (ft_printf("malloc failed"), 1);
+	if (!cmd->cmd_param[0])
+		exit(0);
+	execve(path_cmd, cmd->cmd_param, env_exec);
+	free(path_cmd);
+	perror("execve");
+	exit(errno);
+}
+
 int	ft_exec(t_data *data, pid_t pid)
 {
 	t_cmd	*cmd;
@@ -228,6 +234,7 @@ int	ft_exec(t_data *data, pid_t pid)
 	int		error;
 	int		fd[2];
 	int		prev_fd;
+	char	**lst_path;
 
 	cmd = data->cmd;
 	prev_fd = -1;
@@ -236,8 +243,9 @@ int	ft_exec(t_data *data, pid_t pid)
 		if (cmd->next)
 			if (pipe(fd) == -1)
 				return (ft_printf("pipe error\n"), 1);
-		if (ft_strcmp(cmd->cmd_param[0], "env") && ft_strcmp(cmd->cmd_param[0],
-				"export") && ft_strcmp(cmd->cmd_param[0], "unset")
+		if (cmd->cmd_param[0] && ft_strcmp(cmd->cmd_param[0], "env")
+			&& ft_strcmp(cmd->cmd_param[0], "export")
+			&& ft_strcmp(cmd->cmd_param[0], "unset")
 			&& ft_strcmp(cmd->cmd_param[0], "cd")
 			&& ft_strcmp(cmd->cmd_param[0], "pwd")
 			&& ft_strcmp(cmd->cmd_param[0], "echo")
@@ -245,8 +253,16 @@ int	ft_exec(t_data *data, pid_t pid)
 		{
 			if (!(ft_strchr(cmd->cmd_param[0], '/')
 					&& ft_is_exec(cmd->cmd_param[0], &error)))
-				path_cmd = search_path(cmd->cmd_param[0], parse_path(data->env),
-						&error);
+			{
+				lst_path = parse_path(data->env);
+				if (!lst_path || !*lst_path)
+				{
+					ft_free_dtab(lst_path);
+					return (printf("malloc failed parse_path"), 1);
+				}
+				path_cmd = search_path(cmd->cmd_param[0], lst_path, &error);
+				ft_free_dtab(lst_path);
+			}
 			else
 				path_cmd = cmd->cmd_param[0];
 			if (!path_cmd)
@@ -260,16 +276,22 @@ int	ft_exec(t_data *data, pid_t pid)
 			{
 				ft_error_msg(cmd->cmd_param[0], "Permission denied");
 				// code error 126
+				// free(path_cmd);
 				cmd = cmd->next;
 				continue ;
 			}
 		}
+		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0]
+			&& !is_builtins(cmd->cmd_param, &data->env))
+			break ;
 		pid = fork();
 		if (pid == -1)
 			return (ft_printf("pid error"), 1);
-		else if (pid == 0)
+		// signal(SIGINT, SIG_IGN);
+		if (pid == 0)
 		{
-			is_builtins(cmd->cmd_param, &data->env);
+			if (cmd->cmd_param[0] && !is_builtins(cmd->cmd_param, &data->env))
+				exit(0);
 			ft_child(cmd, path_cmd, data->env, prev_fd, fd);
 		}
 		if (prev_fd != -1)

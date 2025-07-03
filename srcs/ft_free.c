@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:22:47 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/01 08:28:54 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/02 22:45:15 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ void	free_all(t_data data, char *read)
 		free_tokens(data.token);
 	if (data.env)
 		free_env(data.env);
-	free(read);
+	if (read && *read)
+		free(read);
 }
 
 void	ft_free_all_lst(t_list *lst)

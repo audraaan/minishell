@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/01 08:24:59 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/03 00:39:25 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,18 @@ t_list	*new_node(char *str)
 	node->next = NULL;
 	return (node);
 }
+int	ft_cmdlen(t_cmd *cmd)
+{
+	size_t	i;
 
+	i = 0;
+	while (cmd)
+	{
+		i++;
+		cmd = cmd->next;
+	}
+	return (i);
+}
 int	ft_lstlen(t_list *lst)
 {
 	size_t	i;

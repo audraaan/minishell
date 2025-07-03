@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/01 13:38:10 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/03 00:39:57 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ t_list				*new_node(char *str);
 int					ft_lstlen(t_list *lst);
 t_list				*ft_last_node(t_list *lst);
 char				**lst_in_tab(t_list *env);
+int					ft_cmdlen(t_cmd *cmd);
 
 // ft_free.c
 void				ft_free_all_lst(t_list *lst);

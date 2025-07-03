@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/09 18:10:49 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/03 00:44:13 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	ft_change_var(t_list **env, char *a)
 	tmp->content = ft_strdup(ft_strchr(a, '=') + 1);
 	if (!tmp->content)
 	{
-		return (ft_printf("malloc failed"));
+		return (ft_printf("malloc failed\n"));
 	}
 	return (0);
 }
@@ -125,7 +125,7 @@ int	ft_export(t_list **env, char **a)
 			ft_printf("\nminishell: export: %s: not a valid identifier\n",
 				a[i]);
 		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i]))
-			return (ft_printf("malloc failed"));
+			return (ft_printf("malloc failed\n"));
 		else if (exist(env, a[i]) == -1)
 		{
 			tmp = ft_last_node(tmp);

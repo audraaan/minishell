@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/09 19:08:56 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/02 23:25:58 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	**parse_path(t_list *env)
 	}
 	if (tmp)
 	{
-		path = ft_split(ft_strdup(tmp->content), ':');
+		path = ft_split(tmp->content, ':');
 		if (!path || !(*path))
 		{
 			ft_error_msg("malloc parse_path", "failed");
