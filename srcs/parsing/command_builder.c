@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:02:16 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/06/30 18:56:34 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 00:33:16 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ t_cmd *create_new_cmd(t_token *token)
 	if (!new_cmd)
 		return (NULL);
 	param_size = get_cmd_size(token);
-	new_cmd->cmd_param = malloc(sizeof(char *) * param_size);
+	if (param_size >= 0)
+		new_cmd->cmd_param = malloc(sizeof(char *) * (param_size + 1));
 	if (!new_cmd->cmd_param)
 	{
 		free(new_cmd);

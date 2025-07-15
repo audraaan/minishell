@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 18:00:48 by nbedouan          #+#    #+#             */
-/*   Updated: 2024/11/14 18:33:26 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/15 22:44:37 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,38 @@
 
 char	*ft_strdup(const char *s)
 {
-	char	*dup;
-	int		s_len;
+	char	*dest;
+	int		i;
 
-	s_len = ft_strlen(s);
-	dup = malloc((s_len + 1) * sizeof(char));
-	if (!dup)
+	i = 0;
+	while (s[i])
+		i++;
+	dest = (char *)malloc(i * sizeof(char) + 1);
+	if (dest == NULL)
 		return (NULL);
-	dup[s_len] = 0;
-	while (s_len >= 0)
+	i = 0;
+	while (s[i])
 	{
-		dup[s_len] = s[s_len];
-		s_len--;
+		dest[i] = s[i];
+		i++;
 	}
-	return (dup);
+	dest[i] = '\0';
+	return (dest);
 }
+//char	*ft_strdup(const char *s)
+//{
+//	char	*dup;
+//	int		s_len;
+
+//	s_len = ft_strlen(s);
+//	dup = malloc((s_len + 1) * sizeof(char));
+//	if (!dup)
+//		return (NULL);
+//	dup[s_len] = 0;
+//	while (s_len >= 0)
+//	{
+//		dup[s_len] = s[s_len];
+//		s_len--;
+//	}
+//	return (dup);
+//}

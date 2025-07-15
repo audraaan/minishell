@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/05/07 08:46:30 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/15 21:42:11 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	redirect_outfile(char *file)
 	if (outfile == -1)
 	{
 		perror(file);
-		//ft_error("error open", NULL, &file, errno);
-		return (1);
+		// ft_error("error open", NULL, &file, errno);
+		return (errno);
 	}
 	if (dup2(outfile, STDOUT_FILENO) == -1)
 	{
@@ -57,23 +57,24 @@ int	redirect_infile(char *file)
 {
 	int	infile;
 
+	printf("%d\n", access(file, F_OK));
 	if (access(file, F_OK) != 0)
 	{
-		ft_printf("No such file or directory", NULL, &file, 127);
+		ft_printf("No such file or directory\n", NULL, &file, 127);
 	}
 	else if (access(file, R_OK) != 0)
-		ft_error("Permission denied", NULL, &file, 1);
+		ft_error("Permission denied\n", NULL, &file, 1);
 	else
 	{
 		infile = open(file, O_RDONLY);
 		if (infile == -1)
 		{
-			ft_error("error open", NULL, &file, errno);
+			ft_error("error open\n", NULL, &file, errno);
 		}
 		if (dup2(infile, STDIN_FILENO) == -1)
 		{
 			close(infile);
-			ft_error("error dup2 infile stdin", NULL, &file, errno);
+			ft_error("error dup2 infile stdin\n", NULL, &file, errno);
 		}
 		close(infile);
 	}

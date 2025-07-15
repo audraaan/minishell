@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/03 00:50:39 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 00:54:25 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ t_list	*cpy_env(char **env)
 	return (env_cpy);
 }
 
-int	is_builtins(char **cmd, t_list **env)
+int	builtins(char **cmd, t_list **env)
 {
 	if (!ft_strcmp(cmd[0], "env"))
 		ft_env(*env);
@@ -123,15 +123,18 @@ int	main(int ac, char **av, char **env)
 	t_data	data;
 	char	*expanded;
 	char	*read;
-	int		stdout_save;
-	int		stdin_save;
 	pid_t	pid;
 
 	init_data(&data, ac, av);
-	stdout_save = dup(STDOUT_FILENO);
-	stdin_save = dup(STDIN_FILENO);
 	pid = getpid();
 	data.env = cpy_env(env);
+	data.stdin_save = dup(STDIN_FILENO);
+	data.stdout_save = dup(STDOUT_FILENO);
+	if (data.stdin_save == -1 || data.stdout_save == -1)
+	{
+		ft_printf("error dup save");
+		return (1);
+	}
 	if (!data.env)
 	{
 		fprintf(stderr, "Error: Failed to copy environment\n");
@@ -141,16 +144,13 @@ int	main(int ac, char **av, char **env)
 	signal(SIGINT, sig_handler);
 	while (1)
 	{
-		close(STDIN_FILENO);
-		close(STDOUT_FILENO);
-		dup2(stdin_save, STDIN_FILENO);
-		dup2(stdout_save, STDOUT_FILENO);
+		dup2(data.stdin_save, STDIN_FILENO);
+		dup2(data.stdout_save, STDOUT_FILENO);
 		read = readline("minishell> ");
 		if (!read || !ft_strcmp(read, "exit"))
 		{
-			close(stdin_save);
-			close(stdout_save);
-			// free_all(data, read);
+			close(data.stdin_save);
+			close(data.stdout_save);
 			break ;
 		}
 		if (!read[0])
@@ -189,7 +189,7 @@ int	handle_redir(t_cmd *cmd)
 			return (ft_printf("error redir in\n"), 1);
 		else if (cmd->file->type == REDIR_OUT
 			&& redirect_outfile(cmd->file->file))
-			return (ft_printf("error redir out\n"), 1);
+			return (1);
 		else if (cmd->file->type == APPEND
 			&& redirect_outfile_append(cmd->file->file))
 			return (ft_printf("error redir append\n"), 1);
@@ -216,13 +216,13 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_list *env, int prev_fd, int *fd)
 	}
 	if (handle_redir(cmd))
 		exit(1);
-	env_exec = lst_in_tab(env);
-	if (!env_exec)
-		return (ft_printf("malloc failed"), 1);
 	if (!cmd->cmd_param[0])
 		exit(0);
+	env_exec = lst_in_tab(env);
+	if (!env_exec)
+		return (ft_printf("malloc failed\n"), 1);
 	execve(path_cmd, cmd->cmd_param, env_exec);
-	free(path_cmd);
+	// free(path_cmd);
 	perror("execve");
 	exit(errno);
 }
@@ -240,6 +240,7 @@ int	ft_exec(t_data *data, pid_t pid)
 	prev_fd = -1;
 	while (cmd)
 	{
+		path_cmd = NULL;
 		if (cmd->next)
 			if (pipe(fd) == -1)
 				return (ft_printf("pipe error\n"), 1);
@@ -258,13 +259,13 @@ int	ft_exec(t_data *data, pid_t pid)
 				if (!lst_path || !*lst_path)
 				{
 					ft_free_dtab(lst_path);
-					return (printf("malloc failed parse_path"), 1);
+					return (printf("malloc failed parse_path\n"), 1);
 				}
 				path_cmd = search_path(cmd->cmd_param[0], lst_path, &error);
 				ft_free_dtab(lst_path);
 			}
 			else
-				path_cmd = cmd->cmd_param[0];
+				path_cmd = ft_strdup(cmd->cmd_param[0]);
 			if (!path_cmd)
 			{
 				ft_error_msg(cmd->cmd_param[0], "command not found");
@@ -276,22 +277,30 @@ int	ft_exec(t_data *data, pid_t pid)
 			{
 				ft_error_msg(cmd->cmd_param[0], "Permission denied");
 				// code error 126
-				// free(path_cmd);
+				if (path_cmd && *path_cmd)
+					free(path_cmd);
 				cmd = cmd->next;
 				continue ;
 			}
 		}
 		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0]
-			&& !is_builtins(cmd->cmd_param, &data->env))
+			&& !builtins(cmd->cmd_param, &data->env))
 			break ;
 		pid = fork();
 		if (pid == -1)
-			return (ft_printf("pid error"), 1);
+			return (ft_printf("pid error\n"), 1);
 		// signal(SIGINT, SIG_IGN);
 		if (pid == 0)
 		{
-			if (cmd->cmd_param[0] && !is_builtins(cmd->cmd_param, &data->env))
+			close(data->stdin_save);
+			close(data->stdout_save);
+			if (cmd->cmd_param[0] && !builtins(cmd->cmd_param, &data->env))
+			{
+				free_env(data->env);
+				free_iteration_data(data);
+				close(fd[0]);
 				exit(0);
+			}
 			ft_child(cmd, path_cmd, data->env, prev_fd, fd);
 		}
 		if (prev_fd != -1)
@@ -303,6 +312,8 @@ int	ft_exec(t_data *data, pid_t pid)
 		}
 		else
 			prev_fd = -1;
+		if (path_cmd && *path_cmd)
+			free(path_cmd);
 		cmd = cmd->next;
 	}
 	while (wait(&error) > 0)
@@ -438,7 +449,7 @@ int	ft_exec(t_data *data, pid_t pid)
 //	return (ft_printf("pid error"), 1);
 // else if (pid == 0)
 //{
-//	is_builtins(ft_split(tmp_token->str, ' '), &data.env);
+//	builtins(ft_split(tmp_token->str, ' '), &data.env);
 //	ft_child(tmp_token, path_cmd, data.env);
 //}
 // waitpid(pid, &status, 0);

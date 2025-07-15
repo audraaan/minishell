@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/03 00:39:57 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 00:10:55 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ typedef struct s_data
 	t_list			*env;
 	t_cmd			*cmd;
 	t_token			*token;
-	// struct s_data	*next;
+	int				stdout_save;
+	int				stdin_save;
 }					t_data;
 
 /*parsing*/

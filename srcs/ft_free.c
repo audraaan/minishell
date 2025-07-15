@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:22:47 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/02 22:45:15 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 00:24:57 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	free_env(t_list *env)
 		free(tmp->content);
 		free(tmp);
 	}
+	env = NULL;
 }
 
 void	free_tokens(t_token *token)
@@ -120,7 +121,8 @@ void	free_cmd(t_cmd *cmd)
 				free(tmp->cmd_param[i]);
 				i++;
 			}
-			free(tmp->cmd_param);
+			if (tmp->cmd_param)
+				free(tmp->cmd_param);
 		}
 		if (tmp->file)
 			free_file_list(tmp->file);
