@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:02:16 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/16 00:33:16 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 02:16:13 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,16 @@ static void	copy_filename(t_file *current, t_token **token)
 	}
 }
 
+static void	copy_eof(t_file *current, t_token **token)
+{
+	*token = (*token)->next;
+	if (*token && (*token)->str)
+	{
+		current->eof = ft_strdup((*token)->str);
+		*token = (*token)->next;
+	}
+}
+
 void	handle_redirection(t_file **files, t_token **token)
 {
 	t_file	*current;
@@ -225,12 +235,13 @@ void	handle_redirection(t_file **files, t_token **token)
 		return ;
 	current->type = (*token)->type;
 	if (current->type == REDIR_IN
-		|| current->type == HEREDOC
 		|| current->type == REDIR_OUT
 		|| current->type == APPEND)
 	{
 		copy_filename(current, token);
 	}
+	else if (current->type == HEREDOC)
+		copy_eof(current, token);
 }
 
 

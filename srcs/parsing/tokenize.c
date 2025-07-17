@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/15 23:49:18 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/17 03:58:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ void	init_data(t_data *data, int ac, char **av)
 	data->token = NULL;
 	data->cmd = NULL;
 	data->env = NULL;
+	data->prev_fd = -1;
+	data->fd[0] = -1;
+	data->fd[1] = -1;
+	data->error = 0;
 }
 
 int	ft_isspace(char c)

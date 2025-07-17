@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/16 00:10:55 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/17 04:59:00 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+// valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-fds=yes --show-mismatched-frees=yes
+//-s --trace-children=yes ./minishell
 
 //#define REDIR_IN		0	//>
 //#define REDIR_OUT		1	//<
@@ -49,7 +52,7 @@ typedef struct s_file
 {
 	int				type;
 	char			*file;
-	char			**eof;
+	char			*eof;
 	struct s_file	*next;
 }					t_file;
 
@@ -84,6 +87,9 @@ typedef struct s_data
 	t_token			*token;
 	int				stdout_save;
 	int				stdin_save;
+	int				fd[2];
+	int				prev_fd;
+	int				error;
 }					t_data;
 
 /*parsing*/
@@ -103,6 +109,12 @@ t_list				*make_env(void);
 t_list				*parse_env(char **envp);
 int					ft_exec(t_data *data, pid_t pid);
 int					handle_redir(t_cmd *cmd);
+int					ft_child_builtins(t_cmd *cmd, t_data *data);
+int					is_builtins(char *cmd);
+int					ft_wait(t_cmd *head, pid_t pid, int *error);
+int					builtins(char **cmd, t_list **env);
+int					ft_failed_execve(t_data *data, char **cmd, char **env,
+						char *path_cmd);
 
 // build_env.c
 int					ft_env(t_list *env);
@@ -119,6 +131,7 @@ int					ft_cd(t_list **env, char **cmd);
 // get_cmd.c
 char				**parse_path(t_list *env);
 char				*search_path(char *cmd, char **path, int *error);
+char				*ft_path(char *cmd, t_list *env, int *error);
 // redirect.c
 int					redirect_outfile(char *file);
 int					redirect_outfile_append(char *file);
@@ -133,6 +146,7 @@ int					ft_lstlen(t_list *lst);
 t_list				*ft_last_node(t_list *lst);
 char				**lst_in_tab(t_list *env);
 int					ft_cmdlen(t_cmd *cmd);
+void				ft_close_save(t_data *data);
 
 // ft_free.c
 void				ft_free_all_lst(t_list *lst);
@@ -142,6 +156,7 @@ void				free_env(t_list *env);
 int					ft_free_dtab(char **tab);
 void				free_all(t_data data, char *read);
 void				free_iteration_data(t_data *data);
+void				free_cmd(t_cmd *cmd);
 
 // ft_print.c
 void				print(t_cmd *cmd);

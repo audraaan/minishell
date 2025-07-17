@@ -6,11 +6,19 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/03 00:39:25 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/17 05:06:51 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
+
+void	ft_close_save(t_data *data)
+{
+	if (data->stdin_save != -1)
+		close(data->stdin_save);
+	if (data->stdout_save != -1)
+		close(data->stdout_save);
+}
 
 int	ft_error_msg(char *arg, char *msg)
 {
@@ -140,7 +148,7 @@ char	**lst_in_tab(t_list *env)
 	int		i;
 
 	len_env = ft_lstlen(env);
-	tab_env = malloc(sizeof(char *) * (len_env + 1));
+	tab_env = malloc(sizeof(char *) * (len_env+1));
 	i = -1;
 	if (!tab_env)
 		return (NULL);

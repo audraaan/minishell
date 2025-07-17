@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:22:47 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/16 00:24:57 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/17 05:10:04 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ void	free_all(t_data data, char *read)
 		free_tokens(data.token);
 	if (data.env)
 		free_env(data.env);
+	if (data.cmd)
+		free_cmd(data.cmd);
 	if (read && *read)
 		free(read);
 }
@@ -99,6 +101,8 @@ void	free_file_list(t_file *file)
 		file = file->next;
 		if (tmp->file)
 			free(tmp->file);
+		if (tmp->eof)
+			free(tmp->eof);
 		free(tmp);
 	}
 }
