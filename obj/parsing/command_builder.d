@@ -1,6 +1,0 @@
-obj/parsing/command_builder.o: srcs/parsing/command_builder.c \
-  inc/minishell.h inc/libft/libft.h
-
-inc/minishell.h:
-
-inc/libft/libft.h:
