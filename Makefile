@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/01 08:41:32 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/07/19 21:16:52 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,21 +21,25 @@ OBJ_DIR				=			obj/
 
 CC					=			cc
 
-CFLAGS				=		-Wall -Werror -MMD -MP -g3
+CFLAGS				=		-Wall -Werror -MMD -MP -g3 -I inc
 
 SRCS				=			$(addprefix $(SRCS_DIR), $(SRC_ACC))
 
 SRCS_DIR			=			srcs/
 PARSING_DIR			=			parsing/
 
-PARSING_SRCS		=			tokenize \
+PARSING_SRCS		=			builder_utils_2 \
+								builder_utils \
+								command_builder \
+								env_utils \
 								env \
-								command_builder
+								token_utils \
+								tokenize\
 
 
 MAIN_SRCS			=			main \
 								utils \
-								bultins_env \
+								builtins_env \
 								ft_export \
 								get_cmd \
 								redirect \

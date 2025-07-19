@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/15 21:42:11 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/17 06:40:06 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ int	redirect_infile(char *file)
 {
 	int	infile;
 
-	printf("%d\n", access(file, F_OK));
 	if (access(file, F_OK) != 0)
 	{
 		ft_printf("No such file or directory\n", NULL, &file, 127);

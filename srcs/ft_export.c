@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/03 00:44:13 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/19 22:05:43 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,12 +100,12 @@ int	ft_change_var(t_list **env, char *a)
 	len = ft_strlen(a) - ft_strlen(ft_strchr(a, '='));
 	while (pos--)
 		tmp = tmp->next;
-	// ft_printf("tmp=%s,a=%s\n", tmp->name, a);
 	free(tmp->content);
 	tmp->content = ft_strdup(ft_strchr(a, '=') + 1);
 	if (!tmp->content)
 	{
-		return (ft_printf("malloc failed\n"));
+		write(2, "malloc failed\n", 14);
+		return (1);
 	}
 	return (0);
 }
@@ -122,7 +122,7 @@ int	ft_export(t_list **env, char **a)
 	while (a && a[++i])
 	{
 		if (check_params_env(a[i]))
-			ft_printf("\nminishell: export: %s: not a valid identifier\n",
+			ft_printf("minishell: export: %s: not a valid identifier\n",
 				a[i]);
 		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i]))
 			return (ft_printf("malloc failed\n"));

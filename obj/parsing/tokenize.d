@@ -1,7 +1,6 @@
-obj/parsing/tokenize.o: srcs/parsing/tokenize.c \
-  srcs/parsing/../../inc/minishell.h \
-  srcs/parsing/../../inc/libft/libft.h
+obj/parsing/tokenize.o: srcs/parsing/tokenize.c inc/minishell.h \
+  inc/libft/libft.h
 
-srcs/parsing/../../inc/minishell.h:
+inc/minishell.h:
 
-srcs/parsing/../../inc/libft/libft.h:
+inc/libft/libft.h:

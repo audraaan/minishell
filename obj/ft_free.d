@@ -1,6 +1,5 @@
-obj/ft_free.o: srcs/ft_free.c srcs/../inc/minishell.h \
-  srcs/../inc/libft/libft.h
+obj/ft_free.o: srcs/ft_free.c inc/minishell.h inc/libft/libft.h
 
-srcs/../inc/minishell.h:
+inc/minishell.h:
 
-srcs/../inc/libft/libft.h:
+inc/libft/libft.h:

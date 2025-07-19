@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/16 05:58:52 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/19 21:55:32 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ char	**parse_path(t_list *env)
 	char	**path;
 	t_list	*tmp;
 
-	// char	*tab;
-	// tab = NULL;
 	path = NULL;
 	tmp = env;
 	while (tmp)

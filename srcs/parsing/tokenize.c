@@ -3,42 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/17 03:58:23 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/minishell.h"
-
-void	init_data(t_data *data, int ac, char **av)
-{
-	(void)ac;
-	(void)av;
-	data->token = NULL;
-	data->cmd = NULL;
-	data->env = NULL;
-	data->prev_fd = -1;
-	data->fd[0] = -1;
-	data->fd[1] = -1;
-	data->error = 0;
-}
-
-int	ft_isspace(char c)
-{
-	if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v'
-		|| c == '\f')
-		return (1);
-	return (0);
-}
-
-int	is_operator(char c)
-{
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
-}
+#include "minishell.h"
+//#include "../../includes/minishell.h"
 
 char	*extract_word(char *str, int *i)
 {
@@ -71,11 +44,8 @@ char	*extract_word(char *str, int *i)
 
 t_token_type	get_operator_type(char *str, int *i)
 {
-	if (str[(*i)] == '<' && str[(*i) + 1] == '<')
-	{
-		(*i) += 2;
+	if (str[(*i)] == '<' && str[(*i) + 1] == '<' && trickster(i))
 		return (HEREDOC);
-	}
 	else if (str[(*i)] == '>' && str[(*i) + 1] == '>')
 	{
 		(*i) += 2;
@@ -99,21 +69,6 @@ t_token_type	get_operator_type(char *str, int *i)
 	return (WORD);
 }
 
-char	*get_operator_str(t_token_type type)
-{
-	if (type == HEREDOC)
-		return ("<<");
-	if (type == APPEND)
-		return (">>");
-	if (type == REDIR_IN)
-		return ("<");
-	if (type == REDIR_OUT)
-		return (">");
-	if (type == PIPE)
-		return ("|");
-	return (NULL);
-}
-
 t_token	*create_token(char *str, t_token_type type)
 {
 	t_token	*new_token;
@@ -132,41 +87,46 @@ t_token	*create_token(char *str, t_token_type type)
 	return (new_token);
 }
 
+t_token	*tokenize_bis(int *i, char *str)
+{
+	t_token_type	type;
+	t_token			*new_token;
+	char			*word;
+
+	while (str[(*i)] && ft_isspace(str[(*i)]))
+		(*i)++;
+	if (!str[(*i)])
+		return (NULL);
+	if (is_operator(str[(*i)]))
+	{
+		type = get_operator_type(str, i);
+		new_token = create_token(get_operator_str(type), type);
+	}
+	else
+	{
+		type = WORD;
+		word = extract_word(str, i);
+		new_token = create_token(word, type);
+		free(word);
+	}
+	return (new_token);
+}
+
 t_token	*tokenize(t_data *data, char *str)
 {
-	t_token			*new_token;
-	t_token			**current;
-	t_token_type	type;
-	char			*word;
-	int				i;
-	int				in_redirection;
+	t_token	**current;
+	t_token	*new_token;
+	int		i;
 
+	i = 0;
 	new_token = NULL;
 	current = &new_token;
-	i = 0;
-	while (str[i])
+	while (1)
 	{
-		while (str[i] && ft_isspace(str[i]))
-			i++;
-		if (!str[i])
-			break ;
-		if (is_operator(str[i]))
-		{
-			type = get_operator_type(str, &i);
-			*current = create_token(get_operator_str(type), type);
-			in_redirection = 1;
-		}
-		else
-		{
-			type = WORD;
-			word = extract_word(str, &i);
-			*current = create_token(word, type);
-			free(word);
-		}
+		*current = tokenize_bis(&i, str);
 		if (!*current)
 		{
-			free_tokens(new_token);
-			return (NULL);
+			break ;
 		}
 		current = &(*current)->next;
 	}

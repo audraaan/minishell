@@ -6,13 +6,13 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/17 05:09:27 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/19 22:24:01 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-volatile sig_atomic_t	g_signal_received = 0;
+int		g_signal_received;
 
 void	sig_handler(int sig)
 {
@@ -21,54 +21,66 @@ void	sig_handler(int sig)
 	rl_on_new_line();
 	rl_redisplay();
 }
-
-t_list	*cpy_env(char **env)
+void	init_data(t_data *data, int ac, char **av)
 {
-	int		i;
-	int		j;
-	char	*name;
-	char	*content;
-	t_list	*env_cpy;
-
-	env_cpy = NULL;
-	i = 0;
-	while (env[i])
+	(void)ac;
+	(void)av;
+	data->env = NULL;
+	data->cmd = NULL;
+	data->token = NULL;
+	data->stdout_save = -1;
+	data->stdin_save = -1;
+	data->fd[0] = -1;
+	data->fd[1] = -1;
+	data->prev_fd = -1;
+	data->error = -1;
+	data->exit_status = 0;
+	if (!data->stdin_save || !data->stdout_save)
 	{
-		j = 0;
-		while (env[i][j] && env[i][j] != '=')
-			j++;
-		name = ft_substr(env[i], 0, j);
-		if (!name)
-		{
-			free_env(env_cpy);
-			return (NULL);
-		}
-		if (env[i][j] == '=')
-			content = ft_strdup(&env[i][j + 1]);
-		else
-			content = NULL;
-		if (env[i][j] == '=' && !content)
-		{
-			free(name);
-			free_env(env_cpy);
-			return (NULL);
-		}
-		ft_lstadd_back(&env_cpy, ft_lstnew(name, content));
-		i++;
+		ft_printf("save dup failed\n");
+		exit(1);
 	}
-	return (env_cpy);
+	g_signal_received = 0;
 }
 
-int	count_heredoc(t_token *token)
+int	check_synthax(t_token *token)
 {
-	int	res;
-
-	res = 0;
+	if (token->type == PIPE)
+	{
+		perror("minishell: syntax error near unexpected token `|'\n");
+		return (1);
+	}
 	while (token)
 	{
-		if (token->type == HEREDOC)
-			res++;
+		if (token->type == PIPE && (!token->next || token->next->type == PIPE))
+		{
+			perror("minishell: syntax error near unexpected token `|'\n");
+			return (1);
+		}
+		else if (!(token->type == PIPE || token->type == WORD) && (!token->next
+				|| token->next->type != WORD))
+		{
+			perror("minishell: syntax error near unexpected token"
+					" '< > << >>'\n");
+			return (1);
+		}
 		token = token->next;
+	}
+	return (0);
+}
+
+int	count_heredoc(t_token *cmd_file)
+{
+	int		res;
+	t_token	*file;
+
+	file = cmd_file;
+	res = 0;
+	while (file)
+	{
+		if (file->type == HEREDOC)
+			res++;
+		file = file->next;
 	}
 	return (res);
 }
@@ -85,9 +97,10 @@ void	ft_heredoc(t_data *data)
 		if (!read)
 		{
 			write(2,
-				"minishell : warning: here-document delimited by end-of-file",
-				54);
+				"minishell : warning: here-document delimited by end-of-file\n",
+				55);
 			close(fd[1]);
+			close(fd[0]);
 			return ;
 		}
 		if (ft_strcmp(read, data->cmd->file->eof))
@@ -107,32 +120,14 @@ void	ft_heredoc(t_data *data)
 			continue ;
 		}
 	}
-	if (data->cmd && data->cmd->next && data->cmd->next->cmd_param
-		&& data->cmd->next->cmd_param[0])
+	if (data->cmd && data->cmd->cmd_param && data->cmd->cmd_param[0])
 	{
-		printf("caca\n");
-		// dup2(fd[0], STDIN_FILENO);
+		dup2(fd[0], STDIN_FILENO);
 	}
-	// data->cmd->file = data->cmd->file->next;
 	close(fd[0]);
 }
 
-int	handle_redir(t_cmd *cmd)
-{
-	while (cmd->file)
-	{
-		if (cmd->file->type == REDIR_IN && redirect_infile(cmd->file->file))
-			return (ft_printf("error redir in\n"), 1);
-		else if (cmd->file->type == REDIR_OUT
-			&& redirect_outfile(cmd->file->file))
-			return (1);
-		else if (cmd->file->type == APPEND
-			&& redirect_outfile_append(cmd->file->file))
-			return (ft_printf("error redir append\n"), 1);
-		cmd->file = cmd->file->next;
-	}
-	return (0);
-}
+
 
 int	main(int ac, char **av, char **env)
 {
@@ -140,7 +135,7 @@ int	main(int ac, char **av, char **env)
 	char	*expanded;
 	char	*read;
 	pid_t	pid;
-	int		nb_heredoc;
+	//int		nb_heredoc;
 
 	init_data(&data, ac, av);
 	pid = 0;
@@ -175,7 +170,7 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		add_history(read);
-		expanded = expand_env_var(data.env, read);
+		expanded = expand_env_var(&data, read);
 		free(read);
 		if (!expanded)
 		{
@@ -188,12 +183,12 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		data = cmd_builder(&data);
 		// print_tokens(data.token);
-		// print(data.cmd);
-		nb_heredoc = (count_heredoc(data.token) + 1);
-		while (--nb_heredoc)
-		{
-			ft_heredoc(&data);
-		}
+		print(data.cmd);
+		// nb_heredoc = (count_heredoc(data.token) + 1);
+		// while (--nb_heredoc)
+		//{
+		//	ft_heredoc(&data);
+		//}
 		ft_exec(&data, pid);
 		free_iteration_data(&data);
 	}
@@ -249,6 +244,7 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 	ft_failed_execve(data, cmd->cmd_param, env_exec, path_cmd);
 	perror("execve");
 	exit(errno);
+	return (0);
 }
 
 int	ft_failed_execve(t_data *data, char **cmd, char **env, char *path_cmd)
@@ -314,6 +310,23 @@ int	builtins(char **cmd, t_list **env)
 	return (0);
 }
 
+int	handle_redir(t_cmd *cmd)
+{
+	while (cmd->file)
+	{
+		if (cmd->file->type == REDIR_IN && redirect_infile(cmd->file->file))
+			return (ft_printf("error redir in\n"), 1);
+		else if (cmd->file->type == REDIR_OUT
+			&& redirect_outfile(cmd->file->file))
+			return (1);
+		else if (cmd->file->type == APPEND
+			&& redirect_outfile_append(cmd->file->file))
+			return (ft_printf("error redir append\n"), 1);
+		cmd->file = cmd->file->next;
+	}
+	return (0);
+}
+
 int	ft_exec(t_data *data, pid_t pid)
 {
 	t_cmd	*cmd;
@@ -331,7 +344,7 @@ int	ft_exec(t_data *data, pid_t pid)
 			continue ;
 		}
 		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0]
-			&& !builtins(cmd->cmd_param, &data->env))
+			&& !handle_redir(data->cmd) && !builtins(cmd->cmd_param, &data->env))
 			break ;
 		if (cmd->cmd_param[0])
 			pid = handle_children(pid, cmd, data, path_cmd);
@@ -347,7 +360,7 @@ int	ft_wait(t_cmd *head, pid_t pid, int *error)
 {
 	while (head)
 	{
-		waitpid(pid, error, 0);
+		waitpid(-1, error, 0);
 		head = head->next;
 	}
 	return (0);

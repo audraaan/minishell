@@ -1,2 +1,1 @@
-"cat | cat | ls"
-"lst_in_tab qui leak"
+"revoir redirect_infile"

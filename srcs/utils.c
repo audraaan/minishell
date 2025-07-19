@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/17 05:06:51 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/19 21:54:21 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ t_list	*new_node(char *str)
 	node->next = NULL;
 	return (node);
 }
+
 int	ft_cmdlen(t_cmd *cmd)
 {
 	size_t	i;
@@ -104,6 +105,7 @@ int	ft_cmdlen(t_cmd *cmd)
 	}
 	return (i);
 }
+
 int	ft_lstlen(t_list *lst)
 {
 	size_t	i;
@@ -127,39 +129,33 @@ t_list	*ft_last_node(t_list *lst)
 	return (lst);
 }
 
-void	print_tokens(t_token *head)
+char	**ft_free_and_null(char **tab)
 {
-	const char	*type_names[] = {"REDIR_IN", "REDIR_OUT", "HEREDOC", "APPEND",
-			"PIPE", "WORD"};
-
-	printf("\n--- TOKENS ---\n");
-	while (head)
-	{
-		printf("[%-8s] %s\n", type_names[head->type], head->str);
-		head = head->next;
-	}
-	printf("--------------\n\n");
+	ft_free_dtab(tab);
+	return (NULL);
 }
 
 char	**lst_in_tab(t_list *env)
 {
 	int		len_env;
 	char	**tab_env;
+	char	*tmp;
 	int		i;
 
 	len_env = ft_lstlen(env);
-	tab_env = malloc(sizeof(char *) * (len_env+1));
+	tab_env = malloc(sizeof(char *) * (len_env + 1));
 	i = -1;
 	if (!tab_env)
 		return (NULL);
 	while (env)
 	{
-		tab_env[++i] = ft_strjoin(ft_strjoin(env->name, "="), env->content);
+		tmp = ft_strjoin(env->name, "=");
+		if (!tmp)
+			return (ft_free_and_null(tab_env));
+		tab_env[++i] = ft_strjoin(tmp, env->content);
+		free(tmp);
 		if (!tab_env[i])
-		{
-			ft_free_dtab(tab_env);
-			return (NULL);
-		}
+			return (ft_free_and_null(tab_env));
 		env = env->next;
 	}
 	tab_env[len_env] = NULL;

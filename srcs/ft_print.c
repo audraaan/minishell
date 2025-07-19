@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:30:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/01 08:33:37 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/17 05:22:25 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,19 @@ void	print_list(t_list *lst)
 			lst->content ? lst->content : "(null)");
 		lst = lst->next;
 	}
+}
+
+
+void	print_tokens(t_token *head)
+{
+	const char	*type_names[] = {"REDIR_IN", "REDIR_OUT", "HEREDOC", "APPEND",
+			"PIPE", "WORD"};
+
+	printf("\n--- TOKENS ---\n");
+	while (head)
+	{
+		printf("[%-8s] %s\n", type_names[head->type], head->str);
+		head = head->next;
+	}
+	printf("--------------\n\n");
 }
