@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 09:56:30 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 01:23:10 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ int	ft_exec(t_data *data, pid_t pid)
 	{
 		if (cmd->next && pipe(data->fd) == -1)
 			return (ft_error_msg("pipe", "cannot create pipe"));
-		path_cmd = ft_path(cmd, data->env, &data->error);
-		if (data->error == 127 || data->error == 126)
+		path_cmd = ft_path(cmd, data->env, &data->exit_status);
+		if (data->exit_status == 127 || data->exit_status == 126)
 		{
 			cmd = cmd->next;
 			continue ;
 		}
 		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0] && is_builtins(cmd)
-			&& !handle_redir(cmd) && !builtins(cmd->cmd_param, &data->env))
+			&& !handle_redir(cmd) && !builtins(cmd->cmd_param, data))
 			break ;
 		else
 			pid = handle_children(pid, cmd, data, path_cmd);
@@ -38,7 +38,7 @@ int	ft_exec(t_data *data, pid_t pid)
 		cmd = cmd->next;
 	}
 	data->prev_fd = -1;
-	return (ft_wait(data->cmd, pid, &data->error));
+	return (ft_wait(data->cmd, pid, &data->exit_status));
 }
 
 pid_t	handle_children(pid_t pid, t_cmd *cmd, t_data *data, char *path_cmd)
@@ -52,9 +52,8 @@ pid_t	handle_children(pid_t pid, t_cmd *cmd, t_data *data, char *path_cmd)
 		if (cmd->cmd_param[0] && is_builtins(cmd))
 		{
 			ft_child_builtins(cmd, data);
-			free_all(*data, NULL);
 			close(data->fd[0]);
-			exit(data->exit_status);
+			ft_free_and_exit(*data, NULL);
 		}
 		ft_child(cmd, path_cmd, data);
 	}
@@ -86,15 +85,9 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 		close(data->fd[1]);
 	}
 	if (handle_redir(cmd))
-	{
-		free_all(*data, path_cmd);
-		exit(data->exit_status);
-	}
+		ft_free_and_exit(*data, path_cmd);
 	if (!cmd->cmd_param[0])
-	{
-		free_all(*data, path_cmd);
-		exit(data->exit_status);
-	}
+		ft_free_and_exit(*data, path_cmd);
 	env_exec = lst_in_tab(data->env);
 	if (!env_exec)
 		return (ft_error_msg("lst_in_tab:", "malloc failed"));

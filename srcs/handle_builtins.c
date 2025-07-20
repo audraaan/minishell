@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:38:22 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 05:44:45 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 01:00:50 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	ft_child_builtins(t_cmd *cmd, t_data *data)
 		exit(1);
 	if (!cmd->cmd_param[0])
 		exit(0);
-	return (builtins(cmd->cmd_param, &data->env));
+	return (builtins(cmd->cmd_param, data));
 }
 
 int	is_builtins(t_cmd *cmd)
@@ -45,18 +45,18 @@ int	is_builtins(t_cmd *cmd)
 	return (0);
 }
 
-int	builtins(char **cmd, t_list **env)
+int	builtins(char **cmd, t_data *data)
 {
 	if (!ft_strcmp(cmd[0], "env"))
-		ft_env(*env);
+		data->exit_status = ft_env(data->env);
 	else if (!ft_strcmp(cmd[0], "unset"))
-		ft_unset(env, cmd);
+		data->exit_status = ft_unset(&(data->env), cmd);
 	else if (!ft_strcmp(cmd[0], "export"))
-		ft_export(env, cmd);
+		data->exit_status = ft_export(&(data->env), cmd);
 	else if (!ft_strcmp(cmd[0], "pwd"))
-		ft_pwd();
+		data->exit_status = ft_pwd();
 	else if (!ft_strcmp(cmd[0], "cd"))
-		ft_cd(env, cmd);
+		data->exit_status = ft_cd(&(data->env), cmd);
 	else
 		return (1);
 	return (0);

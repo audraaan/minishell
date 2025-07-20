@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 01:32:04 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 01:23:50 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@ void	ft_close_save(t_data *data)
 		close(data->stdin_save);
 	if (data->stdout_save != -1)
 		close(data->stdout_save);
+}
+
+int	ft_perror_msg(char *msg, int error)
+{
+	perror(msg);
+	return (error);
 }
 
 int	ft_error_msg(char *arg, char *msg)
@@ -129,6 +135,15 @@ t_list	*ft_last_node(t_list *lst)
 			lst = lst->next;
 	}
 	return (lst);
+}
+
+void	ft_free_and_exit(t_data data, char *path_cmd)
+{
+	int	status;
+
+	status = data.exit_status;
+	free_all(data, path_cmd);
+	exit(status);
 }
 
 char	**ft_free_and_null(char **tab)

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 05:31:34 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 01:19:47 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ int					ft_wait(t_cmd *head, pid_t pid, int *error);
 // handle_builtins
 int					ft_child_builtins(t_cmd *cmd, t_data *data);
 int					is_builtins(t_cmd *cmd);
-int					builtins(char **cmd, t_list **env);
+int					builtins(char **cmd, t_data *data);
 
 // get_cmd
 char				**parse_path(t_list *env);
@@ -188,6 +188,7 @@ int					ft_cd(t_list **env, char **cmd);
 
 /////////////*other*/////////////
 // utils
+int					ft_perror_msg(char *msg, int error);
 int					ft_error_msg(char *arg, char *msg);
 int					ft_error(char *msg, char **path, char **dtab, int status);
 int					ft_is_exec(char *path_cmd, int *error);
@@ -197,6 +198,7 @@ t_list				*ft_last_node(t_list *lst);
 char				**lst_in_tab(t_list *env);
 int					ft_cmdlen(t_cmd *cmd);
 void				ft_close_save(t_data *data);
+void				ft_free_and_exit(t_data data, char *path_cmd);
 
 // ft_free
 void				ft_free_all_lst(t_list *lst);

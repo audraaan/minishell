@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 07:21:05 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 23:44:14 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	init_data(t_data *data, int ac, char **av)
 	data->fd[0] = -1;
 	data->fd[1] = -1;
 	data->prev_fd = -1;
-	data->error = -1;
 	data->exit_status = 0;
 	if (!data->stdin_save || !data->stdout_save)
 	{
