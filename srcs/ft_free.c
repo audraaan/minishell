@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:22:47 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/19 21:06:55 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 01:19:05 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ void	free_all(t_data data, char *read)
 	if (data.env)
 		free_env(data.env);
 	if (data.cmd)
+	{
 		free_cmd(data.cmd);
+		data.cmd = NULL;
+	}
 	if (read && *read)
 		free(read);
 }
@@ -99,8 +102,8 @@ void	free_file_list(t_file *file)
 	{
 		tmp = file;
 		file = file->next;
-		if (tmp->file)
-			free(tmp->file);
+		if (tmp->file_name)
+			free(tmp->file_name);
 		if (tmp->eof)
 			free(tmp->eof);
 		free(tmp);
@@ -125,11 +128,12 @@ void	free_cmd(t_cmd *cmd)
 				free(tmp->cmd_param[i]);
 				i++;
 			}
-			if (tmp->cmd_param)
-				free(tmp->cmd_param);
+			free(tmp->cmd_param);
 		}
 		if (tmp->file)
+		{
 			free_file_list(tmp->file);
+		}
 		free(tmp);
 	}
 }

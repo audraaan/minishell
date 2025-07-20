@@ -6,11 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/19 21:55:32 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 05:30:50 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "minishell.h"
 
 char	**parse_path(t_list *env)
 {
@@ -60,32 +60,38 @@ char	*search_path(char *cmd, char **path, int *error)
 	}
 	return (NULL);
 }
+void	ft_status_path(char *cmd, int *error, char *path)
+{
+	if (*error == 127)
+		ft_error_msg(cmd, "command not found");
+	else if (*error == 126)
+	{
+		ft_error_msg(cmd, "Permission denied");
+		free(path);
+	}
+}
 
-char	*ft_path(char *cmd, t_list *env, int *error)
+char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 {
 	char	**lst_path;
 	char	*path;
+	char	*cmd_tab;
 
 	path = NULL;
-	if (cmd && !is_builtins(cmd))
+	cmd_tab = cmd->cmd_param[0];
+	if (cmd_tab && !is_builtins(cmd))
 	{
-		if (!(ft_strchr(cmd, '/') && ft_is_exec(cmd, error)))
+		if (!(ft_strchr(cmd_tab, '/') && ft_is_exec(cmd_tab, error)))
 		{
 			lst_path = parse_path(env);
 			if (!lst_path || !*lst_path)
 				ft_error("malloc failed parse_path", lst_path, NULL, 1);
-			path = search_path(cmd, lst_path, error);
+			path = search_path(cmd_tab, lst_path, error);
 			ft_free_dtab(lst_path);
 		}
 		else
-			path = ft_strdup(cmd);
-		if (*error == 127)
-			ft_error_msg(cmd, "command not found");
-		else if (*error == 126)
-		{
-			ft_error_msg(cmd, "Permission denied");
-			free(path);
-		}
+			path = ft_strdup(cmd_tab);
+		ft_status_path(cmd_tab, error,path);
 	}
 	return (path);
 }

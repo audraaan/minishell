@@ -1,1 +1,3 @@
 "revoir redirect_infile"
+>newfile // ca fait r
+cat < asdfasdfadsfadsfasdfasdfasdf //ca fou la merde

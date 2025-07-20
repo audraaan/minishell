@@ -6,11 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/19 22:05:43 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 03:53:16 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "minishell.h"
 
 t_list	*sort_list(t_list *env)
 {
@@ -103,10 +103,7 @@ int	ft_change_var(t_list **env, char *a)
 	free(tmp->content);
 	tmp->content = ft_strdup(ft_strchr(a, '=') + 1);
 	if (!tmp->content)
-	{
-		write(2, "malloc failed\n", 14);
-		return (1);
-	}
+		return (ft_error_msg("ft_strdup", "malloc failed"));
 	return (0);
 }
 
@@ -117,21 +114,20 @@ int	ft_export(t_list **env, char **a)
 
 	tmp = *env;
 	i = 0;
-	if (!a || !a[1]) //! a[0] || peut etre ?
+	if (!a || !a[1])
 		return (export_not_args(env));
 	while (a && a[++i])
 	{
 		if (check_params_env(a[i]))
-			ft_printf("minishell: export: %s: not a valid identifier\n",
-				a[i]);
+			ft_error_msg(a[i], "not a valid identifier for export");
 		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i]))
-			return (ft_printf("malloc failed\n"));
+			return (ft_error_msg(NULL, "malloc failed"));
 		else if (exist(env, a[i]) == -1)
 		{
 			tmp = ft_last_node(tmp);
 			tmp->next = new_node(a[i]);
 			if (!tmp->next)
-				return (ft_printf("error strdup malloc"));
+				return (ft_error_msg("ft_strdup", "malloc failed"));
 		}
 		tmp = *env;
 	}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_env.c                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/23 17:00:13 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/20 02:27:08 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ void	expend_env_var_bis(int *i, char *str, t_list *env_cpy, char **res)
 		(*i)++;
 	name = ft_substr(str, start, (*i) - start);
 	value = get_env_value(env_cpy, name);
-	free (name);
-	*res = join_and_free(*res, ft_strdup(value));
+	if (value)
+		*res = join_and_free(*res, ft_strdup(value));
+	free(name);
 }

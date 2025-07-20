@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_builder.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:02:16 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/25 22:02:22 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/20 05:43:02 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ void	cmd_builder_bis(t_token **token, t_cmd **current_cmd, int *param_index)
 	{
 		if ((*current_cmd) && (*current_cmd)->cmd_param)
 		{
-			(*current_cmd)->cmd_param[(*param_index)]
-				= ft_strdup((*token)->str);
+			(*current_cmd)->cmd_param[(*param_index)] = ft_strdup((*token)->str);
 			(*param_index)++;
 		}
 		(*token) = (*token)->next;
@@ -130,7 +129,7 @@ t_cmd	*create_new_cmd(t_token *token)
 	return (new_cmd);
 }
 
-//t_cmd	*cmd_list(t_token *token)
+// t_cmd	*cmd_list(t_token *token)
 //{
 //	t_cmd		*head;
 //	t_cmd		*current;
@@ -164,7 +163,7 @@ t_cmd	*create_new_cmd(t_token *token)
 //	return (head);
 //}
 
-//void	handle_redirection(t_cmd *current_cmd, t_token *token)
+// void	handle_redirection(t_cmd *current_cmd, t_token *token)
 //{
 //	if (token->type == REDIR_IN || token->type == HEREDOC)
 //	{
@@ -188,10 +187,10 @@ t_cmd	*create_new_cmd(t_token *token)
 //		token = token->next;
 //}
 
-//void handle_redirection(t_cmd *cmd, t_token **token)
+// void handle_redirection(t_cmd *cmd, t_token **token)
 //{
 //	if (!token || !*token)
-//		return;
+//		return ;
 //
 //	cmd->file->type = (*token)->type;
 //	if ((*token)->type == REDIR_IN)
@@ -227,7 +226,7 @@ t_cmd	*create_new_cmd(t_token *token)
 //}
 
 //
-//t_data	cmd_builder(t_data *data)
+// t_data	cmd_builder(t_data *data)
 //{
 //	t_token	*token;
 //	t_cmd	*cmd;
@@ -261,7 +260,7 @@ t_cmd	*create_new_cmd(t_token *token)
 //	return (*data);
 //}
 
-//t_data	cmd_builder(t_data *data)
+// t_data	cmd_builder(t_data *data)
 //{
 //	int	i;
 //	t_token *token;

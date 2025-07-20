@@ -6,11 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 18:04:32 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/18 04:39:51 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/19 23:14:48 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "minishell.h"
 
 int	update_env(t_list **env, char *pwd, char *export)
 {

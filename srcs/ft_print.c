@@ -6,11 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:30:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/17 05:22:25 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 01:08:42 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "minishell.h"
 
 void	print(t_cmd *cmd)
 {
@@ -47,7 +47,7 @@ void	print(t_cmd *cmd)
 		file = cmd->file;
 		while (file)
 		{
-			printf("  file: '%s'\n", file->file ? file->file : "(none)");
+			printf("  file: '%s'\n", file->file_name ? file->file_name : "(none)");
 			printf("  type: '%d'\n", file->type);
 			file = file->next;
 		}

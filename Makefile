@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/19 21:16:52 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/07/20 03:40:53 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,9 @@ MAIN_SRCS			=			main \
 								ft_pwd \
 								ft_free \
 								ft_print \
-								ft_cd
+								ft_cd \
+								exec \
+								handle_builtins 
 
 SRC_ACC				+=			$(addprefix $(PARSING_DIR), $(addsuffix .c, $(PARSING_SRCS)))
 SRC_ACC				+=			$(addsuffix .c, $(MAIN_SRCS))

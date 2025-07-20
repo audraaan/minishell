@@ -6,11 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/19 21:54:21 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 01:32:04 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "minishell.h"
 
 void	ft_close_save(t_data *data)
 {
@@ -96,12 +96,14 @@ t_list	*new_node(char *str)
 int	ft_cmdlen(t_cmd *cmd)
 {
 	size_t	i;
+	t_cmd	*tmp;
 
+	tmp = cmd;
 	i = 0;
-	while (cmd)
+	while (tmp)
 	{
 		i++;
-		cmd = cmd->next;
+		tmp = tmp->next;
 	}
 	return (i);
 }

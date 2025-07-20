@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:11:10 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/19 21:07:13 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 04:14:24 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,15 @@ int	cmp_unset(t_list **prev, t_list **last, char *a)
 		return (0);
 }
 
+void	ft_arg_found(t_list **env, t_list *tmp, t_list *prev)
+{
+	if (prev == NULL)
+		*env = tmp->next;
+	else
+		prev->next = tmp->next;
+	ft_free_lst(tmp);
+}
+
 int	ft_unset(t_list **env, char **a)
 {
 	t_list	*tmp;
@@ -76,20 +85,18 @@ int	ft_unset(t_list **env, char **a)
 		tmp = *env;
 		prev = NULL;
 		if (!check_params_env(*a) && !ft_strchr(*a, '='))
+		{
 			while (tmp)
 			{
 				if (ft_strcmp(tmp->name, *a) == 0)
 				{
-					if (prev == NULL)
-						*env = tmp->next;
-					else
-						prev->next = tmp->next;
-					ft_free_lst(tmp);
+					ft_arg_found(env, tmp, prev);
 					break ;
 				}
 				prev = tmp;
 				tmp = tmp->next;
 			}
+		}
 		a++;
 	}
 	return (0);

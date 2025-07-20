@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builder_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:57:09 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/16 23:32:45 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/20 01:06:46 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	copy_filename(t_file *current, t_token **token)
 	*token = (*token)->next;
 	if (*token && (*token)->str)
 	{
-		current->file = ft_strdup((*token)->str);
+		current->file_name = ft_strdup((*token)->str);
 		*token = (*token)->next;
 	}
 }

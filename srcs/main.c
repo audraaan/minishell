@@ -6,11 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/19 22:24:01 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/20 07:21:05 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "minishell.h"
 
 int		g_signal_received;
 
@@ -21,6 +21,7 @@ void	sig_handler(int sig)
 	rl_on_new_line();
 	rl_redisplay();
 }
+
 void	init_data(t_data *data, int ac, char **av)
 {
 	(void)ac;
@@ -59,11 +60,8 @@ int	check_synthax(t_token *token)
 		}
 		else if (!(token->type == PIPE || token->type == WORD) && (!token->next
 				|| token->next->type != WORD))
-		{
-			perror("minishell: syntax error near unexpected token"
-					" '< > << >>'\n");
-			return (1);
-		}
+			return (ft_error_msg(token->str,
+					"syntax error near unexpected token"));
 		token = token->next;
 	}
 	return (0);
@@ -127,31 +125,23 @@ void	ft_heredoc(t_data *data)
 	close(fd[0]);
 }
 
-
-
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
 	char	*expanded;
 	char	*read;
 	pid_t	pid;
-	//int		nb_heredoc;
 
+	// int		nb_heredoc;
 	init_data(&data, ac, av);
 	pid = 0;
 	data.env = cpy_env(env);
 	data.stdin_save = dup(STDIN_FILENO);
 	data.stdout_save = dup(STDOUT_FILENO);
 	if (data.stdin_save == -1 || data.stdout_save == -1)
-	{
-		ft_printf("error dup save");
-		return (1);
-	}
+		return (ft_error_msg("dup", "dup failed"));
 	if (!data.env)
-	{
-		fprintf(stderr, "Error: Failed to copy environment\n");
-		return (1);
-	}
+		return (ft_error_msg("cpy_env", "Error: Failed to copy environment"));
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, sig_handler);
 	while (1)
@@ -179,11 +169,11 @@ int	main(int ac, char **av, char **env)
 		}
 		data.token = tokenize(&data, expanded);
 		free(expanded);
-		if (!data.token)
+		if (!data.token || check_synthax(data.token))
 			continue ;
 		data = cmd_builder(&data);
 		// print_tokens(data.token);
-		print(data.cmd);
+		// print(data.cmd);
 		// nb_heredoc = (count_heredoc(data.token) + 1);
 		// while (--nb_heredoc)
 		//{
@@ -194,175 +184,6 @@ int	main(int ac, char **av, char **env)
 	}
 	rl_clear_history();
 	free_all(data, read);
-	return (0);
-}
-
-int	ft_child_builtins(t_cmd *cmd, t_data *data)
-{
-	if (data->prev_fd != -1)
-	{
-		dup2(data->prev_fd, STDIN_FILENO);
-		close(data->prev_fd);
-	}
-	if (cmd->next)
-	{
-		close(data->fd[0]);
-		dup2(data->fd[1], STDOUT_FILENO);
-		close(data->fd[1]);
-	}
-	if (handle_redir(cmd))
-		exit(1);
-	if (!cmd->cmd_param[0])
-		exit(0);
-	return (builtins(cmd->cmd_param, &data->env));
-}
-
-int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
-{
-	char	**env_exec;
-
-	env_exec = NULL;
-	if (data->prev_fd != -1)
-	{
-		dup2(data->prev_fd, STDIN_FILENO);
-		close(data->prev_fd);
-	}
-	if (cmd->next)
-	{
-		close(data->fd[0]);
-		dup2(data->fd[1], STDOUT_FILENO);
-		close(data->fd[1]);
-	}
-	if (handle_redir(cmd))
-		exit(1);
-	if (!cmd->cmd_param[0])
-		exit(0);
-	env_exec = lst_in_tab(data->env);
-	if (!env_exec)
-		return (ft_printf("malloc failed\n"), 1);
-	execve(path_cmd, cmd->cmd_param, env_exec);
-	ft_failed_execve(data, cmd->cmd_param, env_exec, path_cmd);
-	perror("execve");
-	exit(errno);
-	return (0);
-}
-
-int	ft_failed_execve(t_data *data, char **cmd, char **env, char *path_cmd)
-{
-	free_all(*data, NULL);
-	ft_free_dtab(env);
-	if (path_cmd)
-		free(path_cmd);
-	return (0);
-}
-pid_t	handle_children(pid_t pid, t_cmd *cmd, t_data *data, char *path_cmd)
-{
-	pid = fork();
-	if (pid == -1)
-		return (ft_printf("pid error\n"), 1);
-	if (pid == 0)
-	{
-		ft_close_save(data);
-		if (cmd->cmd_param[0] && is_builtins(cmd->cmd_param[0]))
-		{
-			ft_child_builtins(cmd, data);
-			free_all(*data, NULL);
-			exit(close(data->fd[0]));
-		}
-		ft_child(cmd, path_cmd, data);
-	}
-	if (data->prev_fd != -1)
-		close(data->prev_fd);
-	if (cmd->next)
-	{
-		close(data->fd[1]);
-		data->prev_fd = data->fd[0];
-	}
-	else if (data->fd[0] != -1)
-		close(data->fd[0]);
-	return (pid);
-}
-
-int	is_builtins(char *cmd)
-{
-	if (cmd && (!ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "export")
-			|| !ft_strcmp(cmd, "unset") || !ft_strcmp(cmd, "cd")
-			|| !ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "echo")
-			|| !ft_strcmp(cmd, "exit")))
-		return (1);
-	return (0);
-}
-
-int	builtins(char **cmd, t_list **env)
-{
-	if (!ft_strcmp(cmd[0], "env"))
-		ft_env(*env);
-	else if (!ft_strcmp(cmd[0], "unset"))
-		ft_unset(env, cmd);
-	else if (!ft_strcmp(cmd[0], "export"))
-		ft_export(env, cmd);
-	else if (!ft_strcmp(cmd[0], "pwd"))
-		ft_pwd();
-	else if (!ft_strcmp(cmd[0], "cd"))
-		ft_cd(env, cmd);
-	else
-		return (1);
-	return (0);
-}
-
-int	handle_redir(t_cmd *cmd)
-{
-	while (cmd->file)
-	{
-		if (cmd->file->type == REDIR_IN && redirect_infile(cmd->file->file))
-			return (ft_printf("error redir in\n"), 1);
-		else if (cmd->file->type == REDIR_OUT
-			&& redirect_outfile(cmd->file->file))
-			return (1);
-		else if (cmd->file->type == APPEND
-			&& redirect_outfile_append(cmd->file->file))
-			return (ft_printf("error redir append\n"), 1);
-		cmd->file = cmd->file->next;
-	}
-	return (0);
-}
-
-int	ft_exec(t_data *data, pid_t pid)
-{
-	t_cmd	*cmd;
-	char	*path_cmd;
-
-	cmd = data->cmd;
-	while (cmd)
-	{
-		if (cmd->next && pipe(data->fd) == -1)
-			return (ft_printf("pipe error\n"), 1);
-		path_cmd = ft_path(cmd->cmd_param[0], data->env, &data->error);
-		if (data->error == 127 || data->error == 126)
-		{
-			cmd = cmd->next;
-			continue ;
-		}
-		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0]
-			&& !handle_redir(data->cmd) && !builtins(cmd->cmd_param, &data->env))
-			break ;
-		if (cmd->cmd_param[0])
-			pid = handle_children(pid, cmd, data, path_cmd);
-		if (path_cmd && *path_cmd)
-			free(path_cmd);
-		cmd = cmd->next;
-	}
-	data->prev_fd = -1;
-	return (ft_wait(data->cmd, pid, &data->error));
-}
-
-int	ft_wait(t_cmd *head, pid_t pid, int *error)
-{
-	while (head)
-	{
-		waitpid(-1, error, 0);
-		head = head->next;
-	}
 	return (0);
 }
 
