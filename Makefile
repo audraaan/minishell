@@ -6,14 +6,16 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/20 03:40:53 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/07/21 02:26:22 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
 
 NAME 				= 			minishell
 
-LIBFT				=			inc/libft/libft.a
+LIBFT				=			includes/libft/libft.a
+
+LIBS				=			-lreadline
 
 HEAD 				=			minishell.h
 
@@ -21,63 +23,64 @@ OBJ_DIR				=			obj/
 
 CC					=			cc
 
-CFLAGS				=		-Wall -Werror -MMD -MP -g3 -I inc
-
-SRCS				=			$(addprefix $(SRCS_DIR), $(SRC_ACC))
+CFLAGS				=			-Wall -Werror -MMD -MP -g3 -I includes
 
 SRCS_DIR			=			srcs/
-PARSING_DIR			=			parsing/
 
-PARSING_SRCS		=			builder_utils_2 \
-								builder_utils \
-								command_builder \
-								env_utils \
-								env \
-								token_utils \
-								tokenize\
+VPATH				=			srcs:srcs/parsing	\
+VPATH				=			srcs:srcs/exec		\
+VPATH				=			srcs:srcs/utils		\
+VPATH				=			srcs:srcs/builtins	\
 
-
-MAIN_SRCS			=			main \
-								utils \
-								builtins_env \
-								ft_export \
-								get_cmd \
+MAIN_SRCS			=			main 			\
+								utils 			\
+								free_utils		\
+								free_utils_2	\
+								temporary_utils	\
+								tokenize 		\
+								token_utils		\
+								env 			\
+								env_utils		\
+								env_utils_2		\
+								command_builder	\
+								builder_utils	\
+								builder_utils_2	\
+								builtins_env	\
+								ft_cd			\
+								ft_export		\
+								ft_pwd		\
+								get_cmd		\
 								redirect \
-								ft_pwd \
-								ft_free \
-								ft_print \
-								ft_cd \
+								handle_builtins \
 								exec \
-								handle_builtins 
 
-SRC_ACC				+=			$(addprefix $(PARSING_DIR), $(addsuffix .c, $(PARSING_SRCS)))
-SRC_ACC				+=			$(addsuffix .c, $(MAIN_SRCS))
+SRCS				=			$(addsuffix .c, $(MAIN_SRCS))
 
-OBJ			=			$(patsubst $(SRCS_DIR)%.c,$(OBJ_DIR)%.o,$(SRCS))
+OBJ					=			$(addprefix $(OBJ_DIR),$(SRCS:.c=.o))
 
-DEP			=			$(patsubst $(SRCS_DIR)%.c,$(OBJ_DIR)%.d,$(SRCS))
+DEP					=			$(OBJ:.o=.d)
 
 all:					$(NAME)
 
 $(NAME):				$(OBJ) $(LIBFT)
-							$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -lreadline -o $@
+							$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LIBS) -o $@
 
-$(OBJ_DIR)%.o: $(SRCS_DIR)%.c
+$(OBJ_DIR)%.o: %.c
 						@mkdir -p $(dir $@)
 						$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT): FORCE
-	$(MAKE) -C inc/libft
-	$(MAKE) bonus -C inc/libft
+	$(MAKE) -C includes/libft
+	$(MAKE) bonus -C includes/libft
 
 clean:
-						make clean -C inc/libft
+						make clean -C includes/libft
 						@rm -rf $(OBJ_DIR)
 						@echo "Deleting $(OBJ_DIR)"
 
 
 fclean:					clean
-							make fclean -C inc/libft
+							make fclean -C includes/libft
 							@rm -rf $(NAME)
 							@echo "Deleting $(NAME)"
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print.c                                         :+:      :+:    :+:   */
+/*   temporary_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 08:30:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 01:08:42 by alarroye         ###   ########lyon.fr   */
+/*   Created: 2025/07/16 23:00:41 by nbedouan          #+#    #+#             */
+/*   Updated: 2025/07/16 23:33:57 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,22 @@
 
 void	print(t_cmd *cmd)
 {
-	int		i;
-	int		cmd_num;
-	t_file	*file;
+	int	i;
+	int	cmd_num = 0;
 
-	cmd_num = 0;
 	if (!cmd)
 	{
 		printf("Command list is empty\n");
-		return ;
+		return;
 	}
+
 	printf("Starting to print commands:\n");
+
 	while (cmd)
 	{
 		i = 0;
 		printf("Command %d at %p:\n", cmd_num++, (void *)cmd);
+
 		if (!cmd->cmd_param)
 		{
 			printf("  cmd_param array is NULL\n");
@@ -43,11 +44,12 @@ void	print(t_cmd *cmd)
 			if (i == 0)
 				printf("  No parameters found\n");
 		}
+
 		// ✅ Itérer sans écraser cmd->file
-		file = cmd->file;
+		t_file *file = cmd->file;
 		while (file)
 		{
-			printf("  file: '%s'\n", file->file_name ? file->file_name : "(none)");
+			printf("  file: '%s'\n", file->filename ? file->filename : "(none)");
 			printf("  type: '%d'\n", file->type);
 			file = file->next;
 		}
@@ -61,16 +63,21 @@ void	print_list(t_list *lst)
 	while (lst)
 	{
 		printf("name: %s \ncontent: %s\n\n", lst->name ? lst->name : "(null)",
-			lst->content ? lst->content : "(null)");
+			   lst->content ? lst->content : "(null)");
 		lst = lst->next;
 	}
 }
 
-
 void	print_tokens(t_token *head)
 {
-	const char	*type_names[] = {"REDIR_IN", "REDIR_OUT", "HEREDOC", "APPEND",
-			"PIPE", "WORD"};
+	const char	*type_names[] = {
+			"REDIR_IN",
+			"REDIR_OUT",
+			"HEREDOC",
+			"APPEND",
+			"PIPE",
+			"WORD"
+	};
 
 	printf("\n--- TOKENS ---\n");
 	while (head)

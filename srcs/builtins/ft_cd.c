@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 18:04:32 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 01:08:44 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 02:44:35 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ int	fd_cd_not_arg(t_list **env, char *buf, int error_update)
 		return (ft_error_msg("cd", "HOME not set"));
 	pwd = getcwd(buf, PATH_MAX);
 	if (!pwd)
-		return (ft_perror_msg("minishell: cd: getcwd", errno));
+		return (ft_perror_msg("minishell: cd: getcwd", 1));
 	if (chdir(tmp_env->content) == -1)
-		return (ft_perror_msg("minishell: cd: chdir", errno));
+		return (ft_perror_msg("minishell: cd: chdir", 1));
 	error_update = update_env(env, tmp_env->content, "PWD=", error_update);
 	if (error_update)
 		return (error_update);
@@ -76,15 +76,15 @@ int	ft_cd(t_list **env, char **cmd)
 		return (ft_error_msg("cd", "too many arguments"));
 	pwd = getcwd(buf, PATH_MAX);
 	if (!pwd)
-		return (ft_perror_msg("minishell: cd: getcwd", errno));
+		return (ft_perror_msg("minishell: cd: getcwd", 1));
 	if (chdir(cmd[1]) == -1)
-		return (ft_perror_msg("minishell: cd: chdir", errno));
+		return (ft_perror_msg("minishell: cd: chdir", 1));
 	error_update = update_env(env, pwd, "OLDPWD=", error_update);
 	if (error_update)
 		return (error_update);
 	pwd = getcwd(buf, PATH_MAX);
 	if (!pwd)
-		return (ft_perror_msg("minishell: cd: getcwd", errno));
+		return (ft_perror_msg("minishell: cd: getcwd", 1));
 	error_update = update_env(env, pwd, "PWD=", error_update);
 	if (error_update)
 		return (error_update);

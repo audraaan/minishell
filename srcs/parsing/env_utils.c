@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:57:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/16 23:33:03 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/21 02:21:43 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,12 @@ char	*remove_quotes(const char *src)
 	}
 	return (res);
 }
-
-void	check_unclosed_quotes(int quotes)
+int	check_unclosed_quotes(int quotes)
 {
-	if (quotes)
-		perror("synthax error : quotes unclosed\n");
-	return ;
+	if (quotes != 0)
+	{
+		ft_putstr_fd("minishell: syntax error: quotes unclosed\n", 2);
+		return (1);
+	}
+	return (0);
 }

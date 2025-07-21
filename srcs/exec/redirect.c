@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 04:46:09 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 02:25:16 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ int	handle_redir(t_cmd *cmd)
 	tmp = cmd->file;
 	while (tmp)
 	{
-		if (tmp->type == REDIR_IN && redirect_infile(tmp->file_name))
+		if (tmp->type == REDIR_IN && redirect_infile(tmp->filename))
 			return (1);
-		else if (tmp->type == REDIR_OUT && redirect_outfile(tmp->file_name))
+		else if (tmp->type == REDIR_OUT && redirect_outfile(tmp->filename))
 			return (1);
-		else if (tmp->type == APPEND && redirect_outfile_append(tmp->file_name))
+		else if (tmp->type == APPEND && redirect_outfile_append(tmp->filename))
 			return (1);
 		tmp = tmp->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 01:23:10 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 02:31:22 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,11 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 
 int	ft_failed_execve(t_data *data, char **cmd, char **env, char *path_cmd)
 {
-	free_all(*data, NULL);
+	free_all(data, NULL);
 	ft_free_dtab(env);
 	if (path_cmd)
 		free(path_cmd);
-	perror("execve");
+	perror("failed execve");
 	exit(errno);
 	return (0);
 }

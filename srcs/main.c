@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 23:44:14 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 03:20:45 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,25 +42,28 @@ void	init_data(t_data *data, int ac, char **av)
 	}
 	g_signal_received = 0;
 }
-
-int	check_synthax(t_token *token)
+int	check_synthax(t_data *data)
 {
+	t_token	*token;
+
+	token = data->token;
+	if (!(token->str))
+		return (er_msg_free_tok(NULL, "command not found", &data->token));
 	if (token->type == PIPE)
-	{
-		perror("minishell: syntax error near unexpected token `|'\n");
-		return (1);
-	}
+		return (er_msg_free_tok(token->str,
+				"syntax error near unexpected token", &data->token));
 	while (token)
 	{
+		if ((!token->str || token->str[0] == '\0'))
+			return (er_msg_free_tok(token->str, "command not found",
+					&data->token));
 		if (token->type == PIPE && (!token->next || token->next->type == PIPE))
-		{
-			perror("minishell: syntax error near unexpected token `|'\n");
-			return (1);
-		}
+			return (er_msg_free_tok(token->str,
+					"syntax error near unexpected token", &data->token));
 		else if (!(token->type == PIPE || token->type == WORD) && (!token->next
 				|| token->next->type != WORD))
-			return (ft_error_msg(token->str,
-					"syntax error near unexpected token"));
+			return (er_msg_free_tok(token->str,
+					"syntax error near unexpected token", &data->token));
 		token = token->next;
 	}
 	return (0);
@@ -148,6 +151,9 @@ int	main(int ac, char **av, char **env)
 		dup2(data.stdin_save, STDIN_FILENO);
 		dup2(data.stdout_save, STDOUT_FILENO);
 		read = readline("minishell> ");
+		if (g_signal_received)
+			data.exit_status = 130;
+		g_signal_received = 0;
 		if (!read || !ft_strcmp(read, "exit"))
 		{
 			ft_close_save(&data);
@@ -163,15 +169,15 @@ int	main(int ac, char **av, char **env)
 		free(read);
 		if (!expanded)
 		{
-			fprintf(stderr, "Error: Environment expansion failed\n");
+			ft_error_msg("Error", "Environment expansion failed");
 			continue ;
 		}
 		data.token = tokenize(&data, expanded);
 		free(expanded);
-		if (!data.token || check_synthax(data.token))
+		if (!data.token || check_synthax(&data))
 			continue ;
 		data = cmd_builder(&data);
-		// print_tokens(data.token);
+		 print_tokens(data.token);
 		// print(data.cmd);
 		// nb_heredoc = (count_heredoc(data.token) + 1);
 		// while (--nb_heredoc)
@@ -182,7 +188,7 @@ int	main(int ac, char **av, char **env)
 		free_iteration_data(&data);
 	}
 	rl_clear_history();
-	free_all(data, read);
+	free_all(&data, read);
 	return (0);
 }
 
