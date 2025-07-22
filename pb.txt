@@ -1,3 +1,4 @@
-"revoir redirect_infile"
->newfile // ca fait r
-cat < asdfasdfadsfadsfasdfasdfasdf //ca fou la merde
+cat file | grep blabla | dfasfasdf
+ls > file not perm pui un builtins ca fait plein de leaks
+export tmp_test=/bin/echo 42
+cat Makefile ca fait r

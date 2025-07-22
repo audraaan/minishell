@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 05:30:50 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/21 06:00:44 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ char	*search_path(char *cmd, char **path, int *error)
 	}
 	return (NULL);
 }
+
 void	ft_status_path(char *cmd, int *error, char *path)
 {
 	if (*error == 127)
@@ -91,7 +92,7 @@ char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 		}
 		else
 			path = ft_strdup(cmd_tab);
-		ft_status_path(cmd_tab, error,path);
+		ft_status_path(cmd_tab, error, path);
 	}
 	return (path);
 }

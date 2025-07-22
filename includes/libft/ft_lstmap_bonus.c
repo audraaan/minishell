@@ -1,16 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 18:35:12 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/27 11:48:58 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2024/11/29 18:35:12 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+static void	*ft_lstmap_bis(t_list *new_lst, void (*del)(void *))
+{
+	ft_lstclear(&new_lst, del);
+	return (NULL);
+}
 
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
@@ -24,8 +30,7 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 	{
 		if (!lst->content)
 		{
-			ft_lstclear(&new_lst, del);
-			return (NULL);
+			ft_lstmap_bis(new_lst, del);
 		}
 		new_content = f(lst->content);
 		new_name = f(lst->name);

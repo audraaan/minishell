@@ -3,21 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:57:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/21 02:21:43 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 23:33:03 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-//#include "../../includes/minishell.h"
 
 char	*char_to_str(char c)
 {
 	char	*str;
 
-	str = malloc(2);
+	str = malloc(sizeof(char) * 2);
 	if (!str)
 		return (NULL);
 	str[0] = c;
@@ -30,10 +29,14 @@ char	*join_and_free(char *s1, char *s2)
 	char	*str;
 
 	if (!s1 || !s2)
+	{
+		free(s1);
+		free(s2);
 		return (NULL);
+	}
 	str = ft_strjoin(s1, s2);
-	free(s2);
 	free(s1);
+	free(s2);
 	return (str);
 }
 
@@ -71,6 +74,7 @@ char	*remove_quotes(const char *src)
 	}
 	return (res);
 }
+
 int	check_unclosed_quotes(int quotes)
 {
 	if (quotes != 0)

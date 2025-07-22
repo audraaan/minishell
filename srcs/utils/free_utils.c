@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 23:23:57 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/16 23:33:34 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/21 23:59:11 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	free_tokens(t_token **token)
 	}
 	(*token) = NULL;
 }
-
 void	free_file_list(t_file **file)
 {
 	t_file	*tmp;
@@ -52,6 +51,12 @@ void	free_file_list(t_file **file)
 	while (*file)
 	{
 		tmp = (*file)->next;
+		if ((*file)->eof)
+		{
+			if ((*file)->filename)
+				unlink((*file)->filename);
+			free((*file)->eof);
+		}
 		if ((*file)->filename)
 			free((*file)->filename);
 		free(*file);

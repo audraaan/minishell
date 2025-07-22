@@ -23,10 +23,21 @@ void	handle_redirection(t_file **files, t_token **token)
 		return ;
 	current->type = (*token)->type;
 	if (current->type == REDIR_IN
-		|| current->type == HEREDOC
 		|| current->type == REDIR_OUT
 		|| current->type == APPEND)
 	{
 		copy_filename(current, token);
+	}
+	else if (current->type == HEREDOC)
+		copy_eof(current, token);
+}
+
+void	copy_eof(t_file *current, t_token **token)
+{
+	*token = (*token)->next;
+	if (*token && (*token)->str)
+	{
+		current->eof = ft_strdup((*token)->str);
+		*token = (*token)->next;
 	}
 }

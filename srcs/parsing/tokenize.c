@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-//#include "../../includes/minishell.h"
 
 char	*extract_word(char *str, int *i)
 {
@@ -108,6 +107,8 @@ t_token	*tokenize_bis(int *i, char *str)
 		word = extract_word(str, i);
 		new_token = create_token(word, type);
 		free(word);
+		if (!new_token)
+			return (NULL);
 	}
 	return (new_token);
 }
@@ -121,11 +122,12 @@ t_token	*tokenize(t_data *data, char *str)
 	i = 0;
 	new_token = NULL;
 	current = &new_token;
-	while (1)
+	while (str[i])
 	{
 		*current = tokenize_bis(&i, str);
 		if (!*current)
 		{
+			free_tokens(&new_token);
 			break ;
 		}
 		current = &(*current)->next;

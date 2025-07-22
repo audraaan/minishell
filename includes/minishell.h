@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 02:22:24 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/22 06:26:13 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ int					check_unclosed_quotes(int quotes);
 // env_utils_2
 void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
+void				expand_tokens(t_data *data);
 
 // command_builder
 t_data				cmd_builder(t_data *data);
@@ -136,19 +137,24 @@ int					cmd_list_bis(t_token **current_token, t_cmd **head,
 						t_cmd **current);
 t_cmd				*create_new_cmd(t_token *token);
 // builder_utils
-void				handle_redirection(t_file **files, t_token **token);
 void				cmd_count(t_token *token, int *nb_pipe);
 int					get_cmd_size(t_token *token);
 int					is_redirection(int type);
 t_file				*file_add_back(t_file **lst);
 void				copy_filename(t_file *current, t_token **token);
+// builder_utils_2
+void				handle_redirection(t_file **files, t_token **token);
+void				copy_eof(t_file *current, t_token **token);
 
 /////////////*exec*/////////////
 
 // main
+void				sigint_handler(int sig);
+void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
 int					check_synthax(t_data *data);
 t_list				*parse_env(char **envp);
+void				ft_heredoc(t_file *tmp);
 
 // exec
 int					ft_exec(t_data *data, pid_t pid);
@@ -157,7 +163,7 @@ pid_t				handle_children(pid_t pid, t_cmd *cmd, t_data *data,
 int					ft_child(t_cmd *cmd, char *path_cmd, t_data *data);
 int					ft_failed_execve(t_data *data, char **cmd, char **env,
 						char *path_cmd);
-int					ft_wait(t_cmd *head, pid_t pid, int *error);
+int					ft_wait(t_cmd *head, pid_t pid, int *status);
 
 // handle_builtins
 int					ft_child_builtins(t_cmd *cmd, t_data *data);
@@ -170,10 +176,11 @@ char				*search_path(char *cmd, char **path, int *error);
 char				*ft_path(t_cmd *cmd, t_list *env, int *error);
 
 // redirect
-int					handle_redir(t_cmd *cmd);
+int					handle_redir(t_data *data, t_cmd *cmd);
 int					redirect_outfile(char *file);
 int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);
+int					redirect_heredoc(char *file);
 
 /////////////*builtins*/////////////
 

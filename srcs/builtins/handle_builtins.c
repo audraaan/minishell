@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:38:22 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 01:00:50 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/22 05:03:54 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@ int	ft_child_builtins(t_cmd *cmd, t_data *data)
 		dup2(data->fd[1], STDOUT_FILENO);
 		close(data->fd[1]);
 	}
-	if (handle_redir(cmd))
+	if (handle_redir(data, cmd))
 		exit(1);
 	if (!cmd->cmd_param[0])
 		exit(0);
+	close(data->fd[0]);
 	return (builtins(cmd->cmd_param, data));
 }
 

@@ -6,20 +6,29 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 03:20:45 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/22 06:09:24 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		g_signal_received;
+volatile sig_atomic_t	g_exit_status = 0;
 
-void	sig_handler(int sig)
+void	sigint_handler(int sig)
 {
-	write(STDOUT_FILENO, "\n", 1);
+	(void)sig;
+	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	g_exit_status = 1;
+}
+
+void	sigquit_handler(int sig)
+{
+	(void)sig;
+	printf("Quit (core dumped)\n");
+	g_exit_status = 131;
 }
 
 void	init_data(t_data *data, int ac, char **av)
@@ -40,8 +49,28 @@ void	init_data(t_data *data, int ac, char **av)
 		ft_printf("save dup failed\n");
 		exit(1);
 	}
-	g_signal_received = 0;
+	g_exit_status = 0;
 }
+
+int	er_msg_free_tok(char *arg, char *msg, t_token **token)
+{
+	char	*tmp;
+	int		res;
+
+	tmp = NULL;
+	if (arg)
+		tmp = ft_strdup(arg);
+	if (token)
+	{
+		free_tokens(token);
+		token = NULL;
+	}
+	res = ft_error_msg(tmp, msg);
+	if (tmp && *tmp)
+		free(tmp);
+	return (res);
+}
+
 int	check_synthax(t_data *data)
 {
 	t_token	*token;
@@ -69,72 +98,140 @@ int	check_synthax(t_data *data)
 	return (0);
 }
 
-int	count_heredoc(t_token *cmd_file)
+char	*ft_read_urandom(void)
 {
-	int		res;
-	t_token	*file;
+	int		fd;
+	int		nb_bytes;
+	char	buf[2];
+	char	*name;
+	int		i;
 
-	file = cmd_file;
-	res = 0;
-	while (file)
+	name = malloc(sizeof(char) * 21);
+	if (!name)
+		return (ft_error_msg(NULL, "malloc failed"), NULL);
+	name[20] = '\0';
+	buf[1] = '\0';
+	fd = open("/dev/urandom", O_RDONLY);
+	if (fd == -1)
 	{
-		if (file->type == HEREDOC)
-			res++;
-		file = file->next;
+		free(name);
+		perror("open: urandom");
+		return (NULL);
 	}
-	return (res);
+	i = 0;
+	while (i < 20)
+	{
+		nb_bytes = read(fd, buf, 1);
+		if (nb_bytes != 1)
+		{
+			free(name);
+			perror("read: urandom");
+			return (NULL);
+		}
+		if (ft_isalpha(buf[0]))
+		{
+			name[i] = buf[0];
+			i++;
+		}
+	}
+	close(fd);
+	return (name);
 }
 
-void	ft_heredoc(t_data *data)
+int	ft_tmp_file(t_file **file)
+{
+	int		fd;
+	char	*name;
+	char	*name_tmp;
+
+	name_tmp = ft_read_urandom();
+	if (!name_tmp)
+		return (-1);
+	name = ft_strjoin("/tmp/", name_tmp);
+	free(name_tmp);
+	if (!name)
+	{
+		free(name);
+		ft_error_msg("ft_strjoin", "malloc failed");
+		return (-1);
+	}
+	fd = open(name, O_CREAT | O_WRONLY, 0644);
+	if (fd == -1)
+	{
+		perror("open:");
+		return (-1);
+	}
+	(*file)->filename = name;
+	return (fd);
+}
+
+void	handle_heredoc(t_data *data)
+{
+	t_cmd	*tmp;
+	t_file	*tmp_file;
+
+	tmp = data->cmd;
+	while (tmp)
+	{
+		tmp_file = tmp->file;
+		while (tmp_file)
+		{
+			// printf("tmpfilename=%s\n", tmp_file->filename);
+			// printf("tmpfileeof=%s\n", tmp_file->eof);
+			if (tmp_file->type == HEREDOC)
+				ft_heredoc(tmp_file);
+			tmp_file = tmp_file->next;
+			// printf("cmd=%s\n", data->cmd->file->filename);
+			// printf("cmdfileeof=%s\n", data->cmd->file->eof);
+		}
+		tmp = tmp->next;
+	}
+}
+
+void	ft_heredoc(t_file *tmp)
 {
 	char	*read;
-	int		fd[2];
+	int		fd;
 
-	pipe(fd);
+	fd = -1;
+	fd = ft_tmp_file(&tmp);
+	if (fd == -1)
+		return ;
 	while (1)
 	{
+		// printf("%s", tmp->filename);
 		read = readline("> ");
 		if (!read)
 		{
-			write(2,
-				"minishell : warning: here-document delimited by end-of-file\n",
-				55);
-			close(fd[1]);
-			close(fd[0]);
+			ft_error_msg("warning", "here-document delimited by end-of-file");
+			close(fd);
 			return ;
 		}
-		if (ft_strcmp(read, data->cmd->file->eof))
+		if (ft_strcmp(read, tmp->eof))
 		{
-			write(fd[1], read, ft_strlen(read));
-			write(fd[1], "\n", 1);
+			write(fd, read, ft_strlen(read));
+			write(fd, "\n", 1);
 		}
 		else
 		{
 			free(read);
-			close(fd[1]);
+			close(fd);
 			break ;
 		}
 		if (!read[0])
 		{
-			write(fd[1], "\n", 1);
+			write(fd, "\n", 1);
 			continue ;
 		}
 	}
-	if (data->cmd && data->cmd->cmd_param && data->cmd->cmd_param[0])
-	{
-		dup2(fd[0], STDIN_FILENO);
-	}
-	close(fd[0]);
+	close(fd);
 }
-
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
-	char	*expanded;
 	char	*read;
 	pid_t	pid;
 
-	// int		nb_heredoc;
 	init_data(&data, ac, av);
 	pid = 0;
 	data.env = cpy_env(env);
@@ -144,16 +241,17 @@ int	main(int ac, char **av, char **env)
 		return (ft_error_msg("dup", "dup failed"));
 	if (!data.env)
 		return (ft_error_msg("cpy_env", "Error: Failed to copy environment"));
+	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sigquit_handler);
 	while (1)
 	{
 		dup2(data.stdin_save, STDIN_FILENO);
 		dup2(data.stdout_save, STDOUT_FILENO);
 		read = readline("minishell> ");
-		if (g_signal_received)
+		if (g_exit_status)
 			data.exit_status = 130;
-		g_signal_received = 0;
+		g_exit_status = 0;
 		if (!read || !ft_strcmp(read, "exit"))
 		{
 			ft_close_save(&data);
@@ -165,25 +263,18 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		add_history(read);
-		expanded = expand_env_var(&data, read);
+		data.token = tokenize(&data, read);
 		free(read);
-		if (!expanded)
+		if (!data.token || check_synthax(&data))
 		{
-			ft_error_msg("Error", "Environment expansion failed");
+			free_tokens(&data.token);
 			continue ;
 		}
-		data.token = tokenize(&data, expanded);
-		free(expanded);
-		if (!data.token || check_synthax(&data))
-			continue ;
+		expand_tokens(&data);
 		data = cmd_builder(&data);
 		 print_tokens(data.token);
-		// print(data.cmd);
-		// nb_heredoc = (count_heredoc(data.token) + 1);
-		// while (--nb_heredoc)
-		//{
-		//	ft_heredoc(&data);
-		//}
+		 print(data.cmd);
+		handle_heredoc(&data);
 		ft_exec(&data, pid);
 		free_iteration_data(&data);
 	}

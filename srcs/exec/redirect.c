@@ -6,28 +6,37 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 02:25:16 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/22 04:37:27 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_redir(t_cmd *cmd)
+int	handle_redir(t_data *data, t_cmd *cmd)
 {
 	t_file	*tmp;
 
 	tmp = cmd->file;
 	while (tmp)
 	{
-		if (tmp->type == REDIR_IN && redirect_infile(tmp->filename))
-			return (1);
-		else if (tmp->type == REDIR_OUT && redirect_outfile(tmp->filename))
-			return (1);
-		else if (tmp->type == APPEND && redirect_outfile_append(tmp->filename))
-			return (1);
+		if (tmp->type == REDIR_IN || tmp->type == HEREDOC)
+		{
+			data->exit_status = redirect_infile(tmp->filename);
+			break ;
+		}
+		else if (tmp->type == REDIR_OUT)
+		{
+			data->exit_status = redirect_outfile(tmp->filename);
+			break ;
+		}
+		else if (tmp->type == APPEND)
+		{
+			data->exit_status = redirect_outfile_append(tmp->filename);
+			break ;
+		}
 		tmp = tmp->next;
 	}
-	return (0);
+	return (data->exit_status);
 }
 
 int	redirect_outfile(char *file)
@@ -36,14 +45,11 @@ int	redirect_outfile(char *file)
 
 	outfile = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (outfile == -1)
-	{
-		perror(file);
-		return (errno);
-	}
+		return (ft_perror_msg(file, 1));
 	if (dup2(outfile, STDOUT_FILENO) == -1)
 	{
 		close(outfile);
-		ft_error("error dup2 outfile stdout", NULL, &file, -1);
+		ft_error("error dup2 outfile stdout", NULL, NULL, -1);
 		return (1);
 	}
 	close(outfile);
@@ -56,14 +62,11 @@ int	redirect_outfile_append(char *file)
 
 	outfile = open(file, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (outfile == -1)
-	{
-		perror(file);
-		return (errno);
-	}
+		return (ft_perror_msg(file, 1));
 	if (dup2(outfile, STDOUT_FILENO) == -1)
 	{
 		close(outfile);
-		ft_error("error dup2 outfile stdout", NULL, &file, -1);
+		ft_error("error dup2 outfile stdout", NULL, NULL, -1);
 		return (1);
 	}
 	close(outfile);
@@ -84,14 +87,11 @@ int	redirect_infile(char *file)
 	{
 		infile = open(file, O_RDONLY);
 		if (infile == -1)
-		{
-			perror(file);
-			return (errno);
-		}
+			return (ft_perror_msg(file, 1));
 		if (dup2(infile, STDIN_FILENO) == -1)
 		{
 			close(infile);
-			ft_error("error dup2 infile stdin\n", NULL, &file, -1);
+			ft_error("error dup2 infile stdin\n", NULL, NULL, -1);
 		}
 		close(infile);
 	}

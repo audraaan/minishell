@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builder_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:57:09 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/21 02:24:40 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 23:32:45 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-//#include "../../includes/minishell.h"
 
 void	cmd_count(t_token *token, int *nb_pipe)
 {

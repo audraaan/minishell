@@ -64,7 +64,6 @@ char	*expand_env_var(t_data *data, char *str)
 	int		i;
 	int		quotes;
 	char	*res;
-	char	*clean;
 
 	res = ft_strdup("");
 	if (!res)
@@ -89,9 +88,7 @@ char	*expand_env_var(t_data *data, char *str)
 		free(res);
 		return (NULL);
 	}
-	clean = remove_quotes(res);
-	free(res);
-	return (clean);
+	return (res);
 }
 
 int	handle_quote(int *i, int *quotes, char *str)

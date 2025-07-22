@@ -6,29 +6,12 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/21 02:16:44 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/22 05:31:21 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	er_msg_free_tok(char *arg, char *msg, t_token **token)
-{
-	char	*tmp;
-	int		res;
-
-	tmp = NULL;
-	if (arg)
-		tmp = ft_strdup(arg);
-	if (token)
-	{
-		free_tokens(token);
-		token = NULL;
-	}
-	res = ft_error_msg(tmp, msg);
-	free(tmp);
-	return (res);
-}
 void	ft_close_save(t_data *data)
 {
 	if (data->stdin_save != -1)
@@ -39,6 +22,7 @@ void	ft_close_save(t_data *data)
 
 int	ft_perror_msg(char *msg, int error)
 {
+	write(2, "minishell: ", 11);
 	perror(msg);
 	return (error);
 }
@@ -160,6 +144,7 @@ void	ft_free_and_exit(t_data data, char *path_cmd)
 
 	status = data.exit_status;
 	free_all(&data, path_cmd);
+	printf("stat=%i\n",status);
 	exit(status);
 }
 
