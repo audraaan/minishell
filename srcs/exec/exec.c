@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/22 06:26:56 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/23 21:42:45 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,16 @@ int	ft_exec(t_data *data, pid_t pid)
 	char	*path_cmd;
 
 	cmd = data->cmd;
+	data->exit_status = 0;
 	while (cmd)
 	{
-		data->exit_status = 0;
 		if (cmd->next && pipe(data->fd) == -1)
 			return (ft_error_msg("pipe", "cannot create pipe"));
 		path_cmd = ft_path(cmd, data->env, &data->exit_status);
 		if (data->exit_status == 127 || data->exit_status == 126)
 		{
 			cmd = cmd->next;
+			printf("exit code: %d\n", data->exit_status);
 			continue ;
 		}
 		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0] && is_builtins(cmd)
@@ -37,7 +38,7 @@ int	ft_exec(t_data *data, pid_t pid)
 		cmd = cmd->next;
 	}
 	data->prev_fd = -1;
-	return (ft_wait(data->cmd, pid, &data->exit_status));
+	return (ft_wait(data, pid));
 }
 
 pid_t	handle_children(pid_t pid, t_cmd *cmd, t_data *data, char *path_cmd)
@@ -47,6 +48,7 @@ pid_t	handle_children(pid_t pid, t_cmd *cmd, t_data *data, char *path_cmd)
 		return (ft_error_msg("fork", "cannot fork"));
 	if (pid == 0)
 	{
+		
 		ft_close_save(data);
 		if (cmd->cmd_param[0] && is_builtins(cmd))
 		{
@@ -95,6 +97,7 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 	if (!env_exec)
 		return (ft_error_msg("lst_in_tab:", "malloc failed"));
 	execve(path_cmd, cmd->cmd_param, env_exec);
+	// dprintf(2, "caca\n");
 	return (ft_failed_execve(data, cmd->cmd_param, env_exec, path_cmd));
 }
 
@@ -107,14 +110,47 @@ int	ft_failed_execve(t_data *data, char **cmd, char **env, char *path_cmd)
 	return (0);
 }
 
-int	ft_wait(t_cmd *head, pid_t pid, int *status)
+// int	ft_wait(t_data *data, pid_t pid)
+//{
+//	t_cmd	*last_cmd;
+//	int		status;
+
+//	last_cmd = data->cmd;
+//	status = 0;
+//	while (last_cmd)
+//	{
+//		waitpid(-1, &status, 0);
+
+//		last_cmd = last_cmd->next;
+//	}
+//	if (!WIFEXITED(data->exit_status))
+//		return (128 + WTERMSIG(data->exit_status));
+//	return (WEXITSTATUS(data->exit_status));
+//}
+
+int	ft_wait(t_data *data, pid_t pid)
 {
+	int status;
+	int w_pid;
+	int err;
+	t_cmd *head;
+
+	head = data->cmd;
+	err = 0;
+	w_pid = 0;
 	while (head)
 	{
-		waitpid(-1, status, 0);
+		w_pid = waitpid(-1, &status, 0);
+		if (w_pid == pid && WIFEXITED(status))
+			err = WEXITSTATUS(status);
+		else if (w_pid == pid && WIFSIGNALED(status))
+			err = (128 + WTERMSIG(status));
 		head = head->next;
+		//printf("er=%i\n", err);
+		//printf("pid=%i\n", pid);
+		//printf("w_pid=%i\n", w_pid);
 	}
-	if (!WIFEXITED(*status))
-		return (128 + WTERMSIG(*status));
-	return (WEXITSTATUS(*status));
+	if (data->exit_status != 0)
+		return (data->exit_status);
+	return (err);
 }

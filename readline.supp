@@ -42,57 +42,114 @@
 
 
 {
-   grep_regex_compile_definitely_lost
+   clear_regex_compile_definitely_lost
    Memcheck:Leak
    match-leak-kinds: definite
    fun:malloc
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
 }
 
 {
-   grep_regex_compile_indirectly_lost
+   clear_regex_compile_indirectly_lost
    Memcheck:Leak
    match-leak-kinds: indirect
    fun:malloc
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
 }
 
 {
-   grep_regex_compile_indirectly_lost_calloc
+   clear_regex_compile_indirectly_lost_calloc
    Memcheck:Leak
    match-leak-kinds: indirect
    fun:calloc
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
 }
 
 {
-   grep_possibly_lost_realloc
+   clear_possibly_lost_realloc
    Memcheck:Leak
    match-leak-kinds: possible
    fun:realloc
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
 }
 
 {
-   grep_still_reachable_calloc
+   clear_still_reachable_calloc
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:calloc
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
 }
 
 {
-   grep_still_reachable_realloc
+   clear_still_reachable_realloc
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:realloc
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
 }
 
 {
-   grep_all_leaks_wildcard
+   clear_all_leaks_wildcard
    Memcheck:Leak
    match-leak-kinds: all
    ...
-   obj:/usr/bin/grep
+   obj:/usr/bin/clear
+}
+
+
+{
+   clear_regex_compile_definitely_lost
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:/usr/bin/clear
+}
+
+{
+   clear_regex_compile_indirectly_lost
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:/usr/bin/clear
+}
+
+{
+   clear_regex_compile_indirectly_lost_calloc
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:/usr/bin/clear
+}
+
+{
+   clear_possibly_lost_realloc
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   obj:/usr/bin/clear
+}
+
+{
+   clear_still_reachable_calloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/bin/clear
+}
+
+{
+   clear_still_reachable_realloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   obj:/usr/bin/clear
+}
+
+{
+   clear_all_leaks_wildcard
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   obj:/usr/bin/clear
 }

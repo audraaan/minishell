@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/22 06:09:24 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/23 20:34:22 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,10 +272,10 @@ int	main(int ac, char **av, char **env)
 		}
 		expand_tokens(&data);
 		data = cmd_builder(&data);
-		 print_tokens(data.token);
-		 print(data.cmd);
+		// print_tokens(data.token);
+		// print(data.cmd);
 		handle_heredoc(&data);
-		ft_exec(&data, pid);
+		data.exit_status = ft_exec(&data, pid);
 		free_iteration_data(&data);
 	}
 	rl_clear_history();

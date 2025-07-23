@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/22 06:26:13 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/23 19:09:11 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ pid_t				handle_children(pid_t pid, t_cmd *cmd, t_data *data,
 int					ft_child(t_cmd *cmd, char *path_cmd, t_data *data);
 int					ft_failed_execve(t_data *data, char **cmd, char **env,
 						char *path_cmd);
-int					ft_wait(t_cmd *head, pid_t pid, int *status);
+int					ft_wait(t_data *data, pid_t pid);
 
 // handle_builtins
 int					ft_child_builtins(t_cmd *cmd, t_data *data);
