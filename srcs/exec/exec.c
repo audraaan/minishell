@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 06:01:45 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 13:57:27 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ void	handle_children(pid_t *pid, t_cmd *cmd, t_data *data, char *path_cmd)
 int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 {
 	char	**env_exec;
+	t_list	*tmp_env;
 
+	tmp_env = data->env;
 	if (data->prev_fd != -1)
 	{
 		dup2(data->prev_fd, STDIN_FILENO);
@@ -85,7 +87,7 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 		ft_free_and_exit(*data, path_cmd);
 	if (!cmd->cmd_param[0])
 		ft_free_and_exit(*data, path_cmd);
-	env_exec = lst_in_tab(data->env);
+	env_exec = lst_in_tab(tmp_env);
 	if (!env_exec)
 		return (ft_error_msg("lst_in_tab:", "malloc failed"));
 	execve(path_cmd, cmd->cmd_param, env_exec);

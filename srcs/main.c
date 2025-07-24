@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 06:40:10 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 13:48:12 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,15 @@ void	init_data(t_data *data, int ac, char **av)
 {
 	(void)ac;
 	(void)av;
-	data->env = NULL;
-	data->cmd = NULL;
-	data->token = NULL;
+	ft_bzero(data, sizeof(t_data));
 	data->stdout_save = -1;
 	data->stdin_save = -1;
 	data->fd[0] = -1;
 	data->fd[1] = -1;
 	data->prev_fd = -1;
-	data->exit_status = 0;
 	if (!data->stdin_save || !data->stdout_save)
 	{
-		ft_printf("save dup failed\n");
+		printf("save dup failed\n");
 		exit(1);
 	}
 	g_exit_status = 0;
@@ -226,6 +223,44 @@ void	ft_heredoc(t_file *tmp)
 	}
 	close(fd);
 }
+// int	handle_shlvl(char ***arg, char *content)
+//{
+//	*arg = malloc(sizeof(char *) * 3);
+//	if (!(*arg))
+//		return (ft_error_msg("handle_shlvl", "malloc failed"));
+//	*arg[0] = ft_strdup("export");
+//	if (!(*arg[0]))
+//		return (ft_error("handle_shlvl: malloc failed", *arg, NULL, -1));
+//	*arg[1] = content;
+//	*arg[2] = NULL;
+//	return (0);
+//}
+
+// int	update_shlvl(t_data *data)
+//{
+//	t_list	*tmp_env;
+//	int		res;
+//	char	**arg;
+//	char	*content;
+
+//	tmp_env = data->env;
+//	while (ft_strcmp(tmp_env->name, "SHLVL"))
+//		tmp_env = tmp_env->next;
+//	if (!ft_strcmp(tmp_env->name, "SHLVL"))
+//	{
+//		res = ft_atoi(tmp_env->content);
+//		res++;
+//		content = ft_itoa(res);
+//		if (!content)
+//			return (ft_error_msg("update_shlvl: ft_itoa", "malloc failed"));
+//		if (handle_shlvl(&arg, content))
+//			return (1);
+//		return (ft_export(&(data->env), arg, data));
+//	}
+//	if (handle_shlvl(&arg, "0"))
+//		return (1);
+//	return (ft_export(&(data->env), arg, data));
+//}
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
@@ -235,6 +270,8 @@ int	main(int ac, char **av, char **env)
 	init_data(&data, ac, av);
 	pid = 0;
 	data.env = cpy_env(env);
+	// if (update_shlvl(&data))
+	//	return (1);
 	data.stdin_save = dup(STDIN_FILENO);
 	data.stdout_save = dup(STDOUT_FILENO);
 	if (data.stdin_save == -1 || data.stdout_save == -1)
@@ -243,7 +280,6 @@ int	main(int ac, char **av, char **env)
 		return (ft_error_msg("cpy_env", "Error: Failed to copy environment"));
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGQUIT, sigquit_handler);
 	while (1)
 	{
 		dup2(data.stdin_save, STDIN_FILENO);
@@ -272,8 +308,9 @@ int	main(int ac, char **av, char **env)
 		}
 		expand_tokens(&data);
 		data = cmd_builder(&data);
-		 print_tokens(data.token);
-		 print(data.cmd);
+		//print_list(data.env);
+		// print_tokens(data.token);
+		// print(data.cmd);
 		handle_heredoc(&data);
 		data.exit_status = ft_exec(&data, pid);
 		free_iteration_data(&data);

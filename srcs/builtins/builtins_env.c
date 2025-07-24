@@ -6,16 +6,18 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 23:11:10 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 04:14:24 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 07:41:10 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_env(t_list *env)
+int	ft_env(t_list *env, char **cmd)
 {
 	t_list	*tmp_env;
 
+	if (cmd && cmd[0] && cmd[1])
+		return (ft_error_msg("env", "too many arguments"));
 	tmp_env = env;
 	while (tmp_env)
 	{

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/20 03:53:16 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 08:00:08 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int	ft_change_var(t_list **env, char *a)
 	return (0);
 }
 
-int	ft_export(t_list **env, char **a)
+int	ft_export(t_list **env, char **a, t_data *data)
 {
 	int		i;
 	t_list	*tmp;
@@ -119,7 +119,8 @@ int	ft_export(t_list **env, char **a)
 	while (a && a[++i])
 	{
 		if (check_params_env(a[i]))
-			ft_error_msg(a[i], "not a valid identifier for export");
+			data->exit_status = ft_error_msg(a[i],
+					"not a valid identifier for export");
 		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i]))
 			return (ft_error_msg(NULL, "malloc failed"));
 		else if (exist(env, a[i]) == -1)
@@ -131,5 +132,5 @@ int	ft_export(t_list **env, char **a)
 		}
 		tmp = *env;
 	}
-	return (0);
+	return (data->exit_status);
 }

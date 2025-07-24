@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 06:23:23 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 07:55:47 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,15 +185,15 @@ int					redirect_heredoc(char *file);
 /////////////*builtins*/////////////
 
 // env + unset
-int					ft_env(t_list *env);
+int					ft_env(t_list *env, char **cmd);
 int					ft_unset(t_list **env, char **a);
 int					check_params_env(char *a);
 // export
-int					ft_export(t_list **env, char **a);
+int					ft_export(t_list **env, char **a, t_data *data);
 // ft_pwd
 int					ft_pwd(void);
 // ft_cd
-int					ft_cd(t_list **env, char **cmd);
+int					ft_cd(t_list **env, char **cmd, t_data *data);
 // ft_exit
 int					ft_exit(t_data *data, t_cmd *cmd);
 
