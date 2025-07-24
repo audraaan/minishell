@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 23:23:57 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/21 23:59:11 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 06:43:30 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	free_tokens(t_token **token)
 	}
 	(*token) = NULL;
 }
+
 void	free_file_list(t_file **file)
 {
 	t_file	*tmp;

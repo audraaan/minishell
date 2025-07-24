@@ -42,59 +42,59 @@
 
 
 {
-   clear_regex_compile_definitely_lost
+   grep_regex_compile_definitely_lost
    Memcheck:Leak
    match-leak-kinds: definite
    fun:malloc
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 {
-   clear_regex_compile_indirectly_lost
+   grep_regex_compile_indirectly_lost
    Memcheck:Leak
    match-leak-kinds: indirect
    fun:malloc
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 {
-   clear_regex_compile_indirectly_lost_calloc
+   grep_regex_compile_indirectly_lost_calloc
    Memcheck:Leak
    match-leak-kinds: indirect
    fun:calloc
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 {
-   clear_possibly_lost_realloc
+   grep_possibly_lost_realloc
    Memcheck:Leak
    match-leak-kinds: possible
    fun:realloc
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 {
-   clear_still_reachable_calloc
+   grep_still_reachable_calloc
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:calloc
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 {
-   clear_still_reachable_realloc
+   grep_still_reachable_realloc
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:realloc
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 {
-   clear_all_leaks_wildcard
+   grep_all_leaks_wildcard
    Memcheck:Leak
    match-leak-kinds: all
    ...
-   obj:/usr/bin/clear
+   obj:/usr/bin/grep
 }
 
 

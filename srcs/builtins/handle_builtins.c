@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:38:22 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/22 05:03:54 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 06:05:03 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_child_builtins(t_cmd *cmd, t_data *data)
 	if (!cmd->cmd_param[0])
 		exit(0);
 	close(data->fd[0]);
-	return (builtins(cmd->cmd_param, data));
+	return (builtins(cmd, data));
 }
 
 int	is_builtins(t_cmd *cmd)
@@ -46,18 +46,20 @@ int	is_builtins(t_cmd *cmd)
 	return (0);
 }
 
-int	builtins(char **cmd, t_data *data)
+int	builtins(t_cmd *cmd, t_data *data)
 {
-	if (!ft_strcmp(cmd[0], "env"))
+	if (!ft_strcmp(cmd->cmd_param[0], "env"))
 		data->exit_status = ft_env(data->env);
-	else if (!ft_strcmp(cmd[0], "unset"))
-		data->exit_status = ft_unset(&(data->env), cmd);
-	else if (!ft_strcmp(cmd[0], "export"))
-		data->exit_status = ft_export(&(data->env), cmd);
-	else if (!ft_strcmp(cmd[0], "pwd"))
+	else if (!ft_strcmp(cmd->cmd_param[0], "unset"))
+		data->exit_status = ft_unset(&(data->env), cmd->cmd_param);
+	else if (!ft_strcmp(cmd->cmd_param[0], "export"))
+		data->exit_status = ft_export(&(data->env), cmd->cmd_param);
+	else if (!ft_strcmp(cmd->cmd_param[0], "pwd"))
 		data->exit_status = ft_pwd();
-	else if (!ft_strcmp(cmd[0], "cd"))
-		data->exit_status = ft_cd(&(data->env), cmd);
+	else if (!ft_strcmp(cmd->cmd_param[0], "cd"))
+		data->exit_status = ft_cd(&(data->env), cmd->cmd_param);
+	else if (!ft_strcmp(cmd->cmd_param[0], "exit"))
+		data->exit_status = ft_exit(data, cmd);
 	else
 		return (1);
 	return (0);

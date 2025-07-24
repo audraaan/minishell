@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/23 19:09:11 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/24 06:23:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ void				ft_heredoc(t_file *tmp);
 
 // exec
 int					ft_exec(t_data *data, pid_t pid);
-pid_t				handle_children(pid_t pid, t_cmd *cmd, t_data *data,
+void				handle_children(pid_t *pid, t_cmd *cmd, t_data *data,
 						char *path_cmd);
 int					ft_child(t_cmd *cmd, char *path_cmd, t_data *data);
 int					ft_failed_execve(t_data *data, char **cmd, char **env,
@@ -168,7 +168,7 @@ int					ft_wait(t_data *data, pid_t pid);
 // handle_builtins
 int					ft_child_builtins(t_cmd *cmd, t_data *data);
 int					is_builtins(t_cmd *cmd);
-int					builtins(char **cmd, t_data *data);
+int					builtins(t_cmd *cmd, t_data *data);
 
 // get_cmd
 char				**parse_path(t_list *env);
@@ -184,17 +184,18 @@ int					redirect_heredoc(char *file);
 
 /////////////*builtins*/////////////
 
-// builtins_env
+// env + unset
 int					ft_env(t_list *env);
 int					ft_unset(t_list **env, char **a);
 int					check_params_env(char *a);
-
 // export
 int					ft_export(t_list **env, char **a);
 // ft_pwd
 int					ft_pwd(void);
 // ft_cd
 int					ft_cd(t_list **env, char **cmd);
+// ft_exit
+int					ft_exit(t_data *data, t_cmd *cmd);
 
 /////////////*other*/////////////
 // utils
