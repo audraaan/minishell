@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 13:57:27 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 10:59:03 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ int	ft_wait(t_data *data, pid_t pid)
 		return (data->exit_status);
 	err = 0;
 	w_pid = 0;
+	status = 0;
 	while (len_cmd--)
 	{
 		w_pid = waitpid(-1, &status, 0);

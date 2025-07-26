@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/24 02:30:12 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/07/25 21:48:46 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,8 @@ MAIN_SRCS			=			main 			\
 								redirect \
 								handle_builtins \
 								exec \
-								ft_exit
+								ft_exit \
+								ft_echo
 
 SRCS				=			$(addsuffix .c, $(MAIN_SRCS))
 

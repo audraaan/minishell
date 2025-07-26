@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 23:00:41 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/21 22:18:37 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 09:28:10 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,16 @@ void	print_tokens(t_token *head)
 		head = head->next;
 	}
 	printf("--------------\n\n");
+}
+
+void ft_print_tab(char **tab)
+{
+    int i = 0;
+    if (!tab)
+        return;
+    while (tab[i])
+    {
+        printf("tab[%i]:%s\n",i, tab[i]);
+        i++;
+    }
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/24 12:41:53 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

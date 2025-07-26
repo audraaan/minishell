@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 23:23:57 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/24 06:43:30 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 08:22:09 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,12 @@ void	free_env(t_list *env)
 	{
 		tmp = env;
 		env = env->next;
-		free(tmp->name);
-		free(tmp->content);
-		free(tmp);
+		if (tmp->name)
+			free(tmp->name);
+		if (tmp->content)
+			free(tmp->content);
+		if (tmp)
+			free(tmp);
 	}
 }
 

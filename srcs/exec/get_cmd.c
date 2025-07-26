@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 00:31:46 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 06:44:59 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,11 @@ char	*search_path(char *cmd, char **path, int *error)
 
 int	ft_status_path(char *cmd, int *error, char *path)
 {
-	if (*error == 127)
+	if (*error == 127 || !path)
+	{
+		*error = 127;
 		return (ft_error_msg(cmd, "command not found"));
+	}
 	else if (*error == 126)
 	{
 		if (path && *path)
@@ -93,8 +96,8 @@ char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 		else
 		{
 			lst_path = parse_path(env);
-			if (!lst_path || !*lst_path)
-				ft_error("malloc failed parse_path", lst_path, NULL, 1);
+			// if (!lst_path || !*lst_path)
+			//	return (NULL);
 			path = search_path(cmd_tab, lst_path, error);
 			ft_free_dtab(lst_path);
 		}

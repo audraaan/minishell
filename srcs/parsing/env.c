@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_env.c                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/23 17:00:13 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/07/26 10:35:10 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_list	*cpy_env(char **env)
+t_list	*cpy_env(char **env, t_data *data)
 {
 	int		i;
 	t_list	*env_cpy;
@@ -20,13 +20,21 @@ t_list	*cpy_env(char **env)
 
 	env_cpy = NULL;
 	i = 0;
-	while (env[i])
+	while (env && env[i])
 	{
-		new_node = create_env_node(env[i], &env_cpy);
+		if (env[i])
+			new_node = create_env_node(env[i], &env_cpy);
 		if (!new_node)
 			return (NULL);
 		ft_lstadd_back(&env_cpy, new_node);
 		i++;
+	}
+	if (!env_cpy)
+		env_cpy = ft_lstnew(ft_strdup("OLDPWD"), NULL);
+	if (ft_make_env(&env_cpy, data))
+	{
+		ft_free_all_lst(env_cpy);
+		return (NULL);
 	}
 	return (env_cpy);
 }
@@ -76,7 +84,7 @@ char	*expand_env_var(t_data *data, char *str)
 			continue ;
 		if (!str[i])
 			break ;
-		if (str[i] == '$' && str[i + 1] == '?')
+		if (str[i] == '$' && str[i + 1] == '?' && quotes != 1)
 			manage_exit_status(&data, &i, str, &res);
 		else if (str[i] == '$' && quotes != 1)
 			expend_env_var_bis(&i, str, data->env, &res);
@@ -134,5 +142,5 @@ void	expend_env_var_bis(int *i, char *str, t_list *env_cpy, char **res)
 	value = get_env_value(env_cpy, name);
 	if (value)
 		*res = join_and_free(*res, ft_strdup(value));
-	free (name);
+	free(name);
 }

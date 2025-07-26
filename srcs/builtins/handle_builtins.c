@@ -60,6 +60,8 @@ int	builtins(t_cmd *cmd, t_data *data)
 		data->exit_status = ft_cd(&(data->env), cmd->cmd_param, data);
 	else if (!ft_strcmp(cmd->cmd_param[0], "exit"))
 		data->exit_status = ft_exit(data, cmd);
+	else if (!ft_strcmp(cmd->cmd_param[0], "echo"))
+		data->exit_status = ft_echo(data->cmd->cmd_param);
 	else
 		return (1);
 	return (0);

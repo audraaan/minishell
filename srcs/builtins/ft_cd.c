@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 18:04:32 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 07:55:08 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 03:26:32 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	update_env(t_data *data, char *pwd, char *export, int error)
 
 	pwd_exported = malloc(sizeof(char *) * 3);
 	pwd_exported[2] = NULL;
-	pwd_exported[0] = strdup("export");
+	pwd_exported[0] = ft_strdup("export");
 	if (!pwd_exported[0])
 	{
 		ft_free_dtab(pwd_exported);
@@ -69,6 +69,7 @@ int	ft_cd(t_list **env, char **cmd, t_data *data)
 	char	buf[PATH_MAX];
 	int		error_update;
 
+	// utiliser chdir meme en cas d'erreur de getcwd
 	error_update = 0;
 	if (cmd && !cmd[1])
 		return (fd_cd_not_arg(env, buf, error_update, data));

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 13:48:12 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 11:02:40 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,18 @@ volatile sig_atomic_t	g_exit_status = 0;
 void	sigint_handler(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
+	// write(1, "\n", 1);
 	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	g_exit_status = 1;
+	rl_done = 1;
+	//	rl_on_new_line();
+	//	rl_redisplay();
+	g_exit_status = 130;
 }
 
-void	sigquit_handler(int sig)
+void	set_signals_prompt(void)
 {
-	(void)sig;
-	printf("Quit (core dumped)\n");
-	g_exit_status = 131;
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	init_data(t_data *data, int ac, char **av)
@@ -194,7 +194,7 @@ void	ft_heredoc(t_file *tmp)
 	fd = ft_tmp_file(&tmp);
 	if (fd == -1)
 		return ;
-	while (1)
+	while (!g_exit_status)
 	{
 		// printf("%s", tmp->filename);
 		read = readline("> ");
@@ -223,44 +223,12 @@ void	ft_heredoc(t_file *tmp)
 	}
 	close(fd);
 }
-// int	handle_shlvl(char ***arg, char *content)
-//{
-//	*arg = malloc(sizeof(char *) * 3);
-//	if (!(*arg))
-//		return (ft_error_msg("handle_shlvl", "malloc failed"));
-//	*arg[0] = ft_strdup("export");
-//	if (!(*arg[0]))
-//		return (ft_error("handle_shlvl: malloc failed", *arg, NULL, -1));
-//	*arg[1] = content;
-//	*arg[2] = NULL;
-//	return (0);
-//}
 
-// int	update_shlvl(t_data *data)
-//{
-//	t_list	*tmp_env;
-//	int		res;
-//	char	**arg;
-//	char	*content;
+int	do_nothing(void)
+{
+	return (0);
+}
 
-//	tmp_env = data->env;
-//	while (ft_strcmp(tmp_env->name, "SHLVL"))
-//		tmp_env = tmp_env->next;
-//	if (!ft_strcmp(tmp_env->name, "SHLVL"))
-//	{
-//		res = ft_atoi(tmp_env->content);
-//		res++;
-//		content = ft_itoa(res);
-//		if (!content)
-//			return (ft_error_msg("update_shlvl: ft_itoa", "malloc failed"));
-//		if (handle_shlvl(&arg, content))
-//			return (1);
-//		return (ft_export(&(data->env), arg, data));
-//	}
-//	if (handle_shlvl(&arg, "0"))
-//		return (1);
-//	return (ft_export(&(data->env), arg, data));
-//}
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
@@ -269,17 +237,16 @@ int	main(int ac, char **av, char **env)
 
 	init_data(&data, ac, av);
 	pid = 0;
-	data.env = cpy_env(env);
-	// if (update_shlvl(&data))
-	//	return (1);
+	data.env = cpy_env(env, &data);
+	rl_event_hook = do_nothing;
+	if (!data.env)
+		return (ft_error_msg("cpy_env", "Error: Failed to copy environment"));
+	;
 	data.stdin_save = dup(STDIN_FILENO);
 	data.stdout_save = dup(STDOUT_FILENO);
 	if (data.stdin_save == -1 || data.stdout_save == -1)
 		return (ft_error_msg("dup", "dup failed"));
-	if (!data.env)
-		return (ft_error_msg("cpy_env", "Error: Failed to copy environment"));
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	set_signals_prompt();
 	while (1)
 	{
 		dup2(data.stdin_save, STDIN_FILENO);
@@ -290,7 +257,11 @@ int	main(int ac, char **av, char **env)
 		g_exit_status = 0;
 		if (!read)
 		{
+			write(data.stdout_save, "exit\n", 5); // if is env
+													//-i c coller a l invite
 			ft_close_save(&data);
+			free_all(&data, read);
+			exit(data.exit_status);
 			break ;
 		}
 		if (!read[0])
@@ -308,11 +279,15 @@ int	main(int ac, char **av, char **env)
 		}
 		expand_tokens(&data);
 		data = cmd_builder(&data);
-		//print_list(data.env);
+		// print_list(data.env);
 		// print_tokens(data.token);
 		// print(data.cmd);
 		handle_heredoc(&data);
+		signal(SIGINT, SIG_IGN);
 		data.exit_status = ft_exec(&data, pid);
+		if (data.exit_status > 128)
+			write(1, "\n", 1);
+		set_signals_prompt();
 		free_iteration_data(&data);
 	}
 	rl_clear_history();

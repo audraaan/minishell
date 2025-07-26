@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 07:55:47 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 06:57:14 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,13 @@ int					is_operator(char c);
 int					trickster(int *i);
 
 // env
-t_list				*cpy_env(char **env);
+t_list				*cpy_env(char **env, t_data *data);
 char				*expand_env_var(t_data *data, char *str);
 t_list				*create_env_node(char *env_var, t_list **env_cpy);
 int					handle_quote(int *i, int *quotes, char *str);
 void				expend_env_var_bis(int *i, char *str, t_list *env_cpy,
 						char **res);
+
 // env_utils
 char				*char_to_str(char c);
 char				*join_and_free(char *s1, char *s2);
@@ -127,6 +128,10 @@ int					check_unclosed_quotes(int quotes);
 void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
 void				expand_tokens(t_data *data);
+int					exported(t_list **env_cpy, char *arg, t_data *data);
+int					ft_make_env(t_list **env_cpy, t_data *data);
+int					update_shlvl(t_list **env_cpy, t_list *tmp_env,
+						t_data *data);
 
 // command_builder
 t_data				cmd_builder(t_data *data);
@@ -196,6 +201,8 @@ int					ft_pwd(void);
 int					ft_cd(t_list **env, char **cmd, t_data *data);
 // ft_exit
 int					ft_exit(t_data *data, t_cmd *cmd);
+// ft_echo
+int					ft_echo(char **cmd_param);
 
 /////////////*other*/////////////
 // utils
@@ -211,6 +218,7 @@ char				**lst_in_tab(t_list *env);
 int					ft_cmdlen(t_cmd *cmd);
 void				ft_close_save(t_data *data);
 void				ft_free_and_exit(t_data data, char *path_cmd);
+int					ft_str_isdigit(char *str);
 
 // ft_free
 void				ft_free_all_lst(t_list *lst);
@@ -227,5 +235,10 @@ void				ft_free_lst(t_list *lst);
 void				print(t_cmd *cmd);
 void				print_list(t_list *lst);
 void				print_tokens(t_token *head);
+void				ft_print_tab(char **tab);
+
+// signaux
+
+void				set_signals_prompt(void);
 
 #endif

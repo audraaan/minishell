@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 02:12:33 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 06:43:50 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 02:44:01 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,6 @@ void	ft_clean_all(t_data *data, int tmp_exit_code)
 	exit(exit_code);
 }
 
-int	ft_str_isdigit(char *str)
-{
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str)
-	{
-		if (!ft_isdigit(*str))
-			return (0);
-		str++;
-	}
-	return (1);
-}
 
 int	ft_exit(t_data *data, t_cmd *cmd)
 {

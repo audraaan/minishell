@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 08:00:08 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 07:25:21 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	exist(t_list **env, char *a)
 	arg = ft_strndup(a, len);
 	if (!arg)
 		return (-1);
-	while (tmp)
+	while (tmp && tmp->name)
 	{
 		if (ft_strcmp(tmp->name, arg) == 0)
 		{
