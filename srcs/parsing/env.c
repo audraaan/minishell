@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/27 00:49:12 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 23:34:00 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	expand_env_var_bis(t_data *data, int *quotes, char *str, char **res)
 	}
 }
 
-void	expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
+extern void	expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
 {
 	char	*name;
 	char	*value;
@@ -65,11 +65,8 @@ void	expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
 	name = ft_substr(str, start, (*i) - start);
 	if (!name || name[0] == '\0')
 	{
-		tmp = ft_strdup("$");
-		if (tmp)
-			*res = join_and_free(*res, tmp);
-		free(name);
-		return ;
+		*res = join_and_free(*res, tmp);
+		return (free(name));
 	}
 	value = get_env_value(env_cpy, name);
 	if (value)
@@ -78,7 +75,7 @@ void	expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
 		if (tmp)
 			*res = join_and_free(*res, tmp);
 	}
-	free (name);
+	return (free(name));
 }
 
 t_list	*cpy_env(char **env, t_data *data)
@@ -135,7 +132,6 @@ t_list	*create_env_node(char *env_var, t_list **env_cpy)
 	}
 	return (ft_lstnew(name, content));
 }
-
 
 //void expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
 //{

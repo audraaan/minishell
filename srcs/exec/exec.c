@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/26 10:59:03 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 23:25:37 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ void	handle_children(pid_t *pid, t_cmd *cmd, t_data *data, char *path_cmd)
 {
 	if (*pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		ft_close_save(data);
 		path_cmd = ft_path(cmd, data->env, &data->exit_status);
 		if (cmd->cmd_param[0] && is_builtins(cmd))

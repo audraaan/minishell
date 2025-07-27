@@ -1,44 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*   signal_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/24 18:19:09 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/27 21:05:20 by alarroye         ###   ########lyon.fr   */
+/*   Created: 2025/07/27 22:25:46 by nbedouan          #+#    #+#             */
+/*   Updated: 2025/07/27 23:33:41 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_echo(char **cmd_param)
-{
-	int	i;
-	int	j;
-	int	nl;
+int		g_exit_status = 0;
 
-	i = 1;
-	j = 0;
-	nl = 1;
-	while (cmd_param[i] && strncmp(cmd_param[i], "-n", 2) == 0)
-	{
-		j = 1;
-		while (cmd_param[i][j] == 'n')
-			j++;
-		if (cmd_param[i][j])
-			break ;
-		nl = 0;
-		i++;
-	}
-	while (cmd_param[i])
-	{
-		printf("%s", cmd_param[i]);
-		if (cmd_param[i + 1])
-			printf(" ");
-		i++;
-	}
-	if (nl)
-		printf("\n");
+void	sigint_handler(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+	rl_done = 1;
+	g_exit_status = 130;
+}
+
+void	sigint_herdoc_handler(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+	rl_done = 1;
+	g_exit_status = 130;
+	exit(g_exit_status);
+}
+
+void	set_signals_prompt(void)
+{
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+int	do_nothing(void)
+{
 	return (0);
 }

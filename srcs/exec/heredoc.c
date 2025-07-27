@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 06:21:39 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 07:11:29 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 23:35:57 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	ft_tmp_file(t_file **file)
 	return (fd);
 }
 
-void	handle_heredoc(t_data *data, volatile sig_atomic_t g_exit_status)
+void	handle_heredoc(t_data *data)
 {
 	t_cmd	*tmp;
 	t_file	*tmp_file;
@@ -104,7 +104,7 @@ void	handle_heredoc(t_data *data, volatile sig_atomic_t g_exit_status)
 				fd = ft_tmp_file(&tmp_file);
 				if (fd == -1)
 					return ;
-				ft_heredoc(tmp_file, g_exit_status, fd);
+				ft_heredoc(tmp_file, fd);
 			}
 			tmp_file = tmp_file->next;
 		}
@@ -112,7 +112,7 @@ void	handle_heredoc(t_data *data, volatile sig_atomic_t g_exit_status)
 	}
 }
 
-int	ft_heredoc(t_file *tmp, volatile sig_atomic_t g_exit_status, int fd)
+int	ft_heredoc(t_file *tmp, int fd)
 {
 	char	*read;
 

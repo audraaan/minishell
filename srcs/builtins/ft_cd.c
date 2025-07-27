@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 18:04:32 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 05:52:51 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 21:04:41 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int	ft_cd(t_list **env, char **cmd, t_data *data)
 	char	buf[PATH_MAX];
 	int		error_update;
 
-	// utiliser chdir meme en cas d'erreur de getcwd
 	error_update = 0;
 	if (cmd && !cmd[1])
 		return (ft_cd_not_arg(env, buf, error_update, data));

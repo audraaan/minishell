@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/27 06:30:02 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/07/27 23:36:33 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,7 +57,11 @@ MAIN_SRCS			=			main 			\
 								exec \
 								ft_exit \
 								ft_echo \
-								heredoc
+								heredoc \
+								utils_exec\
+								utils_msg_and_exit\
+								signal_utils\
+								export_utils
 
 SRCS				=			$(addsuffix .c, $(MAIN_SRCS))
 

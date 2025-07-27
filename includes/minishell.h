@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 07:08:06 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 23:35:02 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ typedef struct s_data
 	pid_t			pid;
 }					t_data;
 
-extern int			g_signal_received;
+extern int			g_exit_status;
 
 /////////////*parsing*/////////////
 
@@ -109,6 +109,7 @@ char				*get_operator_str(t_token_type type);
 int					ft_isspace(char c);
 int					is_operator(char c);
 int					trickster(int *i);
+int					er_msg_free_tok(char *arg, char *msg, t_token **token);
 
 // env
 t_list				*cpy_env(char **env, t_data *data);
@@ -200,10 +201,9 @@ int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);
 int					redirect_heredoc(char *file);
 // heredoc
-void				handle_heredoc(t_data *data,
-						volatile sig_atomic_t g_exit_status);
-int					ft_heredoc(t_file *tmp, volatile sig_atomic_t g_exit_status,
-						int fd);
+void				handle_heredoc(t_data *data);
+int					ft_heredoc(t_file *tmp, int fd);
+
 /////////////*builtins*/////////////
 
 // env + unset
@@ -264,7 +264,8 @@ void				print_tokens(t_token *head);
 void				ft_print_tab(char **tab);
 
 // signaux
-
+void				sigint_handler(int sig);
 void				set_signals_prompt(void);
+int					do_nothing(void);
 
 #endif
