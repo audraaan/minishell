@@ -6,11 +6,80 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/26 10:35:10 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 00:49:12 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*expand_env_var(t_data *data, char *str)
+{
+	int		quotes;
+	char	*res;
+
+	res = ft_strdup("");
+	if (!res)
+		return (NULL);
+	quotes = 0;
+	expand_env_var_bis(data, &quotes, str, &res);
+	if (check_unclosed_quotes(quotes) && res)
+	{
+		free(res);
+		return (NULL);
+	}
+	return (res);
+}
+
+void	expand_env_var_bis(t_data *data, int *quotes, char *str, char **res)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (handle_quote(&i, quotes, str))
+			continue ;
+		if (!str[i])
+			break ;
+		if (str[i] == '$' && str[i + 1] == '?' && *quotes != 1)
+			manage_exit_status(&data, &i, str, res);
+		else if (str[i] == '$' && *quotes != 1)
+			expend_env_var_third(&i, str, data->env, res);
+		else
+			*res = join_and_free((*res), char_to_str(str[i++]));
+	}
+}
+
+void	expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
+{
+	char	*name;
+	char	*value;
+	char	*tmp;
+	int		start;
+
+	(*i)++;
+	start = (*i);
+	tmp = NULL;
+	while (str[(*i)] && (ft_isalnum(str[(*i)]) || str[(*i)] == '_'))
+		(*i)++;
+	name = ft_substr(str, start, (*i) - start);
+	if (!name || name[0] == '\0')
+	{
+		tmp = ft_strdup("$");
+		if (tmp)
+			*res = join_and_free(*res, tmp);
+		free(name);
+		return ;
+	}
+	value = get_env_value(env_cpy, name);
+	if (value)
+	{
+		tmp = ft_strdup(value);
+		if (tmp)
+			*res = join_and_free(*res, tmp);
+	}
+	free (name);
+}
 
 t_list	*cpy_env(char **env, t_data *data)
 {
@@ -67,80 +136,46 @@ t_list	*create_env_node(char *env_var, t_list **env_cpy)
 	return (ft_lstnew(name, content));
 }
 
-char	*expand_env_var(t_data *data, char *str)
-{
-	int		i;
-	int		quotes;
-	char	*res;
 
-	res = ft_strdup("");
-	if (!res)
-		return (NULL);
-	i = 0;
-	quotes = 0;
-	while (str[i])
-	{
-		if (handle_quote(&i, &quotes, str))
-			continue ;
-		if (!str[i])
-			break ;
-		if (str[i] == '$' && str[i + 1] == '?' && quotes != 1)
-			manage_exit_status(&data, &i, str, &res);
-		else if (str[i] == '$' && quotes != 1)
-			expend_env_var_bis(&i, str, data->env, &res);
-		else
-			res = join_and_free(res, char_to_str(str[i++]));
-	}
-	if (check_unclosed_quotes(quotes))
-	{
-		free(res);
-		return (NULL);
-	}
-	return (res);
-}
+//void expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
+//{
+//	char *name;
+//	char *value;
+//	char *tmp;
+//	char *new_res;
+//	int start;
 
-int	handle_quote(int *i, int *quotes, char *str)
-{
-	if (str[(*i)] == '\'' && (*quotes) != 2)
-	{
-		if ((*quotes) == 1)
-			(*quotes) = 0;
-		else
-			(*quotes) = 1;
-		(*i)++;
-		return (1);
-	}
-	else if (str[(*i)] == '\"' && (*quotes) != 1)
-	{
-		if ((*quotes) == 2)
-			(*quotes) = 0;
-		else
-			(*quotes) = 2;
-		(*i)++;
-		return (1);
-	}
-	return (0);
-}
-
-void	expend_env_var_bis(int *i, char *str, t_list *env_cpy, char **res)
-{
-	char	*name;
-	char	*value;
-	int		start;
-
-	(*i)++;
-	start = (*i);
-	while (str[(*i)] && (ft_isalnum(str[(*i)]) || str[(*i)] == '_'))
-		(*i)++;
-	name = ft_substr(str, start, (*i) - start);
-	if (!name || name[0] == '\0')
-	{
-		free(name);
-		*res = join_and_free(*res, ft_strdup("$"));
-		return ;
-	}
-	value = get_env_value(env_cpy, name);
-	if (value)
-		*res = join_and_free(*res, ft_strdup(value));
-	free(name);
-}
+//	(*i)++;
+//	start = *i;
+//	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+//		(*i)++;
+//	name = ft_substr(str, start, *i - start);
+//	if (!name || name[0] == '\0')
+//	{
+//		tmp = ft_strdup("$");
+//		if (tmp)
+//		{
+//			new_res = join_and_free(*res, tmp);
+//			if (new_res)
+//				*res = new_res;
+//			else
+//				free(tmp);
+//		}
+//		free(name);
+//		return ;
+//	}
+//	value = get_env_value(env_cpy, name);
+//	if (value)
+//	{
+//		tmp = ft_strdup(value);
+//		if (tmp)
+//		{
+//			new_res = join_and_free(*res, tmp);
+//			if (!new_res)
+//				free(tmp);
+//			else
+//				*res = new_res;
+//		}
+//	}
+//	free(name);
+//}

@@ -51,30 +51,6 @@ char	*get_env_value(t_list *env, char *name)
 	return (NULL);
 }
 
-char	*remove_quotes(const char *src)
-{
-	char	*res;
-	int		i;
-	char	q;
-
-	q = 0;
-	i = 0;
-	res = ft_strdup("");
-	while (src[i])
-	{
-		if ((src[i] == '\'' || src[i] == '"') && q == 0)
-			q = src[i++];
-		else if (src[i] == q)
-		{
-			q = 0;
-			i++;
-		}
-		else
-			res = join_and_free(res, char_to_str(src[i++]));
-	}
-	return (res);
-}
-
 int	check_unclosed_quotes(int quotes)
 {
 	if (quotes != 0)

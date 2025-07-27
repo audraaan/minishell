@@ -6,11 +6,83 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/26 07:25:21 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 02:15:13 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	ft_export(t_list **env, char **a, t_data *data)
+{
+	int		i;
+	t_list	*tmp;
+
+	tmp = *env;
+	i = 0;
+	if (!a || !a[1])
+		return (export_not_args(env));
+	while (a && a[++i])
+	{
+		if (check_params_env(a[i]))
+			data->exit_status = ft_error_msg(a[i],
+					"not a valid identifier for export");
+		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i], data))
+			return (ft_error_msg(NULL, "malloc failed"));
+		else if (exist(env, a[i]) == -1)
+		{
+			ft_export_bis(tmp, data, a, &i);
+		}
+		tmp = *env;
+	}
+	return (data->exit_status);
+}
+
+void	ft_export_bis(t_list *tmp, t_data *data, char **a, int *i)
+{
+	char	*name;
+	char	*value;
+	char	*equal_pos;
+	int		name_len;
+
+	equal_pos = ft_strchr(a[(*i)], '=');
+	tmp = ft_last_node(tmp);
+	if (equal_pos)
+	{
+		name_len = equal_pos - a[(*i)];
+		name = ft_strndup(a[(*i)], name_len);
+		if (!name)
+			ft_error_msg("ft_strndup", "malloc failed");
+		value = expand_value(data, equal_pos + 1);
+		if (!value)
+		{
+			free(name);
+			ft_error_msg("expand_env_var", "malloc failed");
+		}
+		tmp->next = create_env_node_from_parts(name, value);
+		free(name);
+		free(value);
+	}
+	else
+		tmp->next = new_node(a[(*i)]);
+	if (!tmp->next)
+		ft_error_msg("malloc", "malloc failed");
+}
+
+
+char	*expand_value(t_data *data, char *str)
+{
+	char	*no_quotes;
+	char	*expanded;
+
+	no_quotes = remove_outer_quotes(str);
+	if (!no_quotes)
+		return (NULL);
+	expanded = expand_env_var(data, no_quotes);
+	free(no_quotes);
+	if (!expanded)
+		return (NULL);
+	return (expanded);
+}
 
 t_list	*sort_list(t_list *env)
 {
@@ -73,7 +145,7 @@ int	exist(t_list **env, char *a)
 	arg = ft_strndup(a, len);
 	if (!arg)
 		return (-1);
-	while (tmp && tmp->name)
+	while (tmp)
 	{
 		if (ft_strcmp(tmp->name, arg) == 0)
 		{
@@ -87,50 +159,43 @@ int	exist(t_list **env, char *a)
 	return (-1);
 }
 
-int	ft_change_var(t_list **env, char *a)
+int	ft_change_var(t_list **env, char *a, t_data *data)
 {
 	int		pos;
 	t_list	*tmp;
-	int		len;
+	char	*value;
+	char	*equal_pos;
 
+	equal_pos = ft_strchr(a, '=');
 	tmp = *env;
 	if (!ft_strchr(a, '='))
 		return (0);
 	pos = exist(env, a);
-	len = ft_strlen(a) - ft_strlen(ft_strchr(a, '='));
 	while (pos--)
 		tmp = tmp->next;
+	value = remove_outer_quotes(expand_value(data, equal_pos + 1));
 	free(tmp->content);
-	tmp->content = ft_strdup(ft_strchr(a, '=') + 1);
+	tmp->content = value;
 	if (!tmp->content)
 		return (ft_error_msg("ft_strdup", "malloc failed"));
 	return (0);
 }
 
-int	ft_export(t_list **env, char **a, t_data *data)
+t_list *create_env_node_from_parts(char *name, char *content)
 {
-	int		i;
-	t_list	*tmp;
-
-	tmp = *env;
-	i = 0;
-	if (!a || !a[1])
-		return (export_not_args(env));
-	while (a && a[++i])
+	t_list *node = malloc(sizeof(t_list));
+	if (!node)
+		return NULL;
+	node->name = ft_strdup(name);
+	node->content = ft_strdup(content);
+	node->next = NULL;
+	if (!node->name || !node->content)
 	{
-		if (check_params_env(a[i]))
-			data->exit_status = ft_error_msg(a[i],
-					"not a valid identifier for export");
-		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i]))
-			return (ft_error_msg(NULL, "malloc failed"));
-		else if (exist(env, a[i]) == -1)
-		{
-			tmp = ft_last_node(tmp);
-			tmp->next = new_node(a[i]);
-			if (!tmp->next)
-				return (ft_error_msg("ft_strdup", "malloc failed"));
-		}
-		tmp = *env;
+		free(node->name);
+		free(node->content);
+		free(node);
+		return NULL;
 	}
-	return (data->exit_status);
+	return node;
 }
+

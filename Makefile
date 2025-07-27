@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/25 21:48:46 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/07/27 06:30:02 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,8 @@ MAIN_SRCS			=			main 			\
 								env 			\
 								env_utils		\
 								env_utils_2		\
+								env_utils_3		\
+								env_utils_4		\
 								command_builder	\
 								builder_utils	\
 								builder_utils_2	\
@@ -54,7 +56,8 @@ MAIN_SRCS			=			main 			\
 								handle_builtins \
 								exec \
 								ft_exit \
-								ft_echo
+								ft_echo \
+								heredoc
 
 SRCS				=			$(addsuffix .c, $(MAIN_SRCS))
 

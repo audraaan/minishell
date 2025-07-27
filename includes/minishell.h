@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/26 06:57:14 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 07:08:06 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,20 +114,34 @@ int					trickster(int *i);
 t_list				*cpy_env(char **env, t_data *data);
 char				*expand_env_var(t_data *data, char *str);
 t_list				*create_env_node(char *env_var, t_list **env_cpy);
-int					handle_quote(int *i, int *quotes, char *str);
-void				expend_env_var_bis(int *i, char *str, t_list *env_cpy,
+void				expand_env_var_bis(t_data *data, int *quotes, char *str,
 						char **res);
-
+void				expend_env_var_third(int *i, char *str, t_list *env_cpy,
+						char **res);
 // env_utils
 char				*char_to_str(char c);
 char				*join_and_free(char *s1, char *s2);
-char				*remove_quotes(const char *src);
 char				*get_env_value(t_list *env, char *name);
 int					check_unclosed_quotes(int quotes);
 // env_utils_2
+void				expand_tokens(t_data *data);
+t_token				*handle_retokenization(t_data *data, t_token *current,
+						char *cleaned, t_token *next);
+t_token				*advance_after_replacement(t_token *new_tokens);
+t_token				*handle_simple_expansion(t_token *current, char *cleaned,
+						t_token *next);
+t_token				*process_word_token(t_data *data, t_token *current,
+						t_token *next);
+// env_utils_3
 void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
-void				expand_tokens(t_data *data);
+int					needs_retokenization(char *str);
+void				replace_token_with_list(t_token **token_list,
+						t_token *to_replace, t_token *new_tokens);
+int					token_contains_quotes(char *str);
+char				*remove_outer_quotes(char *str);
+// env_utils_4
+int					handle_quote(int *i, int *quotes, char *str);
 int					exported(t_list **env_cpy, char *arg, t_data *data);
 int					ft_make_env(t_list **env_cpy, t_data *data);
 int					update_shlvl(t_list **env_cpy, t_list *tmp_env,
@@ -159,7 +173,6 @@ void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
 int					check_synthax(t_data *data);
 t_list				*parse_env(char **envp);
-void				ft_heredoc(t_file *tmp);
 
 // exec
 int					ft_exec(t_data *data, pid_t pid);
@@ -186,7 +199,11 @@ int					redirect_outfile(char *file);
 int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);
 int					redirect_heredoc(char *file);
-
+// heredoc
+void				handle_heredoc(t_data *data,
+						volatile sig_atomic_t g_exit_status);
+int					ft_heredoc(t_file *tmp, volatile sig_atomic_t g_exit_status,
+						int fd);
 /////////////*builtins*/////////////
 
 // env + unset
@@ -195,6 +212,13 @@ int					ft_unset(t_list **env, char **a);
 int					check_params_env(char *a);
 // export
 int					ft_export(t_list **env, char **a, t_data *data);
+int					export_not_args(t_list **env);
+void				ft_export_bis(t_list *tmp, t_data *data, char **a, int *i);
+int					exist(t_list **env, char *a);
+char				*expand_value(t_data *data, char *str);
+t_list				*create_env_node_from_parts(char *name, char *content);
+int					ft_change_var(t_list **env, char *a, t_data *data);
+
 // ft_pwd
 int					ft_pwd(void);
 // ft_cd
@@ -219,6 +243,8 @@ int					ft_cmdlen(t_cmd *cmd);
 void				ft_close_save(t_data *data);
 void				ft_free_and_exit(t_data data, char *path_cmd);
 int					ft_str_isdigit(char *str);
+int					ft_free_close_msg(char *msg1, char *msg2, int fd,
+						char *read);
 
 // ft_free
 void				ft_free_all_lst(t_list *lst);

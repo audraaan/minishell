@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/26 11:02:40 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 06:35:00 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,135 +95,6 @@ int	check_synthax(t_data *data)
 	return (0);
 }
 
-char	*ft_read_urandom(void)
-{
-	int		fd;
-	int		nb_bytes;
-	char	buf[2];
-	char	*name;
-	int		i;
-
-	name = malloc(sizeof(char) * 21);
-	if (!name)
-		return (ft_error_msg(NULL, "malloc failed"), NULL);
-	name[20] = '\0';
-	buf[1] = '\0';
-	fd = open("/dev/urandom", O_RDONLY);
-	if (fd == -1)
-	{
-		free(name);
-		perror("open: urandom");
-		return (NULL);
-	}
-	i = 0;
-	while (i < 20)
-	{
-		nb_bytes = read(fd, buf, 1);
-		if (nb_bytes != 1)
-		{
-			free(name);
-			perror("read: urandom");
-			return (NULL);
-		}
-		if (ft_isalpha(buf[0]))
-		{
-			name[i] = buf[0];
-			i++;
-		}
-	}
-	close(fd);
-	return (name);
-}
-
-int	ft_tmp_file(t_file **file)
-{
-	int		fd;
-	char	*name;
-	char	*name_tmp;
-
-	name_tmp = ft_read_urandom();
-	if (!name_tmp)
-		return (-1);
-	name = ft_strjoin("/tmp/", name_tmp);
-	free(name_tmp);
-	if (!name)
-	{
-		free(name);
-		ft_error_msg("ft_strjoin", "malloc failed");
-		return (-1);
-	}
-	fd = open(name, O_CREAT | O_WRONLY, 0644);
-	if (fd == -1)
-	{
-		perror("open:");
-		return (-1);
-	}
-	(*file)->filename = name;
-	return (fd);
-}
-
-void	handle_heredoc(t_data *data)
-{
-	t_cmd	*tmp;
-	t_file	*tmp_file;
-
-	tmp = data->cmd;
-	while (tmp)
-	{
-		tmp_file = tmp->file;
-		while (tmp_file)
-		{
-			// printf("tmpfilename=%s\n", tmp_file->filename);
-			// printf("tmpfileeof=%s\n", tmp_file->eof);
-			if (tmp_file->type == HEREDOC)
-				ft_heredoc(tmp_file);
-			tmp_file = tmp_file->next;
-			// printf("cmd=%s\n", data->cmd->file->filename);
-			// printf("cmdfileeof=%s\n", data->cmd->file->eof);
-		}
-		tmp = tmp->next;
-	}
-}
-
-void	ft_heredoc(t_file *tmp)
-{
-	char	*read;
-	int		fd;
-
-	fd = -1;
-	fd = ft_tmp_file(&tmp);
-	if (fd == -1)
-		return ;
-	while (!g_exit_status)
-	{
-		// printf("%s", tmp->filename);
-		read = readline("> ");
-		if (!read)
-		{
-			ft_error_msg("warning", "here-document delimited by end-of-file");
-			close(fd);
-			return ;
-		}
-		if (ft_strcmp(read, tmp->eof))
-		{
-			write(fd, read, ft_strlen(read));
-			write(fd, "\n", 1);
-		}
-		else
-		{
-			free(read);
-			close(fd);
-			break ;
-		}
-		if (!read[0])
-		{
-			write(fd, "\n", 1);
-			continue ;
-		}
-	}
-	close(fd);
-}
-
 int	do_nothing(void)
 {
 	return (0);
@@ -282,7 +153,7 @@ int	main(int ac, char **av, char **env)
 		// print_list(data.env);
 		// print_tokens(data.token);
 		// print(data.cmd);
-		handle_heredoc(&data);
+		handle_heredoc(&data, g_exit_status);
 		signal(SIGINT, SIG_IGN);
 		data.exit_status = ft_exec(&data, pid);
 		if (data.exit_status > 128)

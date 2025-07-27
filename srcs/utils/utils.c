@@ -6,37 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/26 10:56:15 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 07:05:44 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// int	update_shlvl(char **env, t_data *data)
-//{
-//	char *shlvl;
-//	t_list *tmp_env;
-//	int level;
-
-//	tmp_env = *env_cpy;
-//	shlvl = NULL;
-//	while (tmp_env && ft_strcmp(tmp_env->name, "SHLVL"))
-//		tmp_env = tmp_env->next;
-//	if (!tmp_env || !tmp_env->content || (tmp_env->content
-//			&& !ft_str_isdigit(tmp_env->content)))
-//		return (exported(env_cpy, ft_strdup("SHLVL=1"), data));
-//	else if (tmp_env->content)
-//	{
-//		level = ft_atoi(tmp_env->content);
-//		if (level < 0 || level + 1)
-//			return (exported(env_cpy, ft_strdup("SHLVL=1"), data));
-//		level++;
-//		shlvl = ft_itoa(level);
-//		if (!shlvl)
-//			return (ft_error_msg("update_shlvl: ft_itoa", "malloc failed"));
-//	}
-//	return (exported(env_cpy, shlvl, data));
-//}
 
 int	ft_str_isdigit(char *arg)
 {
@@ -221,6 +195,18 @@ char	**lst_in_tab(t_list *env)
 	}
 	tab_env[++i] = NULL;
 	return (tab_env);
+}
+
+
+int	ft_free_close_msg(char *msg1, char *msg2, int fd, char *read)
+{
+	if (msg1 && *msg1 && msg2 && *msg2)
+		ft_error_msg(msg1, msg2);
+	if (fd != -1)
+		close(fd);
+	if (read)
+		free(read);
+	return (0);
 }
 
 // t_list	*cpy_env(char **env)

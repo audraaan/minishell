@@ -3,131 +3,187 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils_2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/16 22:57:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/26 10:57:51 by alarroye         ###   ########lyon.fr   */
+/*   Created: 2025/07/26 04:52:07 by nbedouan          #+#    #+#             */
+/*   Updated: 2025/07/26 05:22:26 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	manage_exit_status(t_data **data, int *i, char *str, char **res)
+t_token	*advance_after_replacement(t_token *new_tokens)
 {
-	char	*value;
+	t_token	*current;
 
-	value = ft_itoa((*data)->exit_status);
-	*res = join_and_free(*res, ft_strdup(value));
-	free(value);
-	(*i) += 2;
+	current = new_tokens;
+	while (current && current->next)
+		current = current->next;
+	if (current)
+		current = current->next;
+	else
+		current = NULL;
+	return (current);
+}
+
+t_token	*handle_retokenization(t_data *data, t_token *current,
+									char *cleaned, t_token *next)
+{
+	t_token	*new_tokens;
+
+	new_tokens = tokenize(data, cleaned);
+	free(cleaned);
+	if (new_tokens)
+	{
+		replace_token_with_list(&data->token, current, new_tokens);
+		return (advance_after_replacement(new_tokens));
+	}
+	else
+	{
+		free(current->str);
+		current->str = ft_strdup("");
+		return (next);
+	}
+}
+
+t_token	*handle_simple_expansion(t_token *current, char *cleaned,
+										t_token *next)
+{
+	free(current->str);
+	current->str = cleaned;
+	return (next);
+}
+
+t_token	*process_word_token(t_data *data, t_token *current, t_token *next)
+{
+	char	*expanded;
+	char	*cleaned;
+
+	if (token_contains_quotes(current->str) && current->str[0])
+		return (next);
+	expanded = expand_env_var(data, current->str);
+	if (!expanded)
+		return (next);
+	cleaned = remove_outer_quotes(expanded);
+	free(expanded);
+	if (!cleaned)
+		return (next);
+	if (needs_retokenization(cleaned))
+		return (handle_retokenization(data, current, cleaned, next));
+	else
+		return (handle_simple_expansion(current, cleaned, next));
 }
 
 void	expand_tokens(t_data *data)
 {
 	t_token	*current;
-	char	*expanded;
+	t_token	*next;
 
-	//	char	*quotes_removed;
 	current = data->token;
 	while (current)
 	{
+		next = current->next;
 		if (current->type == WORD && current->str)
-		{
-			expanded = expand_env_var(data, current->str);
-			if (!expanded)
-			{
-				current = current->next;
-				continue ;
-			}
-			//			quotes_removed = remove_quotes(expanded);
-			//			free(expanded);
-			//			if (!quotes_removed)
-			//			{
-			//				current = current->next;
-			//				continue ;
-			//			}
-			free(current->str);
-			//			current->str = quotes_removed;
-			current->str = expanded;
-		}
-		current = current->next;
+			current = process_word_token(data, current, next);
+		else
+			current = next;
 	}
 }
 
-int	exported(t_list **env_cpy, char *arg, t_data *data)
-{
-	char	**export;
-	int		status;
+//void expand_tokens(t_data *data)
+//{
+//	t_token *current = data->token;
+//	t_token *next;
+//	char *expanded;
+//	char *cleaned;
+//
+//	while (current)
+//	{
+//		next = current->next;
+//		if (current->type == WORD && current->str)
+//		{
+//			if (token_contains_quotes(current->str) && current->str[0])
+//			{
+//				current = next;
+//				continue;
+//			}
+//			expanded = expand_env_var(data, current->str);
+//			if (!expanded)
+//			{
+//				current = next;
+//				continue;
+//			}
+//			cleaned = remove_quotes(expanded);
+//			free(expanded);
+//			if (!cleaned)
+//			{
+//				current = next;
+//				continue;
+//			}
+//			if (needs_retokenization(cleaned))
+//			{
+//				t_token *new_tokens = tokenize(data, cleaned);
+//				free(cleaned);
+//				if (new_tokens)
+//				{
+//					replace_token_with_list(&data->token, current, new_tokens);
+//					current = new_tokens;
+//					while (current && current->next)
+//						current = current->next;
+//					if (current)
+//						current = current->next;
+//					else
+//						current = NULL;
+//				}
+//				else
+//				{
+//					free(current->str);
+//					current->str = ft_strdup("");
+//					current = next;
+//				}
+//			}
+//			else
+//			{
+//				free(current->str);
+//				current->str = cleaned;
+//				current = next;
+//			}
+//		}
+//		else
+//		{
+//			current = next;
+//		}
+//	}
+//}
 
-	status = 0;
-	if (!arg)
-		return (ft_error_msg("make env", "malloc failed"));
-	export = malloc(sizeof(char *) * 3);
-	if (!export)
-		return (ft_error_msg("make env", "malloc failed"));
-	export[0] = ft_strdup("export");
-	if (!export[0])
-	{
-		ft_free_dtab(export);
-		return (ft_error_msg("make_env: ft_strdup", "malloc failed"));
-	}
-	export[1] = arg;
-	export[2] = NULL;
-	status = ft_export(env_cpy, export, data);
-	ft_free_dtab(export);
-	return (status);
-}
-
-int	ft_make_env(t_list **env_cpy, t_data *data)
-{
-	t_list	*tmp_env;
-	char	buf[PATH_MAX];
-	char	*cwd;
-	char	*pwd;
-
-	pwd = NULL;
-	tmp_env = *env_cpy;
-	while (tmp_env && tmp_env->name && ft_strcmp(tmp_env->name, "OLDPWD"))
-		tmp_env = tmp_env->next;
-	if (!tmp_env && exported(env_cpy, ft_strdup("OLDPWD"), data))
-		return (1);
-	cwd = getcwd(buf, PATH_MAX);
-	if (!cwd)
-		return ((ft_perror_msg("update_pwd: getcwd", 1)));
-	tmp_env = *env_cpy;
-	while (tmp_env && tmp_env->name && ft_strcmp(tmp_env->name, "PWD"))
-		tmp_env = tmp_env->next;
-	if (!tmp_env || !tmp_env->content || ft_strcmp(tmp_env->content, cwd))
-	{
-		pwd = ft_strjoin("PWD=", cwd);
-		if (exported(env_cpy, pwd, data))
-			return (1);
-	}
-	return (update_shlvl(env_cpy, tmp_env, data));
-}
-
-int	update_shlvl(t_list **env_cpy, t_list *tmp_env, t_data *data)
-{
-	char	*shlvl;
-	char	*tmp;
-	int		level;
-
-	tmp = NULL;
-	shlvl = NULL;
-	tmp_env = *env_cpy;
-	while (tmp_env && tmp_env->name && ft_strcmp(tmp_env->name, "SHLVL"))
-		tmp_env = tmp_env->next;
-	if (!tmp_env || !tmp_env->content || !ft_str_isdigit(tmp_env->content))
-		return (exported(env_cpy, ft_strdup("SHLVL=1"), data));
-	level = ft_atoi(tmp_env->content);
-	if (level < 0 || (level + 1) < 0)
-		return (exported(env_cpy, ft_strdup("SHLVL=0"), data));
-	tmp = ft_itoa(level + 1);
-	if (!tmp)
-		return (ft_error_msg("update_shlvl: ft_itoa", "malloc failed"));
-	shlvl = ft_strjoin("SHLVL=", tmp);
-	free(tmp);
-	if (!shlvl)
-		return (ft_error_msg("update_shlvl", "malloc failed"));
-	return (exported(env_cpy, shlvl, data));
-}
+//void	expand_tokens(t_data *data)
+//{
+//	t_token	*current;
+//	char	*expanded;
+////	char	*quotes_removed;
+//
+//	current = data->token;
+//	while (current)
+//	{
+//		if (current->type == WORD && current->str)
+//		{
+//			expanded = expand_env_var(data, current->str);
+//			if (!expanded)
+//			{
+//				current = current->next;
+//				continue ;
+//			}
+////			quotes_removed = remove_quotes(expanded);
+////			free(expanded);
+////			if (!quotes_removed)
+////			{
+////				current = current->next;
+////				continue ;
+////			}
+//			free(current->str);
+////			current->str = quotes_removed;
+//			current->str = expanded;
+//		}
+//		current = current->next;
+//	}
+//}

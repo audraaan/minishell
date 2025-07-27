@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 18:04:32 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/26 03:26:32 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/27 05:52:51 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	update_env(t_data *data, char *pwd, char *export, int error)
 	return (0);
 }
 
-int	fd_cd_not_arg(t_list **env, char *buf, int error_update, t_data *data)
+int	ft_cd_not_arg(t_list **env, char *buf, int error_update, t_data *data)
 {
 	char	*pwd;
 	t_list	*tmp_env;
@@ -50,14 +50,13 @@ int	fd_cd_not_arg(t_list **env, char *buf, int error_update, t_data *data)
 	if (!tmp_env)
 		return (ft_error_msg("cd", "HOME not set"));
 	pwd = getcwd(buf, PATH_MAX);
-	if (!pwd)
-		return (ft_perror_msg("cd: getcwd", 1));
 	if (chdir(tmp_env->content) == -1)
 		return (ft_perror_msg("cd: chdir", 1));
 	error_update = update_env(data, tmp_env->content, "PWD=", error_update);
 	if (error_update)
 		return (error_update);
-	error_update = update_env(data, pwd, "OLDPWD=", error_update);
+	if (pwd)
+		error_update = update_env(data, pwd, "OLDPWD=", error_update);
 	if (error_update)
 		return (error_update);
 	return (0);
@@ -72,14 +71,14 @@ int	ft_cd(t_list **env, char **cmd, t_data *data)
 	// utiliser chdir meme en cas d'erreur de getcwd
 	error_update = 0;
 	if (cmd && !cmd[1])
-		return (fd_cd_not_arg(env, buf, error_update, data));
+		return (ft_cd_not_arg(env, buf, error_update, data));
 	else if (cmd && cmd[2])
 		return (ft_error_msg("cd", "too many arguments"));
 	pwd = getcwd(buf, PATH_MAX);
 	if (!pwd)
-		return (ft_perror_msg("cd: getcwd", 1));
-	if (chdir(cmd[1]) == -1)
-		return (ft_perror_msg("cd: chdir", 1));
+		error_update = 1;
+	if (error_update || chdir(cmd[1]) == -1)
+		return (ft_perror_msg("cd", 1));
 	error_update = update_env(data, pwd, "OLDPWD=", error_update);
 	if (error_update)
 		return (error_update);
