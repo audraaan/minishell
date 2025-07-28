@@ -1,3 +1,11 @@
-leaks ds export
-ctrl c ds heredoc
-NORMER LES PTN DE FONCTION
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~parsing~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+if syntax error lancer qd mm les heredoc d avant la syntax error
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~exec~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+si ./ls il est qd mm exec pasque : if (ft_strchr(cmd_tab, '/') && ft_is_exec(cmd_tab, error)) dans ft_path
+
+gerer le cas ou on envoie un directory en cmd : exit status 126
+
+echo est buger avec pipe : echo 42 | echo no | echo smth | grep 42

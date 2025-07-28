@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:09:11 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 21:12:44 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 11:10:58 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	ft_is_exec(char *path_cmd, int *error)
 			*error = 0;
 			return (1);
 		}
-		else
+		else if (access(path_cmd, X_OK) == -1)
 		{
 			*error = 126;
 			return (1);

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 06:21:39 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/28 02:10:57 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 06:43:38 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,16 @@ int	ft_heredoc(t_file *tmp, int fd)
 
 	while (!g_exit_status)
 	{
-		read = readline("> ");
+		//read = readline("> ");
+		if (isatty(fileno(stdin)))
+			read = readline("> ");
+		else
+		{
+			char *line;
+			line = get_next_line(fileno(stdin));
+			read = ft_strtrim(line, "\n");
+			free(line);
+		}
 		if (!read)
 			return (ft_free_close_msg("warning",
 					"here-document delimited by end-of-file", fd, NULL));

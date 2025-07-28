@@ -6,17 +6,21 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 17:43:05 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/05/07 12:42:29 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 06:49:59 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include <stdarg.h>
-# include <stdint.h>
-# include <stdlib.h>
-# include <unistd.h>
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 20
+# endif
+
+#  include <stdarg.h>
+#  include <stdint.h>
+#  include <stdlib.h>
+#  include <unistd.h>
 
 typedef struct s_list
 {
@@ -85,4 +89,6 @@ void				ft_putchar(char c);
 void				ft_putnbr(int n);
 void				ft_putunbr(unsigned int n);
 
-#endif
+char				*get_next_line(int fd);
+
+# endif

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/28 03:26:12 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 10:40:37 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ int					builtins(t_cmd *cmd, t_data *data);
 char				**parse_path(t_list *env);
 char				*search_path(char *cmd, char **path, int *error);
 char				*ft_path(t_cmd *cmd, t_list *env, int *error);
+char				*ft_absolute_path(char *cmd, int *error);
 
 // redirect
 int					handle_redir(t_data *data, t_cmd *cmd);

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:38:22 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 07:56:17 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 12:23:04 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	builtins(t_cmd *cmd, t_data *data)
 	else if (!ft_strcmp(cmd->cmd_param[0], "exit"))
 		data->exit_status = ft_exit(data, cmd);
 	else if (!ft_strcmp(cmd->cmd_param[0], "echo"))
-		data->exit_status = ft_echo(data->cmd->cmd_param);
+		data->exit_status = ft_echo(cmd->cmd_param);
 	else
 		return (1);
 	return (0);
