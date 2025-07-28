@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 09:35:21 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 02:06:37 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,23 +68,24 @@ int	redirect_infile(char *file)
 {
 	int	infile;
 
-	if (access(file, F_OK) != 0)
+	if (!g_exit_status)
 	{
-		return (ft_error_msg(file, "No such file or directory"));
-	}
-	else if (access(file, R_OK) != 0)
-		return (ft_error_msg(file, "Permission denied"));
-	else
-	{
-		infile = open(file, O_RDONLY);
-		if (infile == -1)
-			return (ft_perror_msg(file, 1));
-		if (dup2(infile, STDIN_FILENO) == -1)
+		if (access(file, F_OK) != 0)
+			return (ft_error_msg(file, "No such file or directory"));
+		else if (access(file, R_OK) != 0)
+			return (ft_error_msg(file, "Permission denied"));
+		else
 		{
+			infile = open(file, O_RDONLY);
+			if (infile == -1)
+				return (ft_perror_msg(file, 1));
+			if (dup2(infile, STDIN_FILENO) == -1)
+			{
+				close(infile);
+				ft_error("error dup2 infile stdin\n", NULL, NULL, -1);
+			}
 			close(infile);
-			ft_error("error dup2 infile stdin\n", NULL, NULL, -1);
 		}
-		close(infile);
 	}
-	return (0);
+	return (g_exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 02:12:33 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 21:04:57 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 05:00:56 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,15 @@ int	ft_exit(t_data *data, t_cmd *cmd)
 	else
 		ft_clean_all(data, (unsigned char)ft_atoi(cmd->cmd_param[1]));
 	return (0);
+}
+
+void	ft_ctrl_d(t_data *data, char *read)
+{
+	int	save_status;
+
+	save_status = data->exit_status;
+	write(data->stdout_save, "exit\n", 5);
+	ft_close_save(data);
+	free_all(data, read);
+	exit(save_status);
 }

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 23:35:02 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/28 03:26:12 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,8 @@ void				copy_eof(t_file *current, t_token **token);
 /////////////*exec*/////////////
 
 // main
+char				*ft_loop(t_data *data, pid_t pid, char *read);
+void				update_data(t_data *data, pid_t pid);
 void				sigint_handler(int sig);
 void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
@@ -201,7 +203,7 @@ int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);
 int					redirect_heredoc(char *file);
 // heredoc
-void				handle_heredoc(t_data *data);
+int					handle_heredoc(t_data *data);
 int					ft_heredoc(t_file *tmp, int fd);
 
 /////////////*builtins*/////////////
@@ -225,6 +227,8 @@ int					ft_pwd(void);
 int					ft_cd(t_list **env, char **cmd, t_data *data);
 // ft_exit
 int					ft_exit(t_data *data, t_cmd *cmd);
+void				ft_ctrl_d(t_data *data, char *read);
+
 // ft_echo
 int					ft_echo(char **cmd_param);
 
