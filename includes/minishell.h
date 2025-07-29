@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/28 10:40:37 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/29 18:26:38 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,6 +199,8 @@ char				*ft_absolute_path(char *cmd, int *error);
 
 // redirect
 int					handle_redir(t_data *data, t_cmd *cmd);
+int					ft_loop_redir(t_data *data, t_file *tmp);
+
 int					redirect_outfile(char *file);
 int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);

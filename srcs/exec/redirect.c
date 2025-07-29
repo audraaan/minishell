@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/28 02:06:37 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/29 18:15:01 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,31 @@ int	handle_redir(t_data *data, t_cmd *cmd)
 	t_file	*tmp;
 
 	tmp = cmd->file;
+	return (ft_loop_redir(data, tmp));
+}
+
+int	ft_loop_redir(t_data *data, t_file *tmp)
+{
 	while (tmp)
 	{
 		if (tmp->type == REDIR_IN || tmp->type == HEREDOC)
+		{
 			data->exit_status = redirect_infile(tmp->filename);
+			if (data->exit_status != 0)
+				return (data->exit_status);
+		}
 		else if (tmp->type == REDIR_OUT)
+		{
 			data->exit_status = redirect_outfile(tmp->filename);
+			if (data->exit_status != 0)
+				return (data->exit_status);
+		}
 		else if (tmp->type == APPEND)
+		{
 			data->exit_status = redirect_outfile_append(tmp->filename);
+			if (data->exit_status != 0)
+				return (data->exit_status);
+		}
 		tmp = tmp->next;
 	}
 	return (data->exit_status);

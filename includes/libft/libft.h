@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 17:43:05 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/28 06:49:59 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/29 18:26:15 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 #  define BUFFER_SIZE 20
 # endif
 
-#  include <stdarg.h>
-#  include <stdint.h>
-#  include <stdlib.h>
-#  include <unistd.h>
+# include <stdarg.h>
+# include <stdint.h>
+# include <stdlib.h>
+# include <unistd.h>
 
 typedef struct s_list
 {
@@ -91,4 +91,4 @@ void				ft_putunbr(unsigned int n);
 
 char				*get_next_line(int fd);
 
-# endif
+#endif
