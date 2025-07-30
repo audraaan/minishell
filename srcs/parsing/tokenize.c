@@ -12,33 +12,49 @@
 
 #include "minishell.h"
 
-char	*extract_word(char *str, int *i)
+char	*extract_word(char *str, int *i, t_quote_type *q_type)
 {
 	int	start;
 	int	quotes;
+	char	*res;
 
 	start = *i;
 	quotes = 0;
 	while (str[*i] && (quotes || (!is_operator(str[*i])
 				&& !ft_isspace(str[*i]))))
 	{
-		if (str[*i] == '\'' && quotes != 2)
+		if (str[*i] == '\'' && quotes != 2 && *q_type != 2)
 		{
-			if (quotes == 1)
+			if (quotes == 1 && *q_type == 1)
+			{
 				quotes = 0;
+				*q_type = NO_QUOTES;
+			}
 			else
+			{
 				quotes = 1;
+				if ((*q_type) == NO_QUOTES)
+				(*q_type) = SINGLE_QUOTES;
+			}
 		}
-		else if (str[*i] == '\"' && quotes != 1)
+		else if (str[*i] == '\"' && quotes != 1 && *q_type != 1)
 		{
 			if (quotes == 2)
+			{
 				quotes = 0;
+				*q_type = NO_QUOTES;
+			}
 			else
+			{
 				quotes = 2;
+				if ((*q_type) == NO_QUOTES)
+					(*q_type) = DOUBLE_QUOTES;
+			}
 		}
 		(*i)++;
 	}
-	return (ft_substr(str, start, *i - start));
+	res = ft_substr(str, start, *i - start);
+	return (res);
 }
 
 t_token_type	get_operator_type(char *str, int *i)
@@ -68,7 +84,7 @@ t_token_type	get_operator_type(char *str, int *i)
 	return (WORD);
 }
 
-t_token	*create_token(char *str, t_token_type type)
+t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type)
 {
 	t_token	*new_token;
 
@@ -82,11 +98,12 @@ t_token	*create_token(char *str, t_token_type type)
 		return (NULL);
 	}
 	new_token->type = type;
+	new_token->q_type = *q_type;
 	new_token->next = NULL;
 	return (new_token);
 }
 
-t_token	*tokenize_bis(int *i, char *str)
+t_token	*tokenize_bis(int *i, char *str, t_quote_type *q_type)
 {
 	t_token_type	type;
 	t_token			*new_token;
@@ -99,13 +116,13 @@ t_token	*tokenize_bis(int *i, char *str)
 	if (is_operator(str[(*i)]))
 	{
 		type = get_operator_type(str, i);
-		new_token = create_token(get_operator_str(type), type);
+		new_token = create_token(get_operator_str(type), type, q_type);
 	}
 	else
 	{
 		type = WORD;
-		word = extract_word(str, i);
-		new_token = create_token(word, type);
+		word = extract_word(str, i, q_type);
+		new_token = create_token(word, type, q_type);
 		free(word);
 		if (!new_token)
 			return (NULL);
@@ -119,14 +136,16 @@ t_token	*tokenize(t_data *data, char *str)
 {
 	t_token	**current;
 	t_token	*new_token;
+	t_quote_type	q_type;
 	int		i;
 
 	i = 0;
+	q_type = NO_QUOTES;
 	new_token = NULL;
 	current = &new_token;
 	while (str[i])
 	{
-		*current = tokenize_bis(&i, str);
+		*current = tokenize_bis(&i, str, &q_type);
 		if (!*current)
 		{
 			free_tokens(&new_token);

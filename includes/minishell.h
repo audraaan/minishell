@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/29 18:26:38 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 23:38:27 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,18 @@ typedef enum e_token_type
 	WORD
 }					t_token_type;
 
+typedef enum e_quotes_type
+{
+	NO_QUOTES,
+	SINGLE_QUOTES,
+	DOUBLE_QUOTES
+}					t_quote_type;
+
 typedef struct s_token
 {
 	char			*str;
 	t_token_type	type;
+	t_quote_type	q_type;
 	struct s_token	*next;
 }					t_token;
 
@@ -101,9 +109,10 @@ extern int			g_exit_status;
 // tokenize
 t_token_type		get_operator_type(char *str, int *i);
 t_token				*tokenize(t_data *data, char *str);
-t_token				*create_token(char *str, t_token_type type);
-char				*extract_word(char *str, int *i);
-t_token				*tokenize_bis(int *i, char *str);
+t_token				*create_token(char *str, t_token_type type,
+						t_quote_type *q_type);
+char				*extract_word(char *str, int *i, t_quote_type *q_type);
+t_token				*tokenize_bis(int *i, char *str, t_quote_type *q_type);
 // tokenize_utils
 char				*get_operator_str(t_token_type type);
 int					ft_isspace(char c);
@@ -176,6 +185,7 @@ void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
 int					check_synthax(t_data *data);
 t_list				*parse_env(char **envp);
+char				*ft_loop(t_data *data, pid_t pid, char *read);
 
 // exec
 int					ft_exec(t_data *data, pid_t pid);
@@ -196,11 +206,11 @@ char				**parse_path(t_list *env);
 char				*search_path(char *cmd, char **path, int *error);
 char				*ft_path(t_cmd *cmd, t_list *env, int *error);
 char				*ft_absolute_path(char *cmd, int *error);
+int					ft_status_path(char *cmd, int *error, char *path);
 
 // redirect
 int					handle_redir(t_data *data, t_cmd *cmd);
 int					ft_loop_redir(t_data *data, t_file *tmp);
-
 int					redirect_outfile(char *file);
 int					redirect_outfile_append(char *file);
 int					redirect_infile(char *file);

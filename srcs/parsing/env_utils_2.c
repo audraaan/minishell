@@ -59,15 +59,15 @@ t_token	*process_word_token(t_data *data, t_token *current, t_token *next)
 	char	*expanded;
 	char	*cleaned;
 
-	if (token_contains_quotes(current->str) && current->str[0])
+	if (current->q_type == 1)
 		return (next);
 	expanded = expand_env_var(data, current->str);
 	if (!expanded)
 		return (next);
+	if (current->q_type != 1)
+		return (handle_simple_expansion(current, expanded, next));
 	cleaned = remove_outer_quotes(expanded);
 	free(expanded);
-	if (!cleaned)
-		return (next);
 	if (needs_retokenization(cleaned))
 		return (handle_retokenization(data, current, cleaned, next));
 	else
@@ -89,101 +89,3 @@ void	expand_tokens(t_data *data)
 			current = next;
 	}
 }
-
-//void expand_tokens(t_data *data)
-//{
-//	t_token *current = data->token;
-//	t_token *next;
-//	char *expanded;
-//	char *cleaned;
-//
-//	while (current)
-//	{
-//		next = current->next;
-//		if (current->type == WORD && current->str)
-//		{
-//			if (token_contains_quotes(current->str) && current->str[0])
-//			{
-//				current = next;
-//				continue;
-//			}
-//			expanded = expand_env_var(data, current->str);
-//			if (!expanded)
-//			{
-//				current = next;
-//				continue;
-//			}
-//			cleaned = remove_quotes(expanded);
-//			free(expanded);
-//			if (!cleaned)
-//			{
-//				current = next;
-//				continue;
-//			}
-//			if (needs_retokenization(cleaned))
-//			{
-//				t_token *new_tokens = tokenize(data, cleaned);
-//				free(cleaned);
-//				if (new_tokens)
-//				{
-//					replace_token_with_list(&data->token, current, new_tokens);
-//					current = new_tokens;
-//					while (current && current->next)
-//						current = current->next;
-//					if (current)
-//						current = current->next;
-//					else
-//						current = NULL;
-//				}
-//				else
-//				{
-//					free(current->str);
-//					current->str = ft_strdup("");
-//					current = next;
-//				}
-//			}
-//			else
-//			{
-//				free(current->str);
-//				current->str = cleaned;
-//				current = next;
-//			}
-//		}
-//		else
-//		{
-//			current = next;
-//		}
-//	}
-//}
-
-//void	expand_tokens(t_data *data)
-//{
-//	t_token	*current;
-//	char	*expanded;
-////	char	*quotes_removed;
-//
-//	current = data->token;
-//	while (current)
-//	{
-//		if (current->type == WORD && current->str)
-//		{
-//			expanded = expand_env_var(data, current->str);
-//			if (!expanded)
-//			{
-//				current = current->next;
-//				continue ;
-//			}
-////			quotes_removed = remove_quotes(expanded);
-////			free(expanded);
-////			if (!quotes_removed)
-////			{
-////				current = current->next;
-////				continue ;
-////			}
-//			free(current->str);
-////			current->str = quotes_removed;
-//			current->str = expanded;
-//		}
-//		current = current->next;
-//	}
-//}

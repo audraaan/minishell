@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   parse_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/27 23:34:00 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/23 17:00:13 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,9 @@ extern void	expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
 	name = ft_substr(str, start, (*i) - start);
 	if (!name || name[0] == '\0')
 	{
-		*res = join_and_free(*res, tmp);
+		tmp = ft_strdup("$");
+		if (tmp)
+			*res = join_and_free(*res, tmp);
 		return (free(name));
 	}
 	value = get_env_value(env_cpy, name);
@@ -132,46 +134,3 @@ t_list	*create_env_node(char *env_var, t_list **env_cpy)
 	}
 	return (ft_lstnew(name, content));
 }
-
-//void expend_env_var_third(int *i, char *str, t_list *env_cpy, char **res)
-//{
-//	char *name;
-//	char *value;
-//	char *tmp;
-//	char *new_res;
-//	int start;
-
-//	(*i)++;
-//	start = *i;
-//	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-//		(*i)++;
-//	name = ft_substr(str, start, *i - start);
-//	if (!name || name[0] == '\0')
-//	{
-//		tmp = ft_strdup("$");
-//		if (tmp)
-//		{
-//			new_res = join_and_free(*res, tmp);
-//			if (new_res)
-//				*res = new_res;
-//			else
-//				free(tmp);
-//		}
-//		free(name);
-//		return ;
-//	}
-//	value = get_env_value(env_cpy, name);
-//	if (value)
-//	{
-//		tmp = ft_strdup(value);
-//		if (tmp)
-//		{
-//			new_res = join_and_free(*res, tmp);
-//			if (!new_res)
-//				free(tmp);
-//			else
-//				*res = new_res;
-//		}
-//	}
-//	free(name);
-//}

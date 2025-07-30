@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/28 12:12:01 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 23:47:07 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*search_path(char *cmd, char **path, int *error)
 	char	*path_tmp;
 
 	i = -1;
-	while (path && path[++i])
+	while (path && path[++i] && cmd && *cmd)
 	{
 		path_tmp = ft_strjoin(path[i], "/");
 		if (!path_tmp)
@@ -61,22 +61,6 @@ char	*search_path(char *cmd, char **path, int *error)
 			return (NULL);
 	}
 	return (NULL);
-}
-
-int	ft_status_path(char *cmd, int *error, char *path)
-{
-	if (*error == 126)
-	{
-		if (path && *path)
-			free(path);
-		return (ft_error_msg(cmd, "Permission denied"));
-	}
-	else if (*error == 127 || !path)
-	{
-		*error = 127;
-		return (ft_error_msg(cmd, "command not found"));
-	}
-	return (0);
 }
 
 char	*ft_path(t_cmd *cmd, t_list *env, int *error)
@@ -97,10 +81,40 @@ char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 			path = search_path(cmd_tab, lst_path, error);
 			ft_free_dtab(lst_path);
 			if (ft_status_path(cmd_tab, error, path))
+			{
+				if (path && *path)
+					free(path);
 				return (NULL);
+			}
 		}
 	}
 	return (path);
+}
+
+int	ft_status_path(char *cmd, int *error, char *path)
+{
+	DIR	*directory;
+
+	if (*error == 0)
+	{
+		directory = opendir(cmd);
+		if (directory)
+		{
+			closedir(directory);
+			*error = 126;
+			return (ft_error_msg(cmd, "Is a directory"));
+		}
+	}
+	if (*error == 126)
+	{
+		return (ft_error_msg(cmd, "Permission denied"));
+	}
+	else if (*error == 127 || !path)
+	{
+		*error = 127;
+		return (ft_error_msg(cmd, "command not found"));
+	}
+	return (0);
 }
 
 char	*ft_absolute_path(char *cmd, int *error)
@@ -117,6 +131,7 @@ char	*ft_absolute_path(char *cmd, int *error)
 				ft_error_msg(cmd, "Is a directory");
 				closedir(directory);
 				*error = 126;
+				return (NULL);
 			}
 			else
 				return (ft_strdup(cmd));
