@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 22:27:17 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 08:43:47 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,4 +105,17 @@ int	check_synthax(t_data *data)
 		token = token->next;
 	}
 	return (0);
+}
+
+int	ft_lstlen(t_list *lst)
+{
+	size_t i;
+
+	i = 0;
+	while (lst)
+	{
+		i++;
+		lst = lst->next;
+	}
+	return (i);
 }

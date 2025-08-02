@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/30 23:38:27 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 08:43:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ int					ft_child(t_cmd *cmd, char *path_cmd, t_data *data);
 int					ft_failed_execve(t_data *data, char **cmd, char **env,
 						char *path_cmd);
 int					ft_wait(t_data *data, pid_t pid);
+void				is_cmd_null(t_cmd *cmd, t_data *data);
 
 // handle_builtins
 int					ft_child_builtins(t_cmd *cmd, t_data *data);

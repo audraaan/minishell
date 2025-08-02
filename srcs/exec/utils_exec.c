@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:09:11 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/28 11:10:58 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 08:43:40 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,15 +74,25 @@ int	ft_is_exec(char *path_cmd, int *error)
 	return (0);
 }
 
-int	ft_lstlen(t_list *lst)
-{
-	size_t	i;
 
+void	is_cmd_null(t_cmd *cmd, t_data *data)
+{
+	t_cmd *tmp;
+	int i;
+
+	tmp = cmd;
 	i = 0;
-	while (lst)
-	{
+	while (!tmp->file && tmp->cmd_param && tmp->cmd_param[i]
+		&& !*(tmp->cmd_param[i]))
 		i++;
-		lst = lst->next;
+	if (!tmp->file && (!tmp->cmd_param || !tmp->cmd_param[i]))
+	{
+		if (data->fd[0] != -1)
+			close(data->fd[0]);
+		if (data->fd[1] != -1)
+			close(data->fd[1]);
+		if (data->prev_fd != -1)
+			close(data->prev_fd);
+		ft_free_and_exit(*data, NULL);
 	}
-	return (i);
 }

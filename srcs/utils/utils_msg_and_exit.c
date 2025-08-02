@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:13:44 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/27 23:45:15 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 04:21:17 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_perror_msg(char *msg, int error)
 int	ft_error_msg(char *arg, char *msg)
 {
 	ft_putstr_fd("minishell: ", 2);
-	if (arg)
+	if (arg && *arg)
 	{
 		ft_putstr_fd(arg, 2);
 		ft_putstr_fd(": ", 2);
