@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/29 18:15:01 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/03 23:44:43 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	redirect_outfile(char *file)
 {
 	int	outfile;
 
-	outfile = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	outfile = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0622);
 	if (outfile == -1)
 		return (ft_perror_msg(file, 1));
 	if (dup2(outfile, STDOUT_FILENO) == -1)
@@ -68,7 +68,7 @@ int	redirect_outfile_append(char *file)
 {
 	int	outfile;
 
-	outfile = open(file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	outfile = open(file, O_CREAT | O_WRONLY | O_APPEND, 0622);
 	if (outfile == -1)
 		return (ft_perror_msg(file, 1));
 	if (dup2(outfile, STDOUT_FILENO) == -1)
