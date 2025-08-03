@@ -14,14 +14,11 @@
 
 char	*expand_value(t_data *data, char *str)
 {
-	char	*no_quotes;
 	char	*expanded;
+	t_token *current;
 
-	no_quotes = remove_outer_quotes(str);
-	if (!no_quotes)
-		return (NULL);
-	expanded = expand_env_var(data, no_quotes);
-	free(no_quotes);
+	current = data->token;
+	expanded = expand_env_var(data, str, &current);
 	if (!expanded)
 		return (NULL);
 	return (expanded);

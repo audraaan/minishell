@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/02 08:43:47 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 22:03:46 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	check_synthax(t_data *data)
 
 int	ft_lstlen(t_list *lst)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (lst)
@@ -118,4 +118,23 @@ int	ft_lstlen(t_list *lst)
 		lst = lst->next;
 	}
 	return (i);
+}
+
+int	er_msg_free_tok(char *arg, char *msg, t_token **token)
+{
+	char *tmp;
+	int res;
+
+	tmp = NULL;
+	if (arg)
+		tmp = ft_strdup(arg);
+	if (token)
+	{
+		free_tokens(token);
+		token = NULL;
+	}
+	res = ft_error_msg(tmp, msg);
+	if (tmp && *tmp)
+		free(tmp);
+	return (res);
 }

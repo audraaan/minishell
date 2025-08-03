@@ -22,62 +22,43 @@ void	manage_exit_status(t_data **data, int *i, char *str, char **res)
 	(*i) += 2;
 }
 
-int	needs_retokenization(char *str)
+void	replace_current_token_with_list(t_data *data, t_token **current, t_token *new_tokens)
 {
-	int	i;
-	int	quotes;
+	t_token *prev;
+	t_token *next_token;
+	t_token *last_new;
 
-	i = 0;
-	quotes = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' && quotes != 2)
-		{
-			if (quotes == 1)
-				quotes = 0;
-			else
-				quotes = 1;
-		}
-		else if (str[i] == '\"' && quotes != 1)
-		{
-			if (quotes == 2)
-				quotes = 0;
-			else
-				quotes = 2;
-		}
-		else if (!quotes && (is_operator(str[i]) || ft_isspace(str[i++])))
-			return (1);
-	}
-	return (0);
-}
-
-void	replace_token_with_list(t_token **token_list, t_token *to_replace,
-								t_token *new_tokens)
-{
-	t_token	*prev;
-	t_token	*current;
-	t_token	*last_new;
-
-	prev = NULL;
-	current = *token_list;
-	while (current && current != to_replace)
-	{
-		prev = current;
-		current = current->next;
-	}
-	if (!current)
-		return ;
+	prev = find_prev_token(data->token, *current);
+	next_token = (*current)->next;
+	free((*current)->str);
+	free(*current);
 	last_new = new_tokens;
 	while (last_new && last_new->next)
 		last_new = last_new->next;
 	if (prev)
 		prev->next = new_tokens;
 	else
-		*token_list = new_tokens;
+		data->token = new_tokens;
 	if (last_new)
-		last_new->next = current->next;
-	free(current->str);
-	free(current);
+		last_new->next = next_token;
+	*current = new_tokens;
+}
+
+t_token	*find_prev_token(t_token *head, t_token *token)
+{
+	t_token	*current;
+
+	if (!head || head == token)
+		return NULL;
+
+	current = head;
+	while (current && current->next)
+	{
+		if (current->next == token)
+			return current;
+		current = current->next;
+	}
+	return (NULL);
 }
 
 int	token_contains_quotes(char *str)

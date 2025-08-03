@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:09:11 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/02 08:43:40 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 21:30:11 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,25 +74,31 @@ int	ft_is_exec(char *path_cmd, int *error)
 	return (0);
 }
 
-
 void	is_cmd_null(t_cmd *cmd, t_data *data)
 {
-	t_cmd *tmp;
-	int i;
+	t_cmd	*t;
+	int		i;
 
-	tmp = cmd;
+	t = cmd;
 	i = 0;
-	while (!tmp->file && tmp->cmd_param && tmp->cmd_param[i]
-		&& !*(tmp->cmd_param[i]))
+	while (!t->file && t->cmd_param && t->cmd_param[i] && !*(t->cmd_param[i]))
 		i++;
-	if (!tmp->file && (!tmp->cmd_param || !tmp->cmd_param[i]))
+	if (!t->file && (!t->cmd_param || !t->cmd_param[0]))
+		close_and_free_all(data);
+	if (!i)
+		return ;
+	if (data->prev_fd != -1)
 	{
-		if (data->fd[0] != -1)
-			close(data->fd[0]);
-		if (data->fd[1] != -1)
-			close(data->fd[1]);
-		if (data->prev_fd != -1)
-			close(data->prev_fd);
-		ft_free_and_exit(*data, NULL);
+		dup2(data->prev_fd, STDIN_FILENO);
+		close(data->prev_fd);
 	}
+	if (cmd->next)
+	{
+		close(data->fd[0]);
+		dup2(data->fd[1], STDOUT_FILENO);
+		close(data->fd[1]);
+	}
+	if (cmd->cmd_param[0])
+		close(data->fd[0]);
+	ft_free_and_exit(*data, NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/02 08:43:23 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/02 22:02:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,13 +121,15 @@ int					trickster(int *i);
 int					er_msg_free_tok(char *arg, char *msg, t_token **token);
 
 // env
+
 t_list				*cpy_env(char **env, t_data *data);
-char				*expand_env_var(t_data *data, char *str);
 t_list				*create_env_node(char *env_var, t_list **env_cpy);
-void				expand_env_var_bis(t_data *data, int *quotes, char *str,
-						char **res);
-void				expend_env_var_third(int *i, char *str, t_list *env_cpy,
-						char **res);
+// char				*expand_env_var(t_data *data, char *str);
+// void				expand_env_var_bis(t_data *data, int *quotes, char *str,
+//						char **res);
+// void				expend_env_var_third(int *i, char *str, t_list *env_cpy,
+//						char **res);
+char				*expand_env_var_void(t_data *data, char *str);
 // env_utils
 char				*char_to_str(char c);
 char				*join_and_free(char *s1, char *s2);
@@ -137,7 +139,6 @@ int					check_unclosed_quotes(int quotes);
 void				expand_tokens(t_data *data);
 t_token				*handle_retokenization(t_data *data, t_token *current,
 						char *cleaned, t_token *next);
-t_token				*advance_after_replacement(t_token *new_tokens);
 t_token				*handle_simple_expansion(t_token *current, char *cleaned,
 						t_token *next);
 t_token				*process_word_token(t_data *data, t_token *current,
@@ -145,11 +146,11 @@ t_token				*process_word_token(t_data *data, t_token *current,
 // env_utils_3
 void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
-int					needs_retokenization(char *str);
-void				replace_token_with_list(t_token **token_list,
-						t_token *to_replace, t_token *new_tokens);
+void				replace_current_token_with_list(t_data *data,
+						t_token **current, t_token *new_tokens);
 int					token_contains_quotes(char *str);
 char				*remove_outer_quotes(char *str);
+t_token				*find_prev_token(t_token *head, t_token *token);
 // env_utils_4
 int					handle_quote(int *i, int *quotes, char *str);
 int					exported(t_list **env_cpy, char *arg, t_data *data);
@@ -263,6 +264,7 @@ void				ft_free_and_exit(t_data data, char *path_cmd);
 int					ft_str_isdigit(char *str);
 int					ft_free_close_msg(char *msg1, char *msg2, int fd,
 						char *read);
+void				close_and_free_all(t_data *data);
 
 // ft_free
 void				ft_free_all_lst(t_list *lst);
@@ -285,5 +287,12 @@ void				ft_print_tab(char **tab);
 void				sigint_handler(int sig);
 void				set_signals_prompt(void);
 int					do_nothing(void);
+
+void				expand_env_var_bis(t_data *data, int *quotes, char *str,
+						char **res, t_token **current, int *retokenized);
+extern void			expend_env_var_third(int *i, char *str, t_list *env_cpy,
+						t_data *data, char **res, t_token **current,
+						int *quotes, int *retokenized);
+char				*expand_env_var(t_data *data, char *str, t_token **current);
 
 #endif

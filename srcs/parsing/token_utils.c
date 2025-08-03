@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:58:14 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/27 21:21:01 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/16 23:33:22 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	ft_isspace(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v'
-		|| c == '\f');
+	return (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\r' || c == '\v' || c == '\f');
 }
 
 int	is_operator(char c)
@@ -42,23 +42,4 @@ int	trickster(int *i)
 {
 	(*i) += 2;
 	return (1);
-}
-
-int	er_msg_free_tok(char *arg, char *msg, t_token **token)
-{
-	char		*tmp;
-	int			res;
-
-	tmp = NULL;
-	if (arg)
-		tmp = ft_strdup(arg);
-	if (token)
-	{
-		free_tokens(token);
-		token = NULL;
-	}
-	res = ft_error_msg(tmp, msg);
-	if (tmp && *tmp)
-		free(tmp);
-	return (res);
 }
