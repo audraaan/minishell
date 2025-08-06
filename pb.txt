@@ -1,6 +1,19 @@
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~parsing~~~~~~~~~~~~~~~~~~~~~~~~~~~
+exit ""
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~sinio~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ctrl c ds un cat | ls ca fait pas de \n
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~exec~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pb de gestion des *cmd de cmdparam if null pasque ca fork et ca exit pas \\ c ptetre good mtn;
 
  ls|cat Makefile|<wc -l // cette grosse merde pete tout
+
+/bin/echo $HOME
+unset HOME 
+ca leaks 
+
+mais echo builtins nen 
+
+
+
+param_is_quotes \\ faut que je regle ca ca leaks et ca invaldie reaad

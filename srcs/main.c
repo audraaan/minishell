@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/06 17:51:29 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 23:08:45 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ int	main(int ac, char **av, char **env)
 	char	*read;
 	pid_t	pid;
 
+	if (!isatty(STDOUT_FILENO))
+		return (ft_error_msg("STDOUT_FILENO", "not tty"));
 	read = NULL;
 	init_data(&data, ac, av);
 	pid = 0;
