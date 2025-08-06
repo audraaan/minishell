@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 08:22:47 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/02 20:00:27 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/04 01:20:40 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ void	free_iteration_data(t_data *data)
 		data->cmd = NULL;
 	}
 }
-void close_and_free_all(t_data *data)
+
+void	close_and_free_all(t_data *data)
 {
 	if (data->fd[0] != -1)
 		close(data->fd[0]);

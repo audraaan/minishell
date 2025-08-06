@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:55:41 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/27 21:55:45 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/04 01:12:33 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*expand_value(t_data *data, char *str)
 {
 	char	*expanded;
-	t_token *current;
+	t_token	*current;
 
 	current = data->token;
 	expanded = expand_env_var(data, str, &current);

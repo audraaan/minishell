@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:43:04 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/03 23:44:43 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 19:24:56 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,36 +15,38 @@
 int	handle_redir(t_data *data, t_cmd *cmd)
 {
 	t_file	*tmp;
+	int		status;
 
+	status = 0;
 	tmp = cmd->file;
-	return (ft_loop_redir(data, tmp));
+	return (ft_loop_redir(data, tmp, status));
 }
 
-int	ft_loop_redir(t_data *data, t_file *tmp)
+int	ft_loop_redir(t_data *data, t_file *tmp, int status)
 {
 	while (tmp)
 	{
 		if (tmp->type == REDIR_IN || tmp->type == HEREDOC)
 		{
-			data->exit_status = redirect_infile(tmp->filename);
-			if (data->exit_status != 0)
-				return (data->exit_status);
+			status = redirect_infile(tmp->filename);
+			if (status != 0)
+				return (status);
 		}
 		else if (tmp->type == REDIR_OUT)
 		{
-			data->exit_status = redirect_outfile(tmp->filename);
-			if (data->exit_status != 0)
-				return (data->exit_status);
+			status = redirect_outfile(tmp->filename);
+			if (status != 0)
+				return (status);
 		}
 		else if (tmp->type == APPEND)
 		{
-			data->exit_status = redirect_outfile_append(tmp->filename);
-			if (data->exit_status != 0)
-				return (data->exit_status);
+			status = redirect_outfile_append(tmp->filename);
+			if (status != 0)
+				return (status);
 		}
 		tmp = tmp->next;
 	}
-	return (data->exit_status);
+	return (status);
 }
 
 int	redirect_outfile(char *file)

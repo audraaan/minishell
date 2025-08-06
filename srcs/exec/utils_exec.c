@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:09:11 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/04 00:20:12 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/04 00:30:12 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,9 @@ void	is_cmd_null(t_cmd *cmd, t_data *data)
 	while (!t->file && t->cmd_param && t->cmd_param[i] && !*(t->cmd_param[i]))
 		i++;
 	if (!t->file && (!t->cmd_param || !t->cmd_param[i]))
-	{
 		close_and_free_all(data);
-	}
-	if (!i)
-	{
+	if (!i || (t->cmd_param || t->cmd_param[i]))
 		return ;
-	}
 	if (data->prev_fd != -1)
 	{
 		dup2(data->prev_fd, STDIN_FILENO);
@@ -104,9 +100,5 @@ void	is_cmd_null(t_cmd *cmd, t_data *data)
 	}
 	if (cmd->cmd_param[0] && data->fd[0] != -1)
 		close(data->fd[0]);
-	if ((t->cmd_param || t->cmd_param[i]))
-	{
-		return ;
-	}
 	ft_free_and_exit(*data, NULL);
 }

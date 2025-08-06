@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/30 23:47:07 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 19:08:56 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,17 +102,17 @@ int	ft_status_path(char *cmd, int *error, char *path)
 		{
 			closedir(directory);
 			*error = 126;
-			return (ft_error_msg(cmd, "Is a directory"));
+			return (1);
 		}
 	}
 	if (*error == 126)
 	{
-		return (ft_error_msg(cmd, "Permission denied"));
+		return (1);
 	}
 	else if (*error == 127 || !path)
 	{
 		*error = 127;
-		return (ft_error_msg(cmd, "command not found"));
+		return (1);
 	}
 	return (0);
 }
@@ -128,18 +128,13 @@ char	*ft_absolute_path(char *cmd, int *error)
 			directory = opendir(cmd);
 			if (directory)
 			{
-				ft_error_msg(cmd, "Is a directory");
-				closedir(directory);
 				*error = 126;
+				closedir(directory);
 				return (NULL);
 			}
 			else
 				return (ft_strdup(cmd));
 		}
-		if (*error == 126)
-			ft_error_msg(cmd, "Permission denied");
 	}
-	else
-		ft_error_msg(cmd, "command not found");
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/07/27 23:36:33 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/08/06 18:44:19 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,11 +34,14 @@ VPATH				=			srcs:srcs/builtins	\
 
 MAIN_SRCS			=			main 			\
 								utils 			\
+								utils_2			\
 								free_utils		\
 								free_utils_2	\
+								free_utils_3	\
 								temporary_utils	\
 								tokenize 		\
 								token_utils		\
+								token_utils_2	\
 								env 			\
 								env_utils		\
 								env_utils_2		\
@@ -55,13 +58,15 @@ MAIN_SRCS			=			main 			\
 								redirect \
 								handle_builtins \
 								exec \
+								check_cmd \
 								ft_exit \
 								ft_echo \
 								heredoc \
-								utils_exec\
-								utils_msg_and_exit\
-								signal_utils\
+								utils_exec \
+								utils_msg_and_exit \
+								signal_utils \
 								export_utils
+								
 
 SRCS				=			$(addsuffix .c, $(MAIN_SRCS))
 

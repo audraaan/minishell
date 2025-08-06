@@ -12,50 +12,50 @@
 
 #include "minishell.h"
 
-int	ft_isspace(char c)
+void	handle_double_quote(int *quotes, t_quote_type *q_type)
 {
-	return (c == ' ' || c == '\t' || c == '\n'
-		|| c == '\r' || c == '\v' || c == '\f');
-}
-
-int	is_operator(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
-
-char	*get_operator_str(t_token_type type)
-{
-	if (type == HEREDOC)
-		return ("<<");
-	if (type == APPEND)
-		return (">>");
-	if (type == REDIR_IN)
-		return ("<");
-	if (type == REDIR_OUT)
-		return (">");
-	if (type == PIPE)
-		return ("|");
-	return (NULL);
-}
-
-int	trickster(int *i)
-{
-	(*i) += 2;
-	return (1);
-}
-
-int	needs_space_splitting(char *value)
-{
-	int	i;
-
-	i = 0;
-	if (!value)
-		return (0);
-	while (value[i])
+	if ((*quotes) == 2)
 	{
-		if (ft_isspace(value[i]) || is_operator(value[i]))
-			return (1);
-		i++;
+		(*quotes) = 0;
+		*q_type = NO_QUOTES;
 	}
-	return (0);
+	else
+	{
+		(*quotes) = 2;
+		if ((*q_type) == NO_QUOTES)
+			(*q_type) = DOUBLE_QUOTES;
+	}
+}
+
+void	handle_single_quote(int *quotes, t_quote_type *q_type)
+{
+	if ((*quotes) == 1 && *q_type == 1)
+	{
+		(*quotes) = 0;
+		*q_type = NO_QUOTES;
+	}
+	else
+	{
+		(*quotes) = 1;
+		if ((*q_type) == NO_QUOTES)
+			(*q_type) = SINGLE_QUOTES;
+	}
+}
+
+void	handle_simple_expansion(char *value, char **res)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(value);
+	if (tmp)
+		*res = join_and_free(*res, tmp);
+}
+
+void	handle_empty_var(char **res)
+{
+	char	*tmp;
+
+	tmp = ft_strdup("$");
+	if (tmp)
+		*res = join_and_free(*res, tmp);
 }

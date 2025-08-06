@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:24:14 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/02 21:19:20 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 20:38:37 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ int	ft_exec(t_data *data, pid_t pid)
 	{
 		if (cmd->next && pipe(data->fd) == -1)
 			return (ft_error_msg("pipe", "cannot create pipe"));
-		if (ft_cmdlen(data->cmd) == 1 && cmd->cmd_param[0] && is_builtins(cmd)
-			&& !handle_redir(data, cmd) && !builtins(cmd, data))
+		if (is_sigle_builtins(data, cmd))
 			break ;
 		else
 		{
@@ -86,10 +85,7 @@ int	ft_child(t_cmd *cmd, char *path_cmd, t_data *data)
 		dup2(data->fd[1], STDOUT_FILENO);
 		close(data->fd[1]);
 	}
-	if (handle_redir(data, cmd) || !path_cmd)
-		ft_free_and_exit(*data, path_cmd);
-	if (!cmd->cmd_param[0])
-		ft_free_and_exit(*data, path_cmd);
+	check_cmd(data, cmd, path_cmd);
 	env_exec = lst_in_tab(tmp_env);
 	if (!env_exec)
 		return (ft_error_msg("lst_in_tab:", "malloc failed"));

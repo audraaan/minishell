@@ -26,11 +26,28 @@ t_token	*process_word_token(t_data *data, t_token *current, t_token *next)
 	return (next);
 }
 
+int	check_token(t_token **current)
+{
+	int	i;
+
+	i = 0;
+	if (!current || !(*current) || !(*current)->str)
+		return (1);
+	while ((*current)->str[i])
+	{
+		if ((*current)->str[i] != '"' && (*current)->str[i] != '\'')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	expand_tokens(t_data *data)
 {
-	t_token	*current = data->token;
+	t_token	*current;
 	t_token	*next;
 
+	current = data->token;
 	while (current)
 	{
 		next = current->next;
@@ -40,68 +57,3 @@ void	expand_tokens(t_data *data)
 			current = next;
 	}
 }
-
-//t_token	*handle_retokenization(t_data *data, t_token *current,
-//									char *cleaned, t_token *next)
-//{
-//	t_token	*new_tokens;
-//
-//	new_tokens = tokenize(data, cleaned);
-//	free(cleaned);
-//	if (new_tokens)
-//		return (replace_token_with_list(&data->token, current, new_tokens));
-//	else
-//	{
-//		free(current->str);
-//		current->str = ft_strdup("");
-//		return (next);
-//	}
-//}
-//
-//t_token *handle_simple_expansion(t_token *current, char *cleaned, t_token *next)
-//{
-//	free(current->str);
-//	current->str = cleaned;
-//	return next;
-//}
-
-//t_token	*handle_simple_expansion(t_token *current, char *cleaned,
-//										t_token *next)
-//{
-//	free(current->str);
-//	current->str = cleaned;
-//	return (next);
-//}
-//
-//t_token	*process_word_token(t_data *data, t_token *current, t_token *next)
-//{
-//	char	*expanded;
-//
-//	if (current->q_type == 1)
-//		return (next);
-//	expanded = expand_env_var(data, current->str, &current);
-//	if (!expanded)
-//		return (next);
-//	else if (current->q_type == 2)
-//		return (handle_simple_expansion(current, expanded, next));
-////	if (needs_retokenization(expanded, &current->q_type))
-////		return (handle_retokenization(data, current, expanded, next));
-//	else
-//		return (handle_simple_expansion(current, expanded, next));
-//}
-//
-//void	expand_tokens(t_data *data)
-//{
-//	t_token	*current;
-//	t_token	*next;
-//
-//	current = data->token;
-//	while (current)
-//	{
-//		next = current->next;
-//		if (current->type == WORD && current->str)
-//			current = process_word_token(data, current, next);
-//		else
-//			current = next;
-//	}
-//}

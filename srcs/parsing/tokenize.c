@@ -14,8 +14,8 @@
 
 char	*extract_word(char *str, int *i, t_quote_type *q_type)
 {
-	int	start;
-	int	quotes;
+	int		start;
+	int		quotes;
 	char	*res;
 
 	start = *i;
@@ -24,33 +24,9 @@ char	*extract_word(char *str, int *i, t_quote_type *q_type)
 				&& !ft_isspace(str[*i]))))
 	{
 		if (str[*i] == '\'' && quotes != 2 && *q_type != 2)
-		{
-			if (quotes == 1 && *q_type == 1)
-			{
-				quotes = 0;
-				*q_type = NO_QUOTES;
-			}
-			else
-			{
-				quotes = 1;
-				if ((*q_type) == NO_QUOTES)
-				(*q_type) = SINGLE_QUOTES;
-			}
-		}
+			handle_single_quote(&quotes, q_type);
 		else if (str[*i] == '\"' && quotes != 1 && *q_type != 1)
-		{
-			if (quotes == 2)
-			{
-				quotes = 0;
-				*q_type = NO_QUOTES;
-			}
-			else
-			{
-				quotes = 2;
-				if ((*q_type) == NO_QUOTES)
-					(*q_type) = DOUBLE_QUOTES;
-			}
-		}
+			handle_double_quote(&quotes, q_type);
 		(*i)++;
 	}
 	res = ft_substr(str, start, *i - start);
@@ -98,6 +74,7 @@ t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type)
 		return (NULL);
 	}
 	new_token->type = type;
+	new_token->retokenized = 0;
 	new_token->q_type = *q_type;
 	new_token->next = NULL;
 	return (new_token);
@@ -134,10 +111,10 @@ t_token	*tokenize_bis(int *i, char *str, t_quote_type *q_type)
 
 t_token	*tokenize(t_data *data, char *str)
 {
-	t_token	**current;
-	t_token	*new_token;
+	t_token			**current;
+	t_token			*new_token;
 	t_quote_type	q_type;
-	int		i;
+	int				i;
 
 	i = 0;
 	q_type = NO_QUOTES;

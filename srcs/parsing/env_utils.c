@@ -51,12 +51,39 @@ char	*get_env_value(t_list *env, char *name)
 	return (NULL);
 }
 
-int	check_unclosed_quotes(int quotes)
+int	check_unclosed_quotes(t_quote_type q_type)
 {
-	if (quotes != 0)
+	if (q_type != 0)
 	{
-		ft_putstr_fd("minishell: syntax error: quotes unclosed\n", 2);
 		return (1);
 	}
 	return (0);
+}
+
+t_list	*create_env_node(char *env_var, t_list **env_cpy)
+{
+	int		j;
+	char	*name;
+	char	*content;
+
+	j = 0;
+	while (env_var[j] && env_var[j] != '=')
+		j++;
+	name = ft_substr(env_var, 0, j);
+	if (!name)
+	{
+		free_env(*env_cpy);
+		return (NULL);
+	}
+	if (env_var[j] == '=')
+		content = ft_strdup(&env_var[j + 1]);
+	else
+		content = NULL;
+	if (env_var[j] == '=' && !content)
+	{
+		free(name);
+		free_env(*env_cpy);
+		return (NULL);
+	}
+	return (ft_lstnew(name, content));
 }

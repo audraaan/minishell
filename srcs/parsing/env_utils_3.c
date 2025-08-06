@@ -22,12 +22,15 @@ void	manage_exit_status(t_data **data, int *i, char *str, char **res)
 	(*i) += 2;
 }
 
-void	replace_current_token_with_list(t_data *data, t_token **current, t_token *new_tokens)
+void	replace_current_token_with_list(t_data *data, t_token **current,
+										t_token *new_tokens)
 {
-	t_token *prev;
-	t_token *next_token;
-	t_token *last_new;
+	t_token	*prev;
+	t_token	*next_token;
+	t_token	*last_new;
+	int		was_retokenized;
 
+	was_retokenized = (*current)->retokenized;
 	prev = find_prev_token(data->token, *current);
 	next_token = (*current)->next;
 	free((*current)->str);
@@ -42,6 +45,7 @@ void	replace_current_token_with_list(t_data *data, t_token **current, t_token *n
 	if (last_new)
 		last_new->next = next_token;
 	*current = new_tokens;
+	(*current)->retokenized = was_retokenized;
 }
 
 t_token	*find_prev_token(t_token *head, t_token *token)
@@ -49,13 +53,12 @@ t_token	*find_prev_token(t_token *head, t_token *token)
 	t_token	*current;
 
 	if (!head || head == token)
-		return NULL;
-
+		return (NULL);
 	current = head;
 	while (current && current->next)
 	{
 		if (current->next == token)
-			return current;
+			return (current);
 		current = current->next;
 	}
 	return (NULL);
