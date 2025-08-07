@@ -1,19 +1,65 @@
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~parsing~~~~~~~~~~~~~~~~~~~~~~~~~~~
-exit ""
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~sinio~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ctrl c ds un cat | ls ca fait pas de \n
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~exec~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pb de gestion des *cmd de cmdparam if null pasque ca fork et ca exit pas \\ c ptetre good mtn;
-
- ls|cat Makefile|<wc -l // cette grosse merde pete tout
-
-/bin/echo $HOME
-unset HOME 
-ca leaks 
-
-mais echo builtins nen 
+le 1 et 2 c sur faut qu on les resou le 3 est pas mal important aussi jpense les autres on s en balec un peu 
 
 
+1) 
+export a="ls -l | cat"
+$a
 
-param_is_quotes \\ faut que je regle ca ca leaks et ca invaldie reaad
+bash :
+ls: cannot access '|': No such file or directory
+ls: cannot access 'cat': No such file or directory
+
+minish :
+total 676
+-rwxr-xr-x 1 alarroye 2024_lyon 541060 Aug  6 23:12 docutile.pdf
+drwxr-xr-x 3 alarroye 2024_lyon     38 Aug  6 23:12 includes
+-rw-r--r-- 1 alarroye 2024_lyon   2684 Aug  6 23:12 Makefile
+-rwxr-xr-x 1 alarroye 2024_lyon 130816 Aug  8 01:15 minishell
+drwxr-xr-x 2 alarroye 2024_lyon   4096 Aug  8 01:15 obj
+-rw-r--r-- 1 alarroye 2024_lyon    540 Aug  8 01:13 pb.txt
+-rw-r--r-- 1 alarroye 2024_lyon   2220 Aug  6 23:12 readline.supp
+drwxr-xr-x 6 alarroye 2024_lyon     97 Aug  6 23:12 srcs
+
+
+2)
+avec env -i + unset PWD OLDPWD SHLVL ca segfault alors qu avant c etait regler
+
+
+3)
+export a="|<>"
+$a
+
+bash : 
+|<>: command not found
+
+minish :
+>: No such file or directory
+
+4)
+export ho="ho hello world"
+ec$ho
+
+bash :
+hello world
+
+minish :
+minishell: ho: command not found
+
+
+5)
+export a="a            b         c"
+echo $a
+
+bash et minish :
+a b c
+
+MAIS
+echo "$a"
+
+bash :
+a            b         c
+minish :
+a b c
+
+
+
