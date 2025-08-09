@@ -6,21 +6,50 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/07/24 08:00:08 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/09 17:31:08 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int	ft_not_env(t_list **env, char **a, t_data *data)
+{
+	char	*name;
+	char	*content;
+	int		len;
+
+	if (check_params_env(a[1]))
+	{
+		data->exit_status = ft_error_msg(a[1],
+				"not a valid identifier for export");
+		return (1);
+	}
+	if (ft_strchr(a[1], '='))
+	{
+		len = ft_strlen(ft_strchr(a[1], '='));
+		name = ft_strndup(a[1], ft_strlen(a[1]) - len);
+		content = ft_strdup((ft_strchr(a[1], '=') + 1));
+	}
+	else
+	{
+		name = ft_strdup(a[1]);
+		content = NULL;
+	}
+	env[0] = create_env_node_from_parts(name, content);
+	a++;
+	return (0);
+}
 int	ft_export(t_list **env, char **a, t_data *data)
 {
 	int		i;
 	t_list	*tmp;
 
-	tmp = *env;
 	i = 0;
-	if (!a || !a[1])
+	if (!a || !(*a) || !a[1])
 		return (export_not_args(env));
+	if (!*env && ft_not_env(env, a, data))
+		return (data->exit_status);
+	tmp = *env;
 	while (a && a[++i])
 	{
 		if (check_params_env(a[i]))
@@ -99,6 +128,8 @@ int	export_not_args(t_list **env)
 {
 	t_list	*sorted;
 
+	if (!(*env))
+		return (0);
 	sorted = sort_list(*env);
 	while (sorted)
 	{

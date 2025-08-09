@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:55:41 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/04 01:12:33 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/09 17:31:35 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,22 @@ t_list	*create_env_node_from_parts(char *name, char *content)
 	if (!node)
 		return (NULL);
 	node->name = ft_strdup(name);
-	node->content = ft_strdup(content);
+	if (content)
+		node->content = ft_strdup(content);
+	else
+		node->content = NULL;
 	node->next = NULL;
-	if (!node->name || !node->content)
+	if (content && (!node->name || !node->content))
 	{
 		free(node->name);
 		free(node->content);
 		free(node);
 		return (NULL);
 	}
-	free(name);
-	free(content);
+	if (name)
+		free(name);
+	if (content)
+		free(content);
 	return (node);
 }
 
