@@ -17,9 +17,10 @@ void	handle_double_quote(int *quotes, t_quote_type *q_type)
 	if ((*quotes) == 2)
 	{
 		(*quotes) = 0;
-		*q_type = NO_QUOTES;
+		if ((*q_type) == DOUBLE_QUOTES)
+			(*q_type) = NO_QUOTES;
 	}
-	else
+	else if ((*quotes) == 0)
 	{
 		(*quotes) = 2;
 		if ((*q_type) == NO_QUOTES)
@@ -29,12 +30,13 @@ void	handle_double_quote(int *quotes, t_quote_type *q_type)
 
 void	handle_single_quote(int *quotes, t_quote_type *q_type)
 {
-	if ((*quotes) == 1 && *q_type == 1)
+	if ((*quotes) == 1)
 	{
 		(*quotes) = 0;
-		*q_type = NO_QUOTES;
+		if ((*q_type) == SINGLE_QUOTES)
+			(*q_type) = NO_QUOTES;
 	}
-	else
+	else if ((*quotes) == 0)
 	{
 		(*quotes) = 1;
 		if ((*q_type) == NO_QUOTES)

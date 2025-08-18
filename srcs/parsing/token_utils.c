@@ -53,7 +53,7 @@ int	needs_space_splitting(char *value)
 		return (0);
 	while (value[i])
 	{
-		if (ft_isspace(value[i]) || is_operator(value[i]))
+		if (ft_isspace(value[i]))
 			return (1);
 		i++;
 	}

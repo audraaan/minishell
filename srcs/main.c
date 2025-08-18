@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/06 23:08:45 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/18 06:38:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,18 +67,18 @@ int	main(int ac, char **av, char **env)
 
 char	*ft_loop(t_data *data, pid_t pid, char *read)
 {
-	char	*line;
+	//char	*line;
 
 	ft_dup_std(data);
-	// read = readline("minishell> ");
-	if (isatty(fileno(stdin)))
-		read = readline("minishell> ");
-	else
-	{
-		line = get_next_line(fileno(stdin));
-		read = ft_strtrim(line, "\n");
-		free(line);
-	}
+	 read = readline("minishell> ");
+	//if (isatty(fileno(stdin)))
+		//read = readline("minishell> ");
+	//else
+	//{
+		//line = get_next_line(fileno(stdin));
+		//read = ft_strtrim(line, "\n");
+		//free(line);
+	//}
 	if (g_exit_status)
 		data->exit_status = 130;
 	g_exit_status = 0;
@@ -106,6 +106,7 @@ void	update_data(t_data *data, pid_t pid)
 {
 	int	is_heredoc;
 
+	// print_tokens(data->token);
 	expand_tokens(data);
 	// print_tokens(data->token);
 	*data = cmd_builder(data);

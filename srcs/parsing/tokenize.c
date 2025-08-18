@@ -3,14 +3,68 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/18 03:11:07 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	check_str(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str || !str[0])
+		return (1);
+	while (str[i])
+	{
+		if (str[i] != '"' && str[i] != '\'')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+static void	handle_double_quote_tok(int *quotes, t_quote_type *q_type, char *str)
+{
+	if ((*quotes) == 2)
+	{
+		(*quotes) = 0;
+		if ((*q_type) == DOUBLE_QUOTES || !check_str(str))
+			(*q_type) = NO_QUOTES;
+	}
+	else if ((*quotes) == 0)
+	{
+		(*quotes) = 2;
+		if ((*q_type) == NO_QUOTES)
+			(*q_type) = DOUBLE_QUOTES;
+	}
+	else if ((*quotes) == 1)
+	{
+	}
+}
+
+static void	handle_single_quote_tok(int *quotes, t_quote_type *q_type, char *str)
+{
+	if ((*quotes) == 1)
+	{
+		(*quotes) = 0;
+		if ((*q_type) == SINGLE_QUOTES || !check_str(str))
+			(*q_type) = NO_QUOTES;
+	}
+	else if ((*quotes) == 0)
+	{
+		(*quotes) = 1;
+		if ((*q_type) == NO_QUOTES)
+			(*q_type) = SINGLE_QUOTES;
+	}
+	else if ((*quotes) == 2)
+	{
+	}
+}
 
 char	*extract_word(char *str, int *i, t_quote_type *q_type)
 {
@@ -23,10 +77,10 @@ char	*extract_word(char *str, int *i, t_quote_type *q_type)
 	while (str[*i] && (quotes || (!is_operator(str[*i])
 				&& !ft_isspace(str[*i]))))
 	{
-		if (str[*i] == '\'' && quotes != 2 && *q_type != 2)
-			handle_single_quote(&quotes, q_type);
-		else if (str[*i] == '\"' && quotes != 1 && *q_type != 1)
-			handle_double_quote(&quotes, q_type);
+		if (str[*i] == '\'' && quotes != 2)
+			handle_single_quote_tok(&quotes, q_type, str);
+		else if (str[*i] == '\"' && quotes != 1)
+			handle_double_quote_tok(&quotes, q_type, str);
 		(*i)++;
 	}
 	res = ft_substr(str, start, *i - start);

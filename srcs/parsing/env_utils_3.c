@@ -37,7 +37,12 @@ void	replace_current_token_with_list(t_data *data, t_token **current,
 	free(*current);
 	last_new = new_tokens;
 	while (last_new && last_new->next)
+	{
+		last_new->retokenized = 1;
 		last_new = last_new->next;
+	}
+	if (last_new)
+		last_new->retokenized = 1;
 	if (prev)
 		prev->next = new_tokens;
 	else
@@ -78,19 +83,19 @@ int	token_contains_quotes(char *str)
 	return (0);
 }
 
-char	*remove_outer_quotes(char *str)
-{
-	int	len;
-
-	len = ft_strlen(str);
-	if (len < 2)
-		return (ft_strdup(str));
-	if ((str[0] == '"' && str[len - 1] == '"')
-		|| (str[0] == '\'' && str[len - 1] == '\''))
-	{
-		if (len == 2)
-			return (ft_strdup(""));
-		return (ft_substr(str, 1, len - 2));
-	}
-	return (ft_strdup(str));
-}
+//char	*remove_outer_quotes(char *str)
+//{
+//	int	len;
+//
+//	len = ft_strlen(str);
+//	if (len < 2)
+//		return (ft_strdup(str));
+//	if ((str[0] == '"' && str[len - 1] == '"')
+//		|| (str[0] == '\'' && str[len - 1] == '\''))
+//	{
+//		if (len == 2)
+//			return (ft_strdup(""));
+//		return (ft_substr(str, 1, len - 2));
+//	}
+//	return (ft_strdup(str));
+//}

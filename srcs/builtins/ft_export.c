@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/09 17:31:08 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/18 03:36:12 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	ft_not_env(t_list **env, char **a, t_data *data)
 	char	*name;
 	char	*content;
 	int		len;
-
 	if (check_params_env(a[1]))
 	{
 		data->exit_status = ft_error_msg(a[1],
@@ -39,6 +38,7 @@ int	ft_not_env(t_list **env, char **a, t_data *data)
 	a++;
 	return (0);
 }
+
 int	ft_export(t_list **env, char **a, t_data *data)
 {
 	int		i;
@@ -81,7 +81,7 @@ void	ft_export_bis(t_list *tmp, t_data *data, char **a, int *i)
 		name = ft_strndup(a[(*i)], name_len);
 		if (!name)
 			ft_error_msg("ft_strndup", "malloc failed");
-		value = expand_value(data, equal_pos + 1);
+		value = ft_strdup(equal_pos + 1);
 		if (!value)
 		{
 			free(name);
@@ -148,7 +148,6 @@ int	ft_change_var(t_list **env, char *a, t_data *data)
 	int		pos;
 	t_list	*tmp;
 	char	*value;
-	char	*clean_value;
 	char	*equal_pos;
 
 	equal_pos = ft_strchr(a, '=');
@@ -158,15 +157,10 @@ int	ft_change_var(t_list **env, char *a, t_data *data)
 	pos = exist(env, a);
 	while (pos--)
 		tmp = tmp->next;
-	value = expand_value(data, equal_pos + 1);
-	if (value)
-		clean_value = remove_outer_quotes(value);
-	if (!value || !clean_value)
+	value = ft_strdup(equal_pos + 1);
+	if (!value)
 		return (ft_error_msg("", "malloc failed"));
-	free(value);
 	free(tmp->content);
-	tmp->content = clean_value;
-	if (!tmp->content)
-		return (ft_error_msg("", "malloc failed"));
+	tmp->content = value;
 	return (0);
 }

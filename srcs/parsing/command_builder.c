@@ -63,7 +63,7 @@ t_cmd	*cmd_list(t_token *token)
 {
 	t_cmd	*head;
 	t_cmd	*current;
-	t_token	*current_token;
+	// t_token	*current_token;
 	int		nb_pipe;
 	int		i;
 
@@ -71,7 +71,7 @@ t_cmd	*cmd_list(t_token *token)
 	nb_pipe = 0;
 	head = NULL;
 	current = NULL;
-	current_token = token;
+	// current_token = token;
 	cmd_count(token, &nb_pipe);
 	while (i <= nb_pipe)
 	{

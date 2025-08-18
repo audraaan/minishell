@@ -6,23 +6,23 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:55:41 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/09 17:31:35 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/18 03:33:52 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*expand_value(t_data *data, char *str)
-{
-	char	*expanded;
-	t_token	*current;
-
-	current = data->token;
-	expanded = expand_env_var(data, str, &current);
-	if (!expanded)
-		return (NULL);
-	return (expanded);
-}
+//char	*expand_value(t_data *data, char *str)
+//{
+//	char	*expanded;
+//	t_token	*current;
+//
+//	current = data->token;
+//	expanded = expand_env_var(data, str, &current);
+//	if (!expanded)
+//		return (NULL);
+//	return (expanded);
+//}
 
 t_list	*create_env_node_from_parts(char *name, char *content)
 {

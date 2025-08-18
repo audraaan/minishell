@@ -135,7 +135,7 @@ void				expand_env_var_bis(t_data *data, char *str, char **res,
 void				expend_env_var_third(int *i, char *str, t_data *data,
 						char **res);
 t_list				*cpy_env(char **env, t_data *data);
-void				handle_retokenization(t_data *data, char *value,
+void				handle_retoken(t_data *data, char *value,
 						t_token **current, char **res);
 // env_utils
 t_list				*create_env_node(char *env_var, t_list **env_cpy);
@@ -154,10 +154,10 @@ void				manage_exit_status(t_data **data, int *i, char *str,
 void				replace_current_token_with_list(t_data *data,
 						t_token **current, t_token *new_tokens);
 int					token_contains_quotes(char *str);
-char				*remove_outer_quotes(char *str);
+char				*remove_outer_quotes(char *str, t_quote_type q_type);
 t_token				*find_prev_token(t_token *head, t_token *token);
 // env_utils_4
-int					handle_quote(int *i, int *quotes, char *str);
+int					handle_quote(int *i, int *quotes, char *str, t_quote_type q_type);
 int					exported(t_list **env_cpy, char *arg, t_data *data);
 int					ft_make_env(t_list **env_cpy, t_data *data);
 int					update_shlvl(t_list **env_cpy, t_list *tmp_env,

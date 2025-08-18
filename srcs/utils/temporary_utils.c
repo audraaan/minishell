@@ -75,7 +75,7 @@ void	print_tokens(t_token *head)
 	printf("\n--- TOKENS ---\n");
 	while (head)
 	{
-		printf("[%-8s] %s\n", type_names[head->type], head->str);
+		printf("[%-8s] %s, %d\n", type_names[head->type], head->str, head->q_type);
 		head = head->next;
 	}
 	printf("--------------\n\n");
