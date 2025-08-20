@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/06 15:37:01 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/20 04:27:36 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,13 @@ int	ft_str_isdigit(char *arg)
 {
 	char	*str;
 
+	if (!arg || !*arg)
+		return (0);
 	str = arg;
 	if (*str == '-' || *str == '+')
 		str++;
+	if (!*str)
+		return (0);
 	while (*str)
 	{
 		if (!ft_isdigit(*str))

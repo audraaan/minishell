@@ -80,10 +80,17 @@ t_file	*file_add_back(t_file **lst)
 
 void	copy_filename(t_file *current, t_token **token)
 {
+	// char	*cleaned_filename;
+
 	*token = (*token)->next;
 	if (*token && (*token)->str)
 	{
-		current->filename = ft_strdup((*token)->str);
+		// if ((*token)->))
+		// 	cleaned_filename = remove_quotes((*token)->str);
+		// 	if (cleaned_filename)
+		// 		current->filename = cleaned_filename;
+		// else
+			current->filename = ft_strdup((*token)->str);
 		*token = (*token)->next;
 	}
 }

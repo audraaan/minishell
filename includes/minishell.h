@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/06 20:20:02 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/20 04:50:35 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_cmd
 {
 	char			**cmd_param;
 	t_file			*file;
+	int				expanded;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -85,7 +86,7 @@ typedef struct s_token
 {
 	char			*str;
 	int				retokenized;
-	int				quotes;
+	int				expanded;
 	t_token_type	type;
 	t_quote_type	q_type;
 	struct s_token	*next;
@@ -135,8 +136,8 @@ void				expand_env_var_bis(t_data *data, char *str, char **res,
 void				expend_env_var_third(int *i, char *str, t_data *data,
 						char **res);
 t_list				*cpy_env(char **env, t_data *data);
-void				handle_retoken(t_data *data, char *value,
-						t_token **current, char **res);
+void				handle_retoken(t_data *data, char *value, t_token **current,
+						char **res);
 // env_utils
 t_list				*create_env_node(char *env_var, t_list **env_cpy);
 char				*char_to_str(char c);
@@ -154,10 +155,13 @@ void				manage_exit_status(t_data **data, int *i, char *str,
 void				replace_current_token_with_list(t_data *data,
 						t_token **current, t_token *new_tokens);
 int					token_contains_quotes(char *str);
+char				*remove_quotes(char *str);
 char				*remove_outer_quotes(char *str, t_quote_type q_type);
+char				*remove_outer_quotes_cmd(char *str, t_quote_type q_type);
 t_token				*find_prev_token(t_token *head, t_token *token);
 // env_utils_4
-int					handle_quote(int *i, int *quotes, char *str, t_quote_type q_type);
+int					handle_quote(int *i, int *quotes, char *str,
+						t_quote_type q_type);
 int					exported(t_list **env_cpy, char *arg, t_data *data);
 int					ft_make_env(t_list **env_cpy, t_data *data);
 int					update_shlvl(t_list **env_cpy, t_list *tmp_env,
@@ -191,7 +195,6 @@ void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
 int					check_synthax(t_data *data);
 t_list				*parse_env(char **envp);
-char				*ft_loop(t_data *data, pid_t pid, char *read);
 
 // exec
 int					ft_exec(t_data *data, pid_t pid);
@@ -204,7 +207,7 @@ int					ft_wait(t_data *data, pid_t pid);
 void				is_cmd_null(t_cmd *cmd, t_data *data);
 // check_cmd
 void				check_cmd(t_data *data, t_cmd *cmd, char *path);
-void				param_is_quotes(char **cmd_param);
+//void				param_is_quotes(char **cmd_param);
 void				check_status(t_data *data, char *cmd, char *path);
 int					is_sigle_builtins(t_data *data, t_cmd *cmd);
 

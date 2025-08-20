@@ -34,10 +34,16 @@ void	handle_redirection(t_file **files, t_token **token)
 
 void	copy_eof(t_file *current, t_token **token)
 {
+	// char	*cleaned_eof;
+
 	*token = (*token)->next;
 	if (*token && (*token)->str)
 	{
-		current->eof = ft_strdup((*token)->str);
+		// cleaned_eof = remove_quotes((*token)->str);
+		// if (cleaned_eof)
+		// 	current->eof = cleaned_eof;
+		// else
+			current->eof = ft_strdup((*token)->str);
 		*token = (*token)->next;
 	}
 }

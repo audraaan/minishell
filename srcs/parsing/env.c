@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_env.c                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/23 17:00:13 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:22:09 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,51 +27,16 @@ char	*expand_env_var(t_data *data, char *str, t_token **current)
 	return (res);
 }
 
-//char	*expand_env_var(t_data *data, char *str, t_token **current)
-//{
-//	char	*res;
-//	char	*tmp;
-//	char	*only_quotes;
-//
-//	only_quotes = NULL;
-//	if (!current || !(*current))
-//		return (ft_strdup(str));
-//	res = ft_strdup("");
-//	tmp = ft_strdup(str);
-//	if (!tmp)
-//		return (free_return(tmp, res));
-//	if (!check_token((current)))
-//		only_quotes = (*current)->str;
-//	expand_env_var_bis(data, tmp, &res, current);
-//	free(tmp);
-//	if (only_quotes && (*current)->type == WORD)
-//	{
-//		free(res);
-//		res = ft_strdup(only_quotes);
-//	}
-//	if (check_unclosed_quotes((*current)->))
-//		return (free_return(res, NULL));
-//	if ((*current)->retokenized)
-//		return (free_return(res, NULL));
-//	if ((*current)->q_type != SINGLE_QUOTES)
-//		tmp = remove_quotes(res);
-//	else
-//		tmp = res;
-//	free(res);
-//	return (tmp);
-//}
-
-void	expand_env_var_bis(t_data *data, char *str, char **res,
-						t_token **current)
+void	expand_env_var_bis(t_data *data, char *str, char **res, t_token **cur)
 {
-	int		i;
-	int		quotes;
+	int	i;
+	int	quotes;
 
 	quotes = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (handle_quote(&i, &quotes, str, (*current)->q_type))
+		if (handle_quote(&i, &quotes, str, (*cur)->q_type))
 		{
 			i++;
 			continue ;
@@ -82,15 +47,13 @@ void	expand_env_var_bis(t_data *data, char *str, char **res,
 			manage_exit_status(&data, &i, str, res);
 		else if (str[i] == '$' && quotes != 1)
 		{
-			data->current_token = current;
+			data->current_token = cur;
 			expend_env_var_third(&i, str, data, res);
-			if ((*current)->retokenized)
+			if ((*cur)->retokenized)
 				return ;
 		}
 		else
-		{
 			*res = join_and_free(*res, char_to_str(str[i++]));
-		}
 	}
 }
 
@@ -114,6 +77,7 @@ void	expend_env_var_third(int *i, char *str, t_data *data, char **res)
 		return ;
 	}
 	value = get_env_value(data->env, name);
+	(*current)->expanded = 1;
 	free(name);
 	if (!value)
 		return ;
@@ -137,8 +101,6 @@ static char	*extract_word_retokenize(char *str, int *i, t_quote_type *q_type)
 			handle_single_quote(&quotes, q_type);
 		else if (str[*i] == '\"' && quotes != 1 && *q_type != SINGLE_QUOTES)
 			handle_double_quote(&quotes, q_type);
-		// if (handle_quote(i, &quotes, str, *q_type))
-		// 	continue ;
 		(*i)++;
 	}
 	res = ft_substr(str, start, *i - start);

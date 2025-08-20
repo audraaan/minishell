@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/18 06:38:23 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/20 05:15:47 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	init_data(t_data *data, int ac, char **av)
 	data->prev_fd = -1;
 	if (!data->stdin_save || !data->stdout_save)
 	{
-		printf("save dup failed\n");
+		ft_printf("save dup failed\n");
 		exit(1);
 	}
 	g_exit_status = 0;
@@ -44,8 +44,8 @@ int	main(int ac, char **av, char **env)
 	char	*read;
 	pid_t	pid;
 
-	if (!isatty(STDOUT_FILENO))
-		return (ft_error_msg("STDOUT_FILENO", "not tty"));
+	// if (!isatty(STDOUT_FILENO))
+	// return (ft_error_msg("STDOUT_FILENO", "not tty"));
 	read = NULL;
 	init_data(&data, ac, av);
 	pid = 0;
@@ -67,18 +67,18 @@ int	main(int ac, char **av, char **env)
 
 char	*ft_loop(t_data *data, pid_t pid, char *read)
 {
-	//char	*line;
-
+	char	*line;
+	
 	ft_dup_std(data);
-	 read = readline("minishell> ");
-	//if (isatty(fileno(stdin)))
-		//read = readline("minishell> ");
-	//else
-	//{
-		//line = get_next_line(fileno(stdin));
-		//read = ft_strtrim(line, "\n");
-		//free(line);
-	//}
+	//read = readline("minishell> ");
+	if (isatty(fileno(stdin)))
+		read = readline("minishell> ");
+	else
+	{
+		line = get_next_line(fileno(stdin));
+		read = ft_strtrim(line, "\n");
+		free(line);
+	}
 	if (g_exit_status)
 		data->exit_status = 130;
 	g_exit_status = 0;
@@ -106,11 +106,11 @@ void	update_data(t_data *data, pid_t pid)
 {
 	int	is_heredoc;
 
-	// print_tokens(data->token);
+	//print_tokens(data->token);
 	expand_tokens(data);
-	// print_tokens(data->token);
+	//print_tokens(data->token);
 	*data = cmd_builder(data);
-	// print(data->cmd);
+	//print(data->cmd);
 	is_heredoc = handle_heredoc(data);
 	signal(SIGINT, SIG_IGN);
 	data->exit_status = ft_exec(data, pid);
@@ -119,5 +119,3 @@ void	update_data(t_data *data, pid_t pid)
 	set_signals_prompt();
 	free_iteration_data(data);
 }
-
-// print_list(data->env);

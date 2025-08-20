@@ -1,26 +1,14 @@
-exit ""
+export q=" "
+$q // ca devrait pas faire cmd not found
 
-unset PATH
-cd /bin
-ls
+$novar ls
+minishell: command not found
+en posix il execute le ls
 
-unset PATH
-cd /bin/../bin/
-ls
+export X="         A         B    "
+/bin/echo "1"$X?
+minish :
+1         A         B    ?
+bash :
+1 A B ?
 
-unset PATH
-cd /bin/
-sleep 2
-
-env -i ./minishell
-cd /bin/
-ls
-
->echo>
-/bin/rm -f echo
-
-<echo<
-/bin/rm -f echo
-
->>echo>>
-/bin/rm -f echo

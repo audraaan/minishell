@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/18 03:11:07 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	handle_double_quote_tok(int *quotes, t_quote_type *q_type, char *str
 	if ((*quotes) == 2)
 	{
 		(*quotes) = 0;
-		if ((*q_type) == DOUBLE_QUOTES || !check_str(str))
+		if ((*q_type) == DOUBLE_QUOTES && !check_str(str))
 			(*q_type) = NO_QUOTES;
 	}
 	else if ((*quotes) == 0)
@@ -52,7 +52,7 @@ static void	handle_single_quote_tok(int *quotes, t_quote_type *q_type, char *str
 	if ((*quotes) == 1)
 	{
 		(*quotes) = 0;
-		if ((*q_type) == SINGLE_QUOTES || !check_str(str))
+		if ((*q_type) == SINGLE_QUOTES && !check_str(str))
 			(*q_type) = NO_QUOTES;
 	}
 	else if ((*quotes) == 0)
@@ -129,6 +129,7 @@ t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type)
 	}
 	new_token->type = type;
 	new_token->retokenized = 0;
+	new_token->expanded = 0;
 	new_token->q_type = *q_type;
 	new_token->next = NULL;
 	return (new_token);

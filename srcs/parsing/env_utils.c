@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:57:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/16 23:33:03 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:19:56 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,7 @@ char	*get_env_value(t_list *env, char *name)
 int	check_unclosed_quotes(t_quote_type q_type)
 {
 	if (q_type != 0)
-	{
 		return (1);
-	}
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 03:31:45 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/18 03:36:12 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/20 07:20:13 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	ft_not_env(t_list **env, char **a, t_data *data)
 	char	*name;
 	char	*content;
 	int		len;
+
 	if (check_params_env(a[1]))
 	{
 		data->exit_status = ft_error_msg(a[1],
@@ -58,9 +59,7 @@ int	ft_export(t_list **env, char **a, t_data *data)
 		else if (exist(env, a[i]) != -1 && ft_change_var(env, a[i], data))
 			return (ft_error_msg(NULL, "malloc failed"));
 		else if (exist(env, a[i]) == -1)
-		{
 			ft_export_bis(tmp, data, a, &i);
-		}
 		tmp = *env;
 	}
 	return (data->exit_status);
