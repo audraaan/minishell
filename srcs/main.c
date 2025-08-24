@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/24 02:16:49 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 23:08:45 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ int	main(int ac, char **av, char **env)
 	char	*read;
 	pid_t	pid;
 
-	//	if (!isatty(STDOUT_FILENO))
-	//		return (ft_error_msg("STDOUT_FILENO", "not tty"));
+//	if (!isatty(STDOUT_FILENO))
+//		return (ft_error_msg("STDOUT_FILENO", "not tty"));
 	read = NULL;
 	init_data(&data, ac, av);
 	pid = 0;
@@ -106,11 +106,11 @@ void	update_data(t_data *data, pid_t pid)
 {
 	int	is_heredoc;
 
-	//	print_tokens(data->token);
+//	print_tokens(data->token);
 	expand_tokens(data);
-	//	print_tokens(data->token);
+//	print_tokens(data->token);
 	*data = cmd_builder(data);
-	//	print(data->cmd);
+//	print(data->cmd);
 	is_heredoc = handle_heredoc(data);
 	signal(SIGINT, SIG_IGN);
 	data->exit_status = ft_exec(data, pid);

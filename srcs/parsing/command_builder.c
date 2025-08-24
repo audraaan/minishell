@@ -33,34 +33,39 @@ t_data	cmd_builder(t_data *data)
 	return (*data);
 }
 
+static void	cmd_builder_third(t_token **token, t_cmd **current_cmd,
+								int *param_index, char *cleaned_str)
+{
+	if ((*current_cmd) && (*current_cmd)->cmd_param)
+	{
+		if ((*token)->q_type != NO_QUOTES || !(*token)->in_quote)
+		{
+			cleaned_str = remove_outer_quotes_cmd((*token)->str);
+			if (cleaned_str)
+				(*current_cmd)->cmd_param[(*param_index)] = cleaned_str;
+			else
+				(*current_cmd)->cmd_param[(*param_index)]
+					= ft_strdup((*token)->str);
+		}
+		else
+		{
+			(*current_cmd)->cmd_param[(*param_index)]
+				= ft_strdup((*token)->str);
+		}
+		(*param_index)++;
+	}
+	(*token) = (*token)->next;
+}
+
 void	cmd_builder_bis(t_token **token, t_cmd **current_cmd, int *param_index)
 {
 	char	*cleaned_str;
 
+	cleaned_str = NULL;
 	if (!token || !(*token) || !current_cmd || !(*current_cmd))
 		return ;
 	if ((*token)->type == WORD)
-	{
-		if ((*current_cmd) && (*current_cmd)->cmd_param)
-		{
-			if ((*token)->q_type != NO_QUOTES || !(*token)->in_quote)
-			{
-				cleaned_str = remove_outer_quotes_cmd((*token)->str);
-				if (cleaned_str)
-					(*current_cmd)->cmd_param[(*param_index)] = cleaned_str;
-				else
-					(*current_cmd)->cmd_param[(*param_index)]
-						= ft_strdup((*token)->str);
-			}
-			else
-			{
-				(*current_cmd)->cmd_param[(*param_index)]
-					= ft_strdup((*token)->str);
-			}
-			(*param_index)++;
-		}
-		(*token) = (*token)->next;
-	}
+		cmd_builder_third(token, current_cmd, param_index, cleaned_str);
 	else if (is_redirection((*token)->type))
 		handle_redirection(&(*current_cmd)->file, &(*token));
 	else if ((*token)->type == PIPE)
@@ -113,32 +118,4 @@ int	cmd_list_bis(t_token **current_token, t_cmd **head, t_cmd **current)
 	if (*current_token)
 		*current_token = (*current_token)->next;
 	return (0);
-}
-
-t_cmd	*create_new_cmd(t_token *token)
-{
-	t_cmd	*new_cmd;
-	int		param_size;
-	int		i;
-
-	i = 0;
-	new_cmd = malloc(sizeof(t_cmd));
-	if (!new_cmd)
-		return (NULL);
-	param_size = get_cmd_size(token);
-	new_cmd->cmd_param = malloc(sizeof(char *) * param_size);
-	if (!new_cmd->cmd_param)
-	{
-		free(new_cmd);
-		return (NULL);
-	}
-	while (i < param_size)
-	{
-		new_cmd->cmd_param[i] = NULL;
-		i++;
-	}
-	new_cmd->file = NULL;
-	new_cmd->expanded = token->expanded;
-	new_cmd->next = NULL;
-	return (new_cmd);
 }

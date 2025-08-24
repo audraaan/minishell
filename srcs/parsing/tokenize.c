@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/24 02:40:47 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 char	*extract_word(char *str, int *i, t_quote_type *q_type,
-		t_quote_type *in_quote)
+					t_quote_type *in_quote)
 {
 	int		start;
 	int		quotes;
@@ -38,35 +38,8 @@ char	*extract_word(char *str, int *i, t_quote_type *q_type,
 	return (res);
 }
 
-t_token_type	get_operator_type(char *str, int *i)
-{
-	if (str[(*i)] == '<' && str[(*i) + 1] == '<' && trickster(i))
-		return (HEREDOC);
-	else if (str[(*i)] == '>' && str[(*i) + 1] == '>')
-	{
-		(*i) += 2;
-		return (APPEND);
-	}
-	else if (str[(*i)] == '>')
-	{
-		(*i)++;
-		return (REDIR_OUT);
-	}
-	else if (str[(*i)] == '<')
-	{
-		(*i)++;
-		return (REDIR_IN);
-	}
-	else if (str[(*i)] == '|')
-	{
-		(*i)++;
-		return (PIPE);
-	}
-	return (WORD);
-}
-
 t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type,
-		t_quote_type *in_quote)
+						t_quote_type *in_quote)
 {
 	t_token	*new_token;
 
@@ -87,11 +60,36 @@ t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type,
 	new_token->next = NULL;
 	return (new_token);
 }
-t_token	*tokenize_bis(int *i, char *str)
+
+static t_token	*create_appropriate_token(char *str, int *i,
+							t_quote_type *q_type, t_quote_type *in_quote)
 {
 	t_token_type	type;
 	t_token			*new_token;
 	char			*word;
+
+	if (is_operator(str[(*i)]))
+	{
+		type = get_operator_type(str, i);
+		new_token = create_token(get_op_str(type), type, q_type, in_quote);
+	}
+	else
+	{
+		type = WORD;
+		word = extract_word(str, i, q_type, in_quote);
+		if (!word)
+			return (NULL);
+		new_token = create_token(word, type, q_type, in_quote);
+		free(word);
+		if (!new_token)
+			return (NULL);
+	}
+	return (new_token);
+}
+
+t_token	*tokenize_bis(int *i, char *str)
+{
+	t_token			*new_token;
 	t_quote_type	in_quote;
 	t_quote_type	q_type;
 
@@ -101,22 +99,7 @@ t_token	*tokenize_bis(int *i, char *str)
 		(*i)++;
 	if (!str[(*i)])
 		return (NULL);
-	if (is_operator(str[(*i)]))
-	{
-		type = get_operator_type(str, i);
-		new_token = create_token(get_op_str(type), type, &q_type, &in_quote);
-	}
-	else
-	{
-		type = WORD;
-		word = extract_word(str, i, &q_type, &in_quote);
-		if (!word)
-			return (NULL);
-		new_token = create_token(word, type, &q_type, &in_quote);
-		free(word);
-		if (!new_token)
-			return (NULL);
-	}
+	new_token = create_appropriate_token(str, i, &q_type, &in_quote);
 	while (str[(*i)] && ft_isspace(str[(*i)]))
 		(*i)++;
 	return (new_token);
@@ -124,9 +107,9 @@ t_token	*tokenize_bis(int *i, char *str)
 
 t_token	*tokenize(t_data *data, char *str)
 {
-	t_token	**current;
-	t_token	*new_token;
-	int		i;
+	t_token			**current;
+	t_token			*new_token;
+	int				i;
 
 	i = 0;
 	new_token = NULL;

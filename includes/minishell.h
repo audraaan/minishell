@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/24 02:08:27 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 03:28:18 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,9 +155,8 @@ char				*get_env_value(t_list *env, char *name);
 int					check_unclosed_quotes(t_quote_type q_type);
 // env_utils_2
 void				expand_tokens(t_data *data);
-t_token				*process_word_token(t_data *data, t_token *current,
+t_token				*process_word_token_bis(t_data *data, t_token *current,
 						t_token *next);
-int					check_token(t_token **current);
 // env_utils_3
 void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
@@ -173,6 +172,10 @@ int					exported(t_list **env_cpy, char *arg, t_data *data);
 int					ft_make_env(t_list **env_cpy, t_data *data);
 int					update_shlvl(t_list **env_cpy, t_list *tmp_env,
 						t_data *data);
+// env_utils_5
+int					check_token(t_token **current);
+int					check_q(t_token **current);
+char				*remove_outer_quotes(char *str, t_quote_type q_type);
 
 // command_builder
 t_data				cmd_builder(t_data *data);

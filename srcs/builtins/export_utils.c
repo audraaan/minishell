@@ -21,7 +21,7 @@ int	ft_not_env(t_list **env, char **a, t_data *data)
 	if (check_params_env(a[1]))
 	{
 		data->exit_status = ft_error_msg(a[1],
-										 "not a valid identifier for export");
+				"not a valid identifier for export");
 		return (1);
 	}
 	if (ft_strchr(a[1], '='))

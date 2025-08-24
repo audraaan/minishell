@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils_3.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 04:52:07 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/24 02:48:28 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/26 05:22:17 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	manage_exit_status(t_data **data, int *i, char *str, char **res)
 	(*i) += 2;
 }
 
-void	loop_replace_cur_tok_list(t_token **last_new)
+static void	loop_replace_cur_tok_list(t_token **last_new)
 {
 	while ((*last_new) && (*last_new)->next)
 	{
@@ -34,7 +34,7 @@ void	loop_replace_cur_tok_list(t_token **last_new)
 }
 
 void	replace_current_token_with_list(t_data *data, t_token **current,
-		t_token *new_tokens)
+										t_token *new_tokens)
 {
 	t_token	*prev;
 	t_token	*next_token;

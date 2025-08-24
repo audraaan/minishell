@@ -42,31 +42,21 @@ void	copy_eof(t_file *current, t_token **token)
 	}
 }
 
-char	*remove_outer_quotes_cmd(char *str)
+static void	remove_outer_quotes_cmd_bis(int *i, int *j, char *str, char *result)
 {
-	char	*result;
-	int		i;
-	int		j;
 	int		current_quote_state;
 
-	i = 0;
-	j = 0;
 	current_quote_state = 0;
-	if (!str)
-		return (NULL);
-	result = malloc(ft_strlen(str) + 1);
-	if (!result)
-		return (NULL);
-	while (str[i])
+	while (str[*i])
 	{
-		if (str[i] == '\'' && current_quote_state != 2)
+		if (str[*i] == '\'' && current_quote_state != 2)
 		{
 			if (current_quote_state == 1)
 				current_quote_state = 0;
 			else
 				current_quote_state = 1;
 		}
-		else if (str[i] == '"' && current_quote_state != 1)
+		else if (str[*i] == '"' && current_quote_state != 1)
 		{
 			if (current_quote_state == 2)
 				current_quote_state = 0;
@@ -74,9 +64,53 @@ char	*remove_outer_quotes_cmd(char *str)
 				current_quote_state = 2;
 		}
 		else
-			result[j++] = str[i];
-		i++;
+			result[(*j)++] = str[*i];
+		(*i)++;
 	}
+}
+
+char	*remove_outer_quotes_cmd(char *str)
+{
+	char	*result;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	if (!str)
+		return (NULL);
+	result = malloc(ft_strlen(str) + 1);
+	if (!result)
+		return (NULL);
+	remove_outer_quotes_cmd_bis(&i, &j, str, result);
 	result[j] = '\0';
 	return (result);
+}
+
+t_cmd	*create_new_cmd(t_token *token)
+{
+	t_cmd	*new_cmd;
+	int		param_size;
+	int		i;
+
+	i = 0;
+	new_cmd = malloc(sizeof(t_cmd));
+	if (!new_cmd)
+		return (NULL);
+	param_size = get_cmd_size(token);
+	new_cmd->cmd_param = malloc(sizeof(char *) * param_size);
+	if (!new_cmd->cmd_param)
+	{
+		free(new_cmd);
+		return (NULL);
+	}
+	while (i < param_size)
+	{
+		new_cmd->cmd_param[i] = NULL;
+		i++;
+	}
+	new_cmd->file = NULL;
+	new_cmd->expanded = token->expanded;
+	new_cmd->next = NULL;
+	return (new_cmd);
 }

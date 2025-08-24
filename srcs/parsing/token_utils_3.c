@@ -12,6 +12,33 @@
 
 #include "minishell.h"
 
+t_token_type	get_operator_type(char *str, int *i)
+{
+	if (str[(*i)] == '<' && str[(*i) + 1] == '<' && trickster(i))
+		return (HEREDOC);
+	else if (str[(*i)] == '>' && str[(*i) + 1] == '>')
+	{
+		(*i) += 2;
+		return (APPEND);
+	}
+	else if (str[(*i)] == '>')
+	{
+		(*i)++;
+		return (REDIR_OUT);
+	}
+	else if (str[(*i)] == '<')
+	{
+		(*i)++;
+		return (REDIR_IN);
+	}
+	else if (str[(*i)] == '|')
+	{
+		(*i)++;
+		return (PIPE);
+	}
+	return (WORD);
+}
+
 static int	check_str(char *str)
 {
 	int	i;
