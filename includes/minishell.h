@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/20 04:50:35 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 02:08:27 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ typedef enum e_quotes_type
 {
 	NO_QUOTES,
 	SINGLE_QUOTES,
-	DOUBLE_QUOTES
+	DOUBLE_QUOTES,
+	MIXED_QUOTES,
+	UNCLOSED
 }					t_quote_type;
 
 typedef struct s_token
@@ -89,6 +91,7 @@ typedef struct s_token
 	int				expanded;
 	t_token_type	type;
 	t_quote_type	q_type;
+	t_quote_type	in_quote;
 	struct s_token	*next;
 }					t_token;
 
@@ -114,11 +117,12 @@ extern int			g_exit_status;
 t_token_type		get_operator_type(char *str, int *i);
 t_token				*tokenize(t_data *data, char *str);
 t_token				*create_token(char *str, t_token_type type,
-						t_quote_type *q_type);
-char				*extract_word(char *str, int *i, t_quote_type *q_type);
-t_token				*tokenize_bis(int *i, char *str, t_quote_type *q_type);
+						t_quote_type *q_type, t_quote_type *in_quote);
+char				*extract_word(char *str, int *i, t_quote_type *q_type,
+						t_quote_type *in_quote);
+t_token				*tokenize_bis(int *i, char *str);
 // token_utils
-char				*get_operator_str(t_token_type type);
+char				*get_op_str(t_token_type type);
 int					ft_isspace(char c);
 int					is_operator(char c);
 int					trickster(int *i);
@@ -128,6 +132,11 @@ void				handle_double_quote(int *quotes, t_quote_type *q_type);
 void				handle_single_quote(int *quotes, t_quote_type *q_type);
 void				handle_simple_expansion(char *value, char **res);
 void				handle_empty_var(char **res);
+// token_utils_3
+void				handle_double_quote_tok(int *quotes, t_quote_type *q_type,
+						t_quote_type *in_quote, char *str);
+void				handle_single_quote_tok(int *quotes, t_quote_type *q_type,
+						t_quote_type *in_quote, char *str);
 
 // env
 char				*expand_env_var(t_data *data, char *str, t_token **current);
@@ -154,10 +163,8 @@ void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
 void				replace_current_token_with_list(t_data *data,
 						t_token **current, t_token *new_tokens);
-int					token_contains_quotes(char *str);
-char				*remove_quotes(char *str);
 char				*remove_outer_quotes(char *str, t_quote_type q_type);
-char				*remove_outer_quotes_cmd(char *str, t_quote_type q_type);
+char				*remove_outer_quotes_cmd(char *str);
 t_token				*find_prev_token(t_token *head, t_token *token);
 // env_utils_4
 int					handle_quote(int *i, int *quotes, char *str,
@@ -195,6 +202,7 @@ void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
 int					check_synthax(t_data *data);
 t_list				*parse_env(char **envp);
+char				*ft_loop(t_data *data, pid_t pid, char *read);
 
 // exec
 int					ft_exec(t_data *data, pid_t pid);
@@ -207,7 +215,7 @@ int					ft_wait(t_data *data, pid_t pid);
 void				is_cmd_null(t_cmd *cmd, t_data *data);
 // check_cmd
 void				check_cmd(t_data *data, t_cmd *cmd, char *path);
-//void				param_is_quotes(char **cmd_param);
+void				param_is_quotes(char **cmd_param);
 void				check_status(t_data *data, char *cmd, char *path);
 int					is_sigle_builtins(t_data *data, t_cmd *cmd);
 
@@ -248,7 +256,7 @@ int					ft_change_var(t_list **env, char *a, t_data *data);
 int					export_not_args(t_list **env);
 // export_utils
 int					exist(t_list **env, char *a);
-char				*expand_value(t_data *data, char *str);
+int					ft_not_env(t_list **env, char **a, t_data *data);
 t_list				*create_env_node_from_parts(char *name, char *content);
 
 // ft_pwd
@@ -292,7 +300,7 @@ void				free_iteration_data(t_data *data);
 void				free_cmd(t_cmd **cmd);
 void				ft_free_lst(t_list *lst);
 void				*free_return(char *s1, char *s2);
-char				**ft_free_and_null(char **tab);
+char				**ft_free_and_null(char **tab, char *t);
 
 // ft_print
 void				print(t_cmd *cmd);
@@ -304,12 +312,5 @@ void				ft_print_tab(char **tab);
 void				sigint_handler(int sig);
 void				set_signals_prompt(void);
 int					do_nothing(void);
-
-// void				expand_env_var_bis(t_data *data, int *quotes, char *str,
-//						char **res, t_token **current, int *retokenized);
-// extern void			expend_env_var_third(int *i, char *str, t_list *env_cpy,
-//						t_data *data, char **res, t_token **current,
-//						int *quotes, int *retokenized);
-// char				*expand_env_var(t_data *data, char *str, t_token **current);
 
 #endif

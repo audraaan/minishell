@@ -3,70 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/24 02:40:47 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	check_str(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str || !str[0])
-		return (1);
-	while (str[i])
-	{
-		if (str[i] != '"' && str[i] != '\'')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-static void	handle_double_quote_tok(int *quotes, t_quote_type *q_type, char *str)
-{
-	if ((*quotes) == 2)
-	{
-		(*quotes) = 0;
-		if ((*q_type) == DOUBLE_QUOTES && !check_str(str))
-			(*q_type) = NO_QUOTES;
-	}
-	else if ((*quotes) == 0)
-	{
-		(*quotes) = 2;
-		if ((*q_type) == NO_QUOTES)
-			(*q_type) = DOUBLE_QUOTES;
-	}
-	else if ((*quotes) == 1)
-	{
-	}
-}
-
-static void	handle_single_quote_tok(int *quotes, t_quote_type *q_type, char *str)
-{
-	if ((*quotes) == 1)
-	{
-		(*quotes) = 0;
-		if ((*q_type) == SINGLE_QUOTES && !check_str(str))
-			(*q_type) = NO_QUOTES;
-	}
-	else if ((*quotes) == 0)
-	{
-		(*quotes) = 1;
-		if ((*q_type) == NO_QUOTES)
-			(*q_type) = SINGLE_QUOTES;
-	}
-	else if ((*quotes) == 2)
-	{
-	}
-}
-
-char	*extract_word(char *str, int *i, t_quote_type *q_type)
+char	*extract_word(char *str, int *i, t_quote_type *q_type,
+		t_quote_type *in_quote)
 {
 	int		start;
 	int		quotes;
@@ -78,12 +25,16 @@ char	*extract_word(char *str, int *i, t_quote_type *q_type)
 				&& !ft_isspace(str[*i]))))
 	{
 		if (str[*i] == '\'' && quotes != 2)
-			handle_single_quote_tok(&quotes, q_type, str);
+			handle_single_quote_tok(&quotes, q_type, in_quote, str);
 		else if (str[*i] == '\"' && quotes != 1)
-			handle_double_quote_tok(&quotes, q_type, str);
+			handle_double_quote_tok(&quotes, q_type, in_quote, str);
 		(*i)++;
 	}
 	res = ft_substr(str, start, *i - start);
+	if (!res)
+		return (NULL);
+	if (quotes)
+		*in_quote = UNCLOSED;
 	return (res);
 }
 
@@ -114,7 +65,8 @@ t_token_type	get_operator_type(char *str, int *i)
 	return (WORD);
 }
 
-t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type)
+t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type,
+		t_quote_type *in_quote)
 {
 	t_token	*new_token;
 
@@ -131,16 +83,20 @@ t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type)
 	new_token->retokenized = 0;
 	new_token->expanded = 0;
 	new_token->q_type = *q_type;
+	new_token->in_quote = *in_quote;
 	new_token->next = NULL;
 	return (new_token);
 }
-
-t_token	*tokenize_bis(int *i, char *str, t_quote_type *q_type)
+t_token	*tokenize_bis(int *i, char *str)
 {
 	t_token_type	type;
 	t_token			*new_token;
 	char			*word;
+	t_quote_type	in_quote;
+	t_quote_type	q_type;
 
+	in_quote = NO_QUOTES;
+	q_type = NO_QUOTES;
 	while (str[(*i)] && ft_isspace(str[(*i)]))
 		(*i)++;
 	if (!str[(*i)])
@@ -148,13 +104,15 @@ t_token	*tokenize_bis(int *i, char *str, t_quote_type *q_type)
 	if (is_operator(str[(*i)]))
 	{
 		type = get_operator_type(str, i);
-		new_token = create_token(get_operator_str(type), type, q_type);
+		new_token = create_token(get_op_str(type), type, &q_type, &in_quote);
 	}
 	else
 	{
 		type = WORD;
-		word = extract_word(str, i, q_type);
-		new_token = create_token(word, type, q_type);
+		word = extract_word(str, i, &q_type, &in_quote);
+		if (!word)
+			return (NULL);
+		new_token = create_token(word, type, &q_type, &in_quote);
 		free(word);
 		if (!new_token)
 			return (NULL);
@@ -166,18 +124,16 @@ t_token	*tokenize_bis(int *i, char *str, t_quote_type *q_type)
 
 t_token	*tokenize(t_data *data, char *str)
 {
-	t_token			**current;
-	t_token			*new_token;
-	t_quote_type	q_type;
-	int				i;
+	t_token	**current;
+	t_token	*new_token;
+	int		i;
 
 	i = 0;
-	q_type = NO_QUOTES;
 	new_token = NULL;
 	current = &new_token;
 	while (str[i])
 	{
-		*current = tokenize_bis(&i, str, &q_type);
+		*current = tokenize_bis(&i, str);
 		if (!*current)
 		{
 			free_tokens(&new_token);

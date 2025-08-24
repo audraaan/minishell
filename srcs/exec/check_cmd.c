@@ -6,28 +6,11 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 17:56:22 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/20 04:37:09 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/06 20:38:45 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// void	check_cmd(t_data *data, t_cmd *cmd, char *path)
-//{
-//	int	redir_status;
-
-//	redir_status = handle_redir(data, cmd);
-//	if (redir_status)
-//	{
-//		data->exit_status = redir_status;
-//		ft_free_and_exit(*data, path);
-//	}
-//	if (!path)
-//		check_status(data, cmd->cmd_param[0], path);
-//	if (!cmd->cmd_param[0])
-//		ft_free_and_exit(*data, path);
-//	param_is_quotes(cmd->cmd_param);
-//}
 
 void	check_cmd(t_data *data, t_cmd *cmd, char *path)
 {
@@ -43,7 +26,6 @@ void	check_cmd(t_data *data, t_cmd *cmd, char *path)
 		ft_free_and_exit(*data, path);
 	if (!path)
 		check_status(data, cmd->cmd_param[0], path);
-	// non appel a param is quotes dc laft ne sert plus
 }
 
 int	is_sigle_builtins(t_data *data, t_cmd *cmd)
@@ -91,12 +73,12 @@ void	check_status(t_data *data, char *cmd, char *path)
 	}
 }
 
-void	param_is_double_quotes(char **cmd_param) // sert pu a r
+void	param_is_double_quotes(char **cmd_param)
 {
-	char **tmp;
-	int i;
-	int j;
-	char *param;
+	char	**tmp;
+	int		i;
+	int		j;
+	char	*param;
 
 	i = 0;
 	j = -1;
@@ -119,12 +101,12 @@ void	param_is_double_quotes(char **cmd_param) // sert pu a r
 	}
 }
 
-void	param_is_quotes(char **cmd_param) // sert pu a r
+void	param_is_quotes(char **cmd_param)
 {
-	char **tmp;
-	int i;
-	int j;
-	char *param;
+	char	**tmp;
+	int		i;
+	int		j;
+	char	*param;
 
 	i = 0;
 	j = -1;
@@ -136,7 +118,7 @@ void	param_is_quotes(char **cmd_param) // sert pu a r
 				break ;
 		if (!tmp[i][j])
 		{
-			if (cmd_param && cmd_param && *cmd_param && cmd_param[i])
+			if (cmd_param && *cmd_param && cmd_param[i])
 			{
 				param = cmd_param[i];
 				cmd_param[i] = ft_strdup("");

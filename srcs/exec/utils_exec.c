@@ -6,15 +6,17 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 21:09:11 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/20 04:57:17 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 02:11:00 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**ft_free_and_null(char **tab)
+char	**ft_free_and_null(char **tab, char *t)
 {
 	ft_free_dtab(tab);
+	if (t && *t)
+		free(t);
 	return (NULL);
 }
 
@@ -34,11 +36,11 @@ char	**lst_in_tab(t_list *env)
 		{
 			tmp = ft_strjoin(env->name, "=");
 			if (!tmp)
-				return (ft_free_and_null(tab_env));
+				return (ft_free_and_null(tab_env, NULL));
 			tab_env[++i] = ft_strjoin(tmp, env->content);
 			free(tmp);
 			if (!tab_env[i])
-				return (ft_free_and_null(tab_env));
+				return (ft_free_and_null(tab_env, NULL));
 		}
 		env = env->next;
 	}
@@ -74,36 +76,6 @@ int	ft_is_exec(char *path_cmd, int *error)
 	return (0);
 }
 
-// void	is_cmd_null(t_cmd *cmd, t_data *data)
-// vielle version pas en accord avec le pasring
-//{
-//	t_cmd	*t;
-//	int		i;
-
-//	t = cmd;
-//	i = 0;
-//	while (!t->file && t->cmd_param && t->cmd_param[i] && !*(t->cmd_param[i]))
-//		i++;
-//	if (!t->file && (!t->cmd_param || !t->cmd_param[i]))
-//		close_and_free_all(data);
-//	if (!i || (t->cmd_param || t->cmd_param[i]))
-//		return ;
-//	if (data->prev_fd != -1)
-//	{
-//		dup2(data->prev_fd, STDIN_FILENO);
-//		close(data->prev_fd);
-//	}
-//	if (cmd->next)
-//	{
-//		close(data->fd[0]);
-//		dup2(data->fd[1], STDOUT_FILENO);
-//		close(data->fd[1]);
-//	}
-//	if (cmd->cmd_param[0] && data->fd[0] != -1)
-//		close(data->fd[0]);
-//	ft_free_and_exit(*data, NULL);
-//}
-
 void	is_cmd_null(t_cmd *cmd, t_data *data)
 {
 	t_cmd	*t;
@@ -114,16 +86,9 @@ void	is_cmd_null(t_cmd *cmd, t_data *data)
 	while (!t->file && t->cmd_param && t->cmd_param[i] && !(t->cmd_param[i][0]))
 		i++;
 	if (!t->file && t->cmd_param && !t->cmd_param[i] && cmd->expanded)
-	{
-		//		dprintf(2,"pasdfdzsfdafgdrdfdddddf\n");
 		close_and_free_all(data);
-	}
 	if (!i || (t->cmd_param || t->cmd_param[i]))
-	{
-		//		dprintf(2,"asdfsdfsdgf\n");
 		return ;
-	}
-	//	dprintf(2,"pipi\n");
 	if (data->prev_fd != -1)
 	{
 		dup2(data->prev_fd, STDIN_FILENO);

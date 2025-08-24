@@ -34,16 +34,49 @@ void	handle_redirection(t_file **files, t_token **token)
 
 void	copy_eof(t_file *current, t_token **token)
 {
-	// char	*cleaned_eof;
-
 	*token = (*token)->next;
 	if (*token && (*token)->str)
 	{
-		// cleaned_eof = remove_quotes((*token)->str);
-		// if (cleaned_eof)
-		// 	current->eof = cleaned_eof;
-		// else
-			current->eof = ft_strdup((*token)->str);
+		current->eof = ft_strdup((*token)->str);
 		*token = (*token)->next;
 	}
+}
+
+char	*remove_outer_quotes_cmd(char *str)
+{
+	char	*result;
+	int		i;
+	int		j;
+	int		current_quote_state;
+
+	i = 0;
+	j = 0;
+	current_quote_state = 0;
+	if (!str)
+		return (NULL);
+	result = malloc(ft_strlen(str) + 1);
+	if (!result)
+		return (NULL);
+	while (str[i])
+	{
+		if (str[i] == '\'' && current_quote_state != 2)
+		{
+			if (current_quote_state == 1)
+				current_quote_state = 0;
+			else
+				current_quote_state = 1;
+		}
+		else if (str[i] == '"' && current_quote_state != 1)
+		{
+			if (current_quote_state == 2)
+				current_quote_state = 0;
+			else
+				current_quote_state = 2;
+		}
+		else
+			result[j++] = str[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
 }

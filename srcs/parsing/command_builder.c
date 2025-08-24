@@ -43,9 +43,9 @@ void	cmd_builder_bis(t_token **token, t_cmd **current_cmd, int *param_index)
 	{
 		if ((*current_cmd) && (*current_cmd)->cmd_param)
 		{
-			if ((*token)->q_type != NO_QUOTES)
+			if ((*token)->q_type != NO_QUOTES || !(*token)->in_quote)
 			{
-				cleaned_str = remove_outer_quotes_cmd((*token)->str, (*token)->q_type);
+				cleaned_str = remove_outer_quotes_cmd((*token)->str);
 				if (cleaned_str)
 					(*current_cmd)->cmd_param[(*param_index)] = cleaned_str;
 				else
@@ -77,7 +77,6 @@ t_cmd	*cmd_list(t_token *token)
 {
 	t_cmd	*head;
 	t_cmd	*current;
-
 	int		nb_pipe;
 	int		i;
 

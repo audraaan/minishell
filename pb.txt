@@ -1,14 +1,79 @@
-export q=" "
-$q // ca devrait pas faire cmd not found
+/bin/echo '' ""
 
-$novar ls
-minishell: command not found
-en posix il execute le ls
+minishell> ls | cat << stop | ls -la | cat << stop1 | ls | cat << stop2 | ls -la > > out | cat << stop3
+minishell: >: syntax error near unexpected token
+minishell>
 
-export X="         A         B    "
-/bin/echo "1"$X?
-minish :
-1         A         B    ?
+nbedouan@z4r3p1:~/42_minishell_tester$ ls | cat << stop | ls -la | cat << stop1 | ls | cat << stop2 | ls -la > > out | cat << stop3
+bash: syntax error near unexpected token `>'
+>
+
+/bin/env | grep "_="
+
+/bin/env | grep "SHLVL"
+
+cat << hello
+$USER
+$NOVAR
+$HOME
+hello
+
+unset -TEST
+
+#cd '/////' 2>/dev/null
+
+
+
 bash :
-1 A B ?
+nbedouan@z4r3p1:~/42_minishell_tester$ touch tmp_x_file1
+nbedouan@z4r3p1:~/42_minishell_tester$ tmp_x_file1
+tmp_x_file1: command not found
+nbedouan@z4r3p1:~/42_minishell_tester$ echo $?
+127
+nbedouan@z4r3p1:~/42_minishell_tester$ ./tmp_x_file1
+bash: ./tmp_x_file1: Permission denied
+nbedouan@z4r3p1:~/42_minishell_tester$ echo $?
+126
+nbedouan@z4r3p1:~/42_minishell_tester$ export PATH=$HOME
+nbedouan@z4r3p1:~/42_minishell_tester$ echo $PATH
+/home/nbedouan
+nbedouan@z4r3p1:~/42_minishell_tester$ tmp_x_file1
+tmp_x_file1: command not found
+nbedouan@z4r3p1:~/42_minishell_tester$ echo $?
+127
+nbedouan@z4r3p1:~/42_minishell_tester$ ./tmp_x_file1
+bash: ./tmp_x_file1: Permission denied
+nbedouan@z4r3p1:~/42_minishell_tester$ echo $?
+126
+nbedouan@z4r3p1:~/42_minishell_tester$ unset PATH
+nbedouan@z4r3p1:~/42_minishell_tester$ tmp_x_file1
+bash: tmp_x_file1: Permission denied
 
+
+minish
+
+minishell> touch tmp_x_file1
+minishell> tmp_x_file1
+minishell: tmp_x_file1: command not found
+minishell> echo $?
+127
+minishell> ./tmp_x_file1
+minishell: ./tmp_x_file1: Permission denied
+minishell> echo $?
+126
+minishell> export PATH=$HOME
+minishell> echo $PATH
+/home/nbedouan
+minishell> tmp_x_file1
+minishell: tmp_x_file1: command not found
+minishell> echo $?
+127
+minishell> ./tmp_x_file1
+minishell: ./tmp_x_file1: Permission denied
+minishell> echo $?
+126
+minishell> unset PATH
+minishell> tmp_x_file1
+minishell: tmp_x_file1: command not found
+minishell> echo $?
+127

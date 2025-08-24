@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:09 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/20 04:27:36 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 02:16:07 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,27 +86,28 @@ t_list	*ft_last_node(t_list *lst)
 
 int	check_synthax(t_data *data)
 {
-	t_token	*token;
+	t_token	*t;
 
-	token = data->token;
-	if (!(token->str))
+	t = data->token;
+	if (!(t->str))
 		return (er_msg_free_tok(NULL, "command not found", &data->token));
-	if (token->type == PIPE)
-		return (er_msg_free_tok(token->str,
-				"syntax error near unexpected token", &data->token));
-	while (token)
+	if (t->type == PIPE)
+		return (er_msg_free_tok(t->str, "syntax error near unexpected token",
+				&data->token));
+	while (t)
 	{
-		if ((!token->str || token->str[0] == '\0'))
-			return (er_msg_free_tok(token->str, "command not found",
-					&data->token));
-		if (token->type == PIPE && (!token->next || token->next->type == PIPE))
-			return (er_msg_free_tok(token->str,
+		if (t->in_quote == UNCLOSED)
+			return (er_msg_free_tok(t->str, "unclosed quote", &data->token));
+		if ((!t->str || t->str[0] == '\0'))
+			return (er_msg_free_tok(t->str, "command not found", &data->token));
+		if (t->type == PIPE && (!t->next || t->next->type == PIPE))
+			return (er_msg_free_tok(t->str,
 					"syntax error near unexpected token", &data->token));
-		else if (!(token->type == PIPE || token->type == WORD) && (!token->next
-				|| token->next->type != WORD))
-			return (er_msg_free_tok(token->str,
+		else if (!(t->type == PIPE || t->type == WORD) && (!t->next
+				|| t->next->type != WORD))
+			return (er_msg_free_tok(t->str,
 					"syntax error near unexpected token", &data->token));
-		token = token->next;
+		t = t->next;
 	}
 	return (0);
 }

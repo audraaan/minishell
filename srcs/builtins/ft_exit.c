@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 02:12:33 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/20 05:38:32 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/07/30 22:48:19 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	ft_ctrl_d(t_data *data, char *read)
 	int	save_status;
 
 	save_status = data->exit_status;
-	if (isatty(STDIN_FILENO)) // for tester
+	if (isatty(STDIN_FILENO))
 		write(data->stdout_save, "exit\n", 5);
 	ft_close_save(data);
 	free_all(data, read);

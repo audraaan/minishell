@@ -23,7 +23,7 @@ int	is_operator(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
-char	*get_operator_str(t_token_type type)
+char	*get_op_str(t_token_type type)
 {
 	if (type == HEREDOC)
 		return ("<<");

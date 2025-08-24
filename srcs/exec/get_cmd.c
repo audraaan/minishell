@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:39:06 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/20 04:54:58 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 02:10:59 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,34 +63,6 @@ char	*search_path(char *cmd, char **path, int *error)
 	return (NULL);
 }
 
-//char	*ft_path(t_cmd *cmd, t_list *env, int *error)
-//{
-//	char	**lst_path;
-//	char	*path;
-//	char	*cmd_tab;
-
-//	path = NULL;
-//	cmd_tab = cmd->cmd_param[0];
-//	if (cmd_tab && !is_builtins(cmd))
-//	{
-//		if (ft_strchr(cmd_tab, '/'))
-//			path = ft_absolute_path(cmd_tab, error);
-//		else
-//		{
-//			lst_path = parse_path(env);
-//			path = search_path(cmd_tab, lst_path, error);
-//			ft_free_dtab(lst_path);
-//			if (ft_status_path(cmd_tab, error, path))
-//			{
-//				if (path && *path)
-//					free(path);
-//				return (NULL);
-//			}
-//		}
-//	}
-//	return (path);
-//}
-
 char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 {
 	char	**lst_path;
@@ -101,7 +73,7 @@ char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 	cmd_tab = cmd->cmd_param[0];
 	if (cmd_tab && !is_builtins(cmd))
 	{
-		if (!cmd_tab[0]) //inutile ?
+		if (!cmd_tab[0])
 		{
 			*error = 127;
 			return (NULL);
@@ -114,11 +86,7 @@ char	*ft_path(t_cmd *cmd, t_list *env, int *error)
 			path = search_path(cmd_tab, lst_path, error);
 			ft_free_dtab(lst_path);
 			if (ft_status_path(cmd_tab, error, path))
-			{
-				if (path && *path)
-					free(path);
-				return (NULL);
-			}
+				ft_free_and_null(NULL, path);
 		}
 	}
 	return (path);

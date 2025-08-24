@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   parse_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/20 05:22:09 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/23 17:00:13 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,17 @@ char	*expand_env_var(t_data *data, char *str, t_token **current)
 	return (res);
 }
 
-void	expand_env_var_bis(t_data *data, char *str, char **res, t_token **cur)
+void	expand_env_var_bis(t_data *data, char *str, char **res,
+						t_token **current)
 {
-	int	i;
-	int	quotes;
+	int		i;
+	int		quotes;
 
 	quotes = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (handle_quote(&i, &quotes, str, (*cur)->q_type))
+		if (handle_quote(&i, &quotes, str, (*current)->q_type))
 		{
 			i++;
 			continue ;
@@ -47,13 +48,15 @@ void	expand_env_var_bis(t_data *data, char *str, char **res, t_token **cur)
 			manage_exit_status(&data, &i, str, res);
 		else if (str[i] == '$' && quotes != 1)
 		{
-			data->current_token = cur;
+			data->current_token = current;
 			expend_env_var_third(&i, str, data, res);
-			if ((*cur)->retokenized)
+			if ((*current)->retokenized)
 				return ;
 		}
 		else
+		{
 			*res = join_and_free(*res, char_to_str(str[i++]));
+		}
 	}
 }
 
@@ -87,106 +90,6 @@ void	expend_env_var_third(int *i, char *str, t_data *data, char **res)
 		*res = join_and_free(*res, ft_strdup(value));
 }
 
-static char	*extract_word_retokenize(char *str, int *i, t_quote_type *q_type)
-{
-	int		start;
-	int		quotes;
-	char	*res;
-
-	start = *i;
-	quotes = 0;
-	while (str[*i] && (!ft_isspace(str[*i]) || quotes))
-	{
-		if (str[*i] == '\'' && quotes != 2 && *q_type != DOUBLE_QUOTES)
-			handle_single_quote(&quotes, q_type);
-		else if (str[*i] == '\"' && quotes != 1 && *q_type != SINGLE_QUOTES)
-			handle_double_quote(&quotes, q_type);
-		(*i)++;
-	}
-	res = ft_substr(str, start, *i - start);
-	return (res);
-}
-
-static t_token	*retokenize_bis(int *i, char *str, t_quote_type *q_type)
-{
-	t_token_type	type;
-	t_token			*new_token;
-	char			*word;
-
-	while (str[(*i)] && ft_isspace(str[(*i)]))
-		(*i)++;
-	if (!str[(*i)])
-		return (NULL);
-	type = WORD;
-	word = extract_word_retokenize(str, i, q_type);
-	new_token = create_token(word, type, q_type);
-	free(word);
-	if (!new_token)
-		return (NULL);
-	while (str[(*i)] && ft_isspace(str[(*i)]))
-		(*i)++;
-	return (new_token);
-}
-
-static t_token	*retokenize(t_data *data, char *str, t_quote_type o_q_type)
-{
-	t_token			*new_token;
-	t_token			**current;
-	t_quote_type	q_type;
-	int				i;
-
-	i = 0;
-	new_token = NULL;
-	current = &new_token;
-	while (str[i])
-	{
-		q_type = o_q_type;
-		*current = retokenize_bis(&i, str, &q_type);
-		if (!*current)
-		{
-			if (str[i])
-			{
-				free_tokens(&new_token);
-				break ;
-			}
-			break ;
-		}
-		current = &(*current)->next;
-	}
-	return (new_token);
-}
-
-void	handle_retoken(t_data *data, char *value, t_token **current, char **res)
-{
-	t_token	*new_tokens;
-	char	*combined_value;
-	char	*tmp;
-
-	(*current)->retokenized = 1;
-	if (*res && **res)
-	{
-		combined_value = ft_strjoin(*res, value);
-		if (!combined_value)
-			return ;
-	}
-	else
-		combined_value = ft_strdup(value);
-	new_tokens = retokenize(data, combined_value, (*current)->q_type);
-	if (new_tokens)
-	{
-		replace_current_token_with_list(data, current, new_tokens);
-		(*current)->retokenized = 1;
-	}
-	else
-	{
-		tmp = ft_strdup(combined_value);
-		if (tmp)
-			*res = join_and_free(*res, tmp);
-		(*current)->retokenized = 0;
-	}
-	free(combined_value);
-}
-
 t_list	*cpy_env(char **env, t_data *data)
 {
 	int		i;
@@ -213,3 +116,53 @@ t_list	*cpy_env(char **env, t_data *data)
 	}
 	return (env_cpy);
 }
+
+//static char *get_remaining_str(char *str)
+//{
+//	int i = 0;
+//
+//	while (str[i] && str[i] != '$')
+//		i++;
+//	if (!str[i])
+//		return (ft_strdup(""));
+//	i++;
+//	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+//		i++;
+//	return (ft_substr(str, i, ft_strlen(str) - i));
+//}
+//
+//void	handle_retoken(t_data *data, char *value, t_token **current, char **res)
+//{
+//	t_token	*new_tokens;
+//	char	*combined_value;
+//	char	*remaining_str;
+//	char	*tmp;
+//
+//	remaining_str = get_remaining_str((*current)->str);
+//	if (*res && **res)
+//	{
+//		tmp = ft_strjoin(*res, value);
+//		if (!tmp)
+//			return ;
+//		if (remaining_str)
+//			combined_value = ft_strjoin(tmp, remaining_str);
+//		else
+//			combined_value = tmp;
+//	}
+//	else
+//		combined_value = ft_strdup(value);
+//	new_tokens = retokenize(data, combined_value, (*current)->q_type);
+//	if (new_tokens)
+//	{
+//		replace_current_token_with_list(data, current, new_tokens);
+//		(*current)->retokenized = 1;
+//	}
+//	else
+//	{
+//		tmp = ft_strdup(combined_value);
+//		if (tmp)
+//			*res = join_and_free(*res, tmp);
+//		(*current)->retokenized = 0;
+//	}
+//	free(combined_value);
+//}

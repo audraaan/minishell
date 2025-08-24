@@ -42,6 +42,7 @@ MAIN_SRCS			=			main 			\
 								tokenize 		\
 								token_utils		\
 								token_utils_2	\
+								token_utils_3	\
 								env 			\
 								env_utils		\
 								env_utils_2		\
@@ -65,8 +66,9 @@ MAIN_SRCS			=			main 			\
 								utils_exec \
 								utils_msg_and_exit \
 								signal_utils \
-								export_utils
-								
+								export_utils \
+								retokenize \
+
 
 SRCS				=			$(addsuffix .c, $(MAIN_SRCS))
 
