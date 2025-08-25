@@ -78,12 +78,18 @@ t_file	*file_add_back(t_file **lst)
 	return (new);
 }
 
-void	copy_filename(t_file *current, t_token **token)
+int	copy_filename(t_file *current, t_token **token)
 {
 	*token = (*token)->next;
 	if (*token && (*token)->str)
 	{
 		current->filename = ft_strdup((*token)->str);
+		if (!current->filename)
+		{
+			ft_error_msg("copy filename", "malloc failed");
+			return (1);
+		}
 		*token = (*token)->next;
 	}
+	return (0);
 }

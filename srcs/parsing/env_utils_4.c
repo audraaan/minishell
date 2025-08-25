@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	handle_quote(int *i, int *quotes, char *str, t_quote_type q_type)
+int	handle_quote(int *i, int *quotes, char *str)
 {
 	if (str[(*i)] == '\'' && (*quotes) != 2)
 	{
@@ -20,6 +20,7 @@ int	handle_quote(int *i, int *quotes, char *str, t_quote_type q_type)
 			(*quotes) = 0;
 		else
 			(*quotes) = 1;
+		(*i)++;
 		return (1);
 	}
 	else if (str[(*i)] == '\"' && (*quotes) != 1)
@@ -28,6 +29,7 @@ int	handle_quote(int *i, int *quotes, char *str, t_quote_type q_type)
 			(*quotes) = 0;
 		else
 			(*quotes) = 2;
+		(*i)++;
 		return (1);
 	}
 	return (0);

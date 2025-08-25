@@ -6,7 +6,7 @@
 #    By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/16 13:49:07 by alarroye          #+#    #+#              #
-#    Updated: 2025/08/06 18:44:19 by alarroye         ###   ########lyon.fr    #
+#    Updated: 2025/08/25 09:54:53 by alarroye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,6 @@ MAIN_SRCS			=			main 			\
 								free_utils		\
 								free_utils_2	\
 								free_utils_3	\
-								temporary_utils	\
 								tokenize 		\
 								token_utils		\
 								token_utils_2	\

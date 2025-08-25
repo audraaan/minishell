@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_env.c                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/04/23 17:00:13 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/25 14:15:06 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,25 +28,23 @@ char	*expand_env_var(t_data *data, char *str, t_token **current)
 }
 
 void	expand_env_var_bis(t_data *data, char *str, char **res,
-						t_token **current)
+		t_token **current)
 {
-	int		i;
-	int		quotes;
+	int	i;
+	int	quotes;
 
 	quotes = 0;
 	i = 0;
 	while (str[i])
 	{
-		if (handle_quote(&i, &quotes, str, (*current)->q_type))
-		{
-			i++;
+		if (handle_quote(&i, &quotes, str))
 			continue ;
-		}
 		if (!str[i])
 			break ;
-		if (str[i] == '$' && str[i + 1] == '?' && quotes != 1)
+		if (str[i] == '$' && str[i + 1] == '?' && quotes != 1
+			&& !(*current)->expanded)
 			manage_exit_status(&data, &i, str, res);
-		else if (str[i] == '$' && quotes != 1)
+		else if (str[i] == '$' && quotes != 1 && !(*current)->expanded)
 		{
 			data->current_token = current;
 			expend_env_var_third(&i, str, data, res);
@@ -54,9 +52,7 @@ void	expand_env_var_bis(t_data *data, char *str, char **res,
 				return ;
 		}
 		else
-		{
 			*res = join_and_free(*res, char_to_str(str[i++]));
-		}
 	}
 }
 
@@ -64,15 +60,10 @@ void	expend_env_var_third(int *i, char *str, t_data *data, char **res)
 {
 	char	*name;
 	char	*value;
-	int		start;
 	t_token	**current;
 
 	current = (data->current_token);
-	(*i)++;
-	start = (*i);
-	while (str[(*i)] && (ft_isalnum(str[(*i)]) || str[(*i)] == '_'))
-		(*i)++;
-	name = ft_substr(str, start, (*i) - start);
+	name = extract_var_name(str, i);
 	if (!name || name[0] == '\0')
 	{
 		handle_empty_var(res);
@@ -116,53 +107,3 @@ t_list	*cpy_env(char **env, t_data *data)
 	}
 	return (env_cpy);
 }
-
-//static char *get_remaining_str(char *str)
-//{
-//	int i = 0;
-//
-//	while (str[i] && str[i] != '$')
-//		i++;
-//	if (!str[i])
-//		return (ft_strdup(""));
-//	i++;
-//	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-//		i++;
-//	return (ft_substr(str, i, ft_strlen(str) - i));
-//}
-//
-//void	handle_retoken(t_data *data, char *value, t_token **current, char **res)
-//{
-//	t_token	*new_tokens;
-//	char	*combined_value;
-//	char	*remaining_str;
-//	char	*tmp;
-//
-//	remaining_str = get_remaining_str((*current)->str);
-//	if (*res && **res)
-//	{
-//		tmp = ft_strjoin(*res, value);
-//		if (!tmp)
-//			return ;
-//		if (remaining_str)
-//			combined_value = ft_strjoin(tmp, remaining_str);
-//		else
-//			combined_value = tmp;
-//	}
-//	else
-//		combined_value = ft_strdup(value);
-//	new_tokens = retokenize(data, combined_value, (*current)->q_type);
-//	if (new_tokens)
-//	{
-//		replace_current_token_with_list(data, current, new_tokens);
-//		(*current)->retokenized = 1;
-//	}
-//	else
-//	{
-//		tmp = ft_strdup(combined_value);
-//		if (tmp)
-//			*res = join_and_free(*res, tmp);
-//		(*current)->retokenized = 0;
-//	}
-//	free(combined_value);
-//}

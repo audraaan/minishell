@@ -27,7 +27,10 @@ t_data	cmd_builder(t_data *data)
 	current_cmd = data->cmd;
 	token = data->token;
 	while (token)
-		cmd_builder_bis(&token, &current_cmd, &param_index);
+	{
+		if (cmd_builder_bis(&token, &current_cmd, &param_index))
+			close_and_free_all(data);
+	}
 	if (current_cmd && current_cmd->cmd_param)
 		current_cmd->cmd_param[param_index] = NULL;
 	return (*data);
@@ -57,17 +60,20 @@ static void	cmd_builder_third(t_token **token, t_cmd **current_cmd,
 	(*token) = (*token)->next;
 }
 
-void	cmd_builder_bis(t_token **token, t_cmd **current_cmd, int *param_index)
+int	cmd_builder_bis(t_token **token, t_cmd **current_cmd, int *param_index)
 {
 	char	*cleaned_str;
 
 	cleaned_str = NULL;
 	if (!token || !(*token) || !current_cmd || !(*current_cmd))
-		return ;
+		return (0);
 	if ((*token)->type == WORD)
 		cmd_builder_third(token, current_cmd, param_index, cleaned_str);
 	else if (is_redirection((*token)->type))
-		handle_redirection(&(*current_cmd)->file, &(*token));
+	{
+		if (handle_redirection(&(*current_cmd)->file, &(*token)))
+			return (1);
+	}
 	else if ((*token)->type == PIPE)
 	{
 		if ((*current_cmd) && (*current_cmd)->cmd_param)
@@ -76,6 +82,7 @@ void	cmd_builder_bis(t_token **token, t_cmd **current_cmd, int *param_index)
 		(*param_index) = 0;
 		(*token) = (*token)->next;
 	}
+	return (0);
 }
 
 t_cmd	*cmd_list(t_token *token)

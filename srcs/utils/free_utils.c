@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 23:23:57 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/26 08:22:09 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/25 14:11:28 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ void	free_env(t_list *env)
 	}
 }
 
-void	free_tokens(t_token **token)
+int	free_tokens(t_token **token)
 {
 	t_token	*tmp;
 
 	if (!token || !*token)
-		return ;
+		return (1);
 	while (*token)
 	{
 		tmp = (*token)->next;
@@ -44,6 +44,7 @@ void	free_tokens(t_token **token)
 		*token = tmp;
 	}
 	(*token) = NULL;
+	return (1);
 }
 
 void	free_file_list(t_file **file)

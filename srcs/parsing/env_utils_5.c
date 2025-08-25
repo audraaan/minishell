@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils_5.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 02:54:08 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/24 03:26:03 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/24 02:54:21 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*extract_var_name(char *str, int *i)
+{
+	char	*name;
+	int		start;
+
+	(*i)++;
+	start = (*i);
+	while (str[(*i)] && (ft_isalnum(str[(*i)]) || str[(*i)] == '_'))
+		(*i)++;
+	name = ft_substr(str, start, (*i) - start);
+	return (name);
+}
 
 int	check_token(t_token **current)
 {
@@ -44,7 +57,7 @@ int	check_q(t_token **current)
 	return (1);
 }
 
-int	ft_loop_remove_outer_quotes(int len, char *str)
+static int	ft_loop_remove_outer_quotes(int len, char *str)
 {
 	int	i;
 

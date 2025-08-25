@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/24 03:28:18 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/25 14:11:07 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,6 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-
-// valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all
-//  --track-fds=yes --show-mismatched-frees=yes
-//-s --trace-children=yes ./minishell
-
-//#define REDIR_IN		0	//>
-//#define REDIR_OUT		1	//<
-//#define HEREDOC		2	//<<
-//#define APPEND		3	//>>
-//#define PIPE			4	//|
-//#define WORD			5	//cmd
-
-// typedef struct s_list
-//{
-//	char			*content;
-//	char			*name;
-//	struct s_list	*next;
-//}					t_list;
 
 typedef struct s_lst
 {
@@ -157,6 +139,7 @@ int					check_unclosed_quotes(t_quote_type q_type);
 void				expand_tokens(t_data *data);
 t_token				*process_word_token_bis(t_data *data, t_token *current,
 						t_token *next);
+int					check_token(t_token **current);
 // env_utils_3
 void				manage_exit_status(t_data **data, int *i, char *str,
 						char **res);
@@ -166,20 +149,18 @@ char				*remove_outer_quotes(char *str, t_quote_type q_type);
 char				*remove_outer_quotes_cmd(char *str);
 t_token				*find_prev_token(t_token *head, t_token *token);
 // env_utils_4
-int					handle_quote(int *i, int *quotes, char *str,
-						t_quote_type q_type);
+int					handle_quote(int *i, int *quotes, char *str);
 int					exported(t_list **env_cpy, char *arg, t_data *data);
 int					ft_make_env(t_list **env_cpy, t_data *data);
 int					update_shlvl(t_list **env_cpy, t_list *tmp_env,
 						t_data *data);
 // env_utils_5
-int					check_token(t_token **current);
+char				*extract_var_name(char *str, int *i);
 int					check_q(t_token **current);
-char				*remove_outer_quotes(char *str, t_quote_type q_type);
 
 // command_builder
 t_data				cmd_builder(t_data *data);
-void				cmd_builder_bis(t_token **token, t_cmd **current_cmd,
+int					cmd_builder_bis(t_token **token, t_cmd **current_cmd,
 						int *param_index);
 t_cmd				*cmd_list(t_token *token);
 int					cmd_list_bis(t_token **current_token, t_cmd **head,
@@ -190,10 +171,10 @@ void				cmd_count(t_token *token, int *nb_pipe);
 int					get_cmd_size(t_token *token);
 int					is_redirection(int type);
 t_file				*file_add_back(t_file **lst);
-void				copy_filename(t_file *current, t_token **token);
+int					copy_filename(t_file *current, t_token **token);
 // builder_utils_2
-void				handle_redirection(t_file **files, t_token **token);
-void				copy_eof(t_file *current, t_token **token);
+int					handle_redirection(t_file **files, t_token **token);
+int					copy_eof(t_file *current, t_token **token);
 
 /////////////*exec*/////////////
 
@@ -295,7 +276,7 @@ void				close_and_free_all(t_data *data);
 // ft_free
 void				ft_free_all_lst(t_list *lst);
 void				free_file_list(t_file **file);
-void				free_tokens(t_token **token);
+int					free_tokens(t_token **token);
 void				free_env(t_list *env);
 int					ft_free_dtab(char **tab);
 void				free_all(t_data *data, char *read);

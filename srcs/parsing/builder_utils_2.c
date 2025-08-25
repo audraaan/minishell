@@ -12,34 +12,43 @@
 
 #include "minishell.h"
 
-void	handle_redirection(t_file **files, t_token **token)
+int	handle_redirection(t_file **files, t_token **token)
 {
 	t_file	*current;
 
 	if (!files || !token || !*token)
-		return ;
+		return (1);
 	current = file_add_back(files);
 	if (!current)
-		return ;
+		return (1);
 	current->type = (*token)->type;
 	if (current->type == REDIR_IN
 		|| current->type == REDIR_OUT
 		|| current->type == APPEND)
 	{
-		copy_filename(current, token);
+		if (copy_filename(current, token))
+			return (1);
 	}
 	else if (current->type == HEREDOC)
-		copy_eof(current, token);
+		if (copy_eof(current, token))
+			return (1);
+	return (0);
 }
 
-void	copy_eof(t_file *current, t_token **token)
+int	copy_eof(t_file *current, t_token **token)
 {
 	*token = (*token)->next;
 	if (*token && (*token)->str)
 	{
 		current->eof = ft_strdup((*token)->str);
+		if (!current->eof)
+		{
+			ft_error_msg("copy eof", "malloc failed");
+			return (1);
+		}
 		*token = (*token)->next;
 	}
+	return (0);
 }
 
 static void	remove_outer_quotes_cmd_bis(int *i, int *j, char *str, char *result)
