@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_utils.c                                      :+:      :+:    :+:   */
+/*   token_utils_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 22:58:14 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/07/16 23:33:22 by nbedouan         ###   ########.fr       */
+/*   Updated: 2025/08/25 15:32:57 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,6 @@ void	handle_single_quote(int *quotes, t_quote_type *q_type)
 		if ((*q_type) == NO_QUOTES)
 			(*q_type) = SINGLE_QUOTES;
 	}
-}
-
-void	handle_simple_expansion(char *value, char **res)
-{
-	char	*tmp;
-
-	tmp = ft_strdup(value);
-	if (tmp)
-		*res = join_and_free(*res, tmp);
 }
 
 void	handle_empty_var(char **res)

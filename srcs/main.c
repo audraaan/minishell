@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:03:00 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/25 14:06:52 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/25 15:27:31 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,75 +92,12 @@ char	*ft_loop(t_data *data, pid_t pid, char *read)
 	return (read);
 }
 
-void	print(t_cmd *cmd)
-{
-	int		i;
-	int		cmd_num;
-	t_file	*file;
-
-	cmd_num = 0;
-	if (!cmd)
-	{
-		printf("Command list is empty\n");
-		return ;
-	}
-	printf("Starting to print commands:\n");
-	while (cmd)
-	{
-		i = 0;
-		printf("Command %d at %p:\n", cmd_num++, (void *)cmd);
-		if (!cmd->cmd_param)
-		{
-			printf("  cmd_param array is NULL\n");
-		}
-		else
-		{
-			while (cmd->cmd_param[i])
-			{
-				printf("  param[%d]: '%s'\n", i, cmd->cmd_param[i]);
-				i++;
-			}
-			if (i == 0)
-				printf("  No parameters found\n");
-		}
-		printf("  expended ?: '%d'\n", cmd->expanded);
-		file = cmd->file;
-		while (file)
-		{
-			printf("  file: '%s'\n",
-				file->filename ? file->filename : "(none)");
-			printf("  eof: '%s'\n", file->eof ? file->eof : "(none)");
-			printf("  type: '%d'\n", file->type);
-			file = file->next;
-		}
-		cmd = cmd->next;
-	}
-	printf("Done printing commands\n");
-}
-void	print_tokens(t_token *head)
-{
-	const char	*type_names[] = {"REDIR_IN", "REDIR_OUT", "HEREDOC", "APPEND",
-			"PIPE", "WORD"};
-
-	printf("\n--- TOKENS ---\n");
-	while (head)
-	{
-		printf("[%-8s] %s, %d,%d\n", type_names[head->type], head->str,
-			head->q_type, head->in_quote);
-		head = head->next;
-	}
-	printf("--------------\n\n");
-}
-
 void	update_data(t_data *data, pid_t pid)
 {
 	int	is_heredoc;
 
-	//print_tokens(data->token);
 	expand_tokens(data);
-	//print_tokens(data->token);
 	*data = cmd_builder(data);
-	//print(data->cmd);
 	is_heredoc = handle_heredoc(data);
 	signal(SIGINT, SIG_IGN);
 	data->exit_status = ft_exec(data, pid);

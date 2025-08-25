@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 18:00:48 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/04 04:26:19 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/25 15:39:23 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,3 @@ char	*ft_strdup(const char *s)
 	dest[i] = '\0';
 	return (dest);
 }
-//char	*ft_strdup(const char *s)
-//{
-//	char	*dup;
-//	int		s_len;
-
-//	s_len = ft_strlen(s);
-//	dup = malloc((s_len + 1) * sizeof(char));
-//	if (!dup)
-//		return (NULL);
-//	dup[s_len] = 0;
-//	while (s_len >= 0)
-//	{
-//		dup[s_len] = s[s_len];
-//		s_len--;
-//	}
-//	return (dup);
-//}

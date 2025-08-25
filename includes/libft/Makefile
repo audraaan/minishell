@@ -48,7 +48,7 @@ SRC		=			ft_atoi.c \
 					ft_tools1.c \
 					ft_tools2.c \
 					ft_printf.c \
-					ft_strndup.c \
+					ft_strndup.c 
 
 SRC_BONUS	=		ft_lstadd_back_bonus.c \
 					ft_lstadd_front_bonus.c \
@@ -65,8 +65,6 @@ OBJ		=			$(SRC:%.c=$(OBJ_DIR)%.o)
 OBJ_BONUS	=		$(SRC_BONUS:%.c=$(OBJ_DIR)%.o)
 DEP		=			$(SRC:%.c=$(OBJ_DIR)%.d)
 DEP_BONUS	=		$(SRC_BONUS:%.c=$(OBJ_DIR)%.d)
-
-# $< = SOURCE FILE && $@ = OUTPUT FILE && $? = DEPS THAT CHANGED
 
 $(OBJ_DIR)%.o: %.c Makefile | $(OBJ_DIR)
 						$(CC) $(CFLAGS) -c $< -o $@

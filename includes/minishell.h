@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:48:52 by alarroye          #+#    #+#             */
-/*   Updated: 2025/08/25 14:11:07 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/25 15:38:18 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ int					needs_space_splitting(char *value);
 // token_utils_2
 void				handle_double_quote(int *quotes, t_quote_type *q_type);
 void				handle_single_quote(int *quotes, t_quote_type *q_type);
-void				handle_simple_expansion(char *value, char **res);
 void				handle_empty_var(char **res);
 // token_utils_3
 void				handle_double_quote_tok(int *quotes, t_quote_type *q_type,
@@ -134,7 +133,6 @@ t_list				*create_env_node(char *env_var, t_list **env_cpy);
 char				*char_to_str(char c);
 char				*join_and_free(char *s1, char *s2);
 char				*get_env_value(t_list *env, char *name);
-int					check_unclosed_quotes(t_quote_type q_type);
 // env_utils_2
 void				expand_tokens(t_data *data);
 t_token				*process_word_token_bis(t_data *data, t_token *current,
@@ -182,10 +180,8 @@ int					copy_eof(t_file *current, t_token **token);
 char				*ft_loop(t_data *data, pid_t pid, char *read);
 void				update_data(t_data *data, pid_t pid);
 void				sigint_handler(int sig);
-void				sigquit_handler(int sig);
 void				init_data(t_data *data, int ac, char **av);
 int					check_synthax(t_data *data);
-t_list				*parse_env(char **envp);
 char				*ft_loop(t_data *data, pid_t pid, char *read);
 
 // exec
@@ -285,12 +281,6 @@ void				free_cmd(t_cmd **cmd);
 void				ft_free_lst(t_list *lst);
 void				*free_return(char *s1, char *s2);
 char				**ft_free_and_null(char **tab, char *t);
-
-// ft_print
-void				print(t_cmd *cmd);
-void				print_list(t_list *lst);
-void				print_tokens(t_token *head);
-void				ft_print_tab(char **tab);
 
 // signaux
 void				sigint_handler(int sig);

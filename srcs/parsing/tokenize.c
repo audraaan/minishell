@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: nbedouan <nbedouan@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:39:35 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/25 14:12:47 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/04/14 14:39:41 by nbedouan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 char	*extract_word(char *str, int *i, t_quote_type *q_type,
-		t_quote_type *in_quote)
+					t_quote_type *in_quote)
 {
 	int		start;
 	int		quotes;
@@ -39,7 +39,7 @@ char	*extract_word(char *str, int *i, t_quote_type *q_type,
 }
 
 t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type,
-		t_quote_type *in_quote)
+						t_quote_type *in_quote)
 {
 	t_token	*new_token;
 
@@ -62,7 +62,7 @@ t_token	*create_token(char *str, t_token_type type, t_quote_type *q_type,
 }
 
 static t_token	*create_appropriate_token(char *str, int *i,
-		t_quote_type *q_type, t_quote_type *in_quote)
+							t_quote_type *q_type, t_quote_type *in_quote)
 {
 	t_token_type	type;
 	t_token			*new_token;
@@ -122,7 +122,7 @@ t_token	*tokenize(t_data *data, char *str)
 		if (!*current && free_tokens(&new_token))
 			break ;
 		if (is_eof == 1)
-			(*current)->expanded = 1;
+			(*current)->expanded = 2;
 		if ((*current)->type == HEREDOC)
 			is_eof = 1;
 		else

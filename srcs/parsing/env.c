@@ -6,7 +6,7 @@
 /*   By: alarroye <alarroye@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 13:58:17 by nbedouan          #+#    #+#             */
-/*   Updated: 2025/08/25 14:15:06 by alarroye         ###   ########lyon.fr   */
+/*   Updated: 2025/08/25 15:35:17 by alarroye         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*expand_env_var(t_data *data, char *str, t_token **current)
 }
 
 void	expand_env_var_bis(t_data *data, char *str, char **res,
-		t_token **current)
+						t_token **current)
 {
 	int	i;
 	int	quotes;
@@ -42,9 +42,9 @@ void	expand_env_var_bis(t_data *data, char *str, char **res,
 		if (!str[i])
 			break ;
 		if (str[i] == '$' && str[i + 1] == '?' && quotes != 1
-			&& !(*current)->expanded)
+			&& (*current)->expanded != 2)
 			manage_exit_status(&data, &i, str, res);
-		else if (str[i] == '$' && quotes != 1 && !(*current)->expanded)
+		else if (str[i] == '$' && quotes != 1 && (*current)->expanded != 2)
 		{
 			data->current_token = current;
 			expend_env_var_third(&i, str, data, res);
@@ -58,9 +58,9 @@ void	expand_env_var_bis(t_data *data, char *str, char **res,
 
 void	expend_env_var_third(int *i, char *str, t_data *data, char **res)
 {
-	char	*name;
-	char	*value;
-	t_token	**current;
+	char		*name;
+	char		*value;
+	t_token		**current;
 
 	current = (data->current_token);
 	name = extract_var_name(str, i);
